@@ -1,0 +1,14 @@
+.DS_Store
+
+.vscode/*.json
+!.vscode/extensions.json
+
+Packages
+.build
+.swiftpm
+default.profraw
+
+*.sqlite
+.env
+.env.*
+!.env.example

@@ -1,0 +1,55 @@
+{
+	"includes": [
+		".swift-format",
+		"dprint.json",
+		"Resources/Views/**/*.leaf",
+		".vscode/*.json",
+	],
+	"excludes": [
+		".build",
+	],
+	"useTabs": true,
+	"indentWidth": 2,
+	"lineWidth": 100,
+	"oxc": {
+		"quoteStyle": "single",
+		"quoteProperties": "consistent",
+		"experimentalSortImports": {
+			"groups": [
+				["style", "side_effect_style"],
+				["builtin"],
+				["external"],
+				["internal", "subpath"],
+				["parent", "sibling", "index"],
+				["unknown"],
+			],
+		},
+	},
+	"markup": {
+		"associations": ["*.{html,svg,leaf}"],
+		"styleIndent": true,
+		"scriptIndent": true,
+		"scriptFormatter": "biome",
+		"html.void.selfClosing": true,
+		"component.selfClosing": true,
+	},
+	"malva": {
+		"quotes": "preferSingle",
+	},
+	"json": {
+		"associations": ["*.{json,jsonc}", ".swift-format"],
+		"trailingCommas": "jsonc",
+		"jsonTrailingCommaFiles": [
+			"dprint.json",
+			".vscode/extensions.json",
+			".vscode/launch.json",
+			".vscode/settings.json",
+		],
+	},
+	"plugins": [
+		"https://plugins.dprint.dev/oxc-0.14.0.wasm",
+		"https://plugins.dprint.dev/json-0.21.3.wasm",
+		"https://plugins.dprint.dev/g-plane/markup_fmt-v0.27.0.wasm",
+		"https://plugins.dprint.dev/g-plane/malva-v0.15.2.wasm",
+	],
+}

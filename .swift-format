@@ -1,0 +1,7 @@
+{
+	"version": 1,
+	"tabWidth": 2,
+	"lineLength": 100,
+	"indentation": { "tabs": 1 },
+	"multilineTrailingCommaBehavior": "alwaysUsed"
+}
