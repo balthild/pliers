@@ -7,16 +7,35 @@ import NIOPosix
 import NIOSSL
 import Vapor
 
-public enum PliersServer {
-	public static func run() async throws {
+public struct PliersServer {
+	private var context: CommandContext
+	private var signature: ServeCommand.Signature
+
+	private var app: Application { context.application }
+
+	public static func make(
+		_ context: CommandContext,
+		_ signature: ServeCommand.Signature,
+	) async throws -> Self {
 		var env = Environment.production
 		try LoggingSystem.bootstrap(from: &env)
 
-		let app = try await Application.make(env)
+		var context = context
+		context.application = try await Application.make(env)
 
+		return .init(
+			context: context,
+			signature: signature,
+		)
+	}
+
+	public func run() async throws {
 		do {
-			try await configure(app)
-			try await app.execute()
+			try environment()
+			try await configure()
+
+			try await app.asyncBoot()
+			try await execute()
 			try await app.asyncShutdown()
 		} catch {
 			app.logger.report(error: error)
@@ -25,15 +44,7 @@ public enum PliersServer {
 		}
 	}
 
-	private static func configure(_ app: Application) async throws {
-		try environment(app)
-
-		app.views.use(.leaf)
-		try database(app)
-		try http(app)
-	}
-
-	private static func environment(_ app: Application) throws {
+	private func environment() throws {
 		let names: Set<String> = [
 			"UID", "GID", "EUID", "EGID",
 			"HOME", "USER", "LOGNAME", "GROUPS",
@@ -58,17 +69,45 @@ public enum PliersServer {
 		}
 	}
 
-	private static func database(_ app: Application) throws {
+	private func execute() async throws {
+		try await app.servers.asyncCommand.run(using: context, signature: signature)
+		try await app.running?.onStop.get()
+	}
+}
+
+extension PliersServer {
+	private func configure() async throws {
+		try await database()
+		try await console()
+		try await http()
+
+		app.views.use(.leaf)
+
+		// jwt is used for short-lived temporary login tokens only,
+		// so the key can be randomly generated on each launch
+		let key = SymmetricKey(size: .bits256)
+		await app.jwt.keys.add(hmac: .init(key: key), digestAlgorithm: .sha256)
+	}
+
+	private func console() async throws {
+		app.asyncCommands.commands.removeValue(forKey: "routes")
+		app.asyncCommands.commands.removeValue(forKey: "migrate")
+	}
+
+	private func database() async throws {
 		let config = DatabaseConfigurationFactory.sqlite(.file("db.sqlite"))
 		app.databases.use(config, as: .sqlite)
 
 		app.migrations.add(CreateUser())
 	}
 
-	private static func http(_ app: Application) throws {
+	private func http() async throws {
 		app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
 
+		app.sessions.configuration.cookieName = "pliers_session"
+		app.middleware.use(app.sessions.middleware)
+
 		try app.register(collection: HomeController())
-		try app.register(collection: AuthController())
+		try app.register(collection: LoginController())
 	}
 }
