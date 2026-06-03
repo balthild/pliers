@@ -22,12 +22,11 @@ struct UserTokenAuthenticator: AsyncCredentialsAuthenticator {
 		do {
 			let home = try FileManager.default.homeDirectory(forUser: credentials.username)
 				.expect("get home dir for user")
-			let file = home.appending(path: ".config/pliers/token")
+			let file = home.appending(path: Constants.userTokenPath)
 
 			let attrs = try FileManager.default.attributesOfItem(atPath: file.path)
-			let mode = attrs[.posixPermissions] as? Int
-			if mode != 0o600 {
-				throw RuntimeError("unexpected permission for token file")
+			if attrs[.posixPermissions] as? UInt16 != 0o600 {
+				throw RuntimeError("token file must not be accessible by other users")
 			}
 
 			let data = try Data(contentsOf: file)

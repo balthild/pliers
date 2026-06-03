@@ -5,27 +5,22 @@ import Logging
 import NIOCore
 import NIOPosix
 import NIOSSL
+import PliersCommon
 import Vapor
 
 public struct PliersServer {
-	private var context: CommandContext
-	private var signature: ServeCommand.Signature
+	private let config: Config
+	private let app: Application
 
-	private var app: Application { context.application }
-
-	public static func make(
-		_ context: CommandContext,
-		_ signature: ServeCommand.Signature,
-	) async throws -> Self {
+	public static func make(_ config: Config) async throws -> Self {
 		var env = Environment.production
 		try LoggingSystem.bootstrap(from: &env)
 
-		var context = context
-		context.application = try await Application.make(env)
+		let app = try await Application.make(env)
 
 		return .init(
-			context: context,
-			signature: signature,
+			config: config,
+			app: app,
 		)
 	}
 
@@ -70,7 +65,11 @@ public struct PliersServer {
 	}
 
 	private func execute() async throws {
-		try await app.servers.asyncCommand.run(using: context, signature: signature)
+		let input = CommandInput(arguments: ["serve", "--port", String(config.port)])
+		var context = CommandContext(console: Terminal(), input: input)
+		context.application = app
+
+		try await app.servers.asyncCommand.run(using: &context)
 		try await app.running?.onStop.get()
 	}
 }
@@ -95,10 +94,12 @@ extension PliersServer {
 	}
 
 	private func database() async throws {
-		let config = DatabaseConfigurationFactory.sqlite(.file("db.sqlite"))
+		let file = config.state.appending(path: "db.sqlite")
+		let config = DatabaseConfigurationFactory.sqlite(.file(file.path))
 		app.databases.use(config, as: .sqlite)
 
 		app.migrations.add(CreateUser())
+		try await app.autoMigrate()
 	}
 
 	private func http() async throws {

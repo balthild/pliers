@@ -12,7 +12,7 @@ struct AuthCommand: AsyncCommand, Sendable {
 	let help = "generate a temporary login token"
 
 	func run(using context: CommandContext, signature: Signature) async throws {
-		let url = "http://localhost:8080/login/token"
+		let url = "http://localhost:\(context.config.port)/login/token"
 		let deadline = NIODeadline.now() + .seconds(5)
 		let response = try await HTTPClient.shared.get(url: url, deadline: deadline).get()
 		guard let body = response.body else {
@@ -22,18 +22,17 @@ struct AuthCommand: AsyncCommand, Sendable {
 		let token = String(decoding: body.readableBytesView, as: UTF8.self)
 
 		let home = FileManager.default.homeDirectoryForCurrentUser
-		let file = home.appending(path: ".config/pliers/token")
+		let file = home.appending(path: Constants.userTokenPath)
 
 		try FileManager.default.createDirectory(
 			at: file.deletingLastPathComponent(),
 			withIntermediateDirectories: true,
 		)
 
-		let attrs: [FileAttributeKey: Any] = [.posixPermissions: 0o600]
 		let created = FileManager.default.createFile(
 			atPath: file.path,
 			contents: Data(token.utf8),
-			attributes: attrs,
+			attributes: [.posixPermissions: 0o600],
 		)
 
 		if !created {
