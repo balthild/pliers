@@ -31,6 +31,9 @@ struct UserTokenAuthenticator: AsyncCredentialsAuthenticator {
 
 			let data = try Data(contentsOf: file)
 			try await request.jwt.verify(data, as: Payload.self)
+
+			let user = try await User.findOrCreate(username: credentials.username, on: request.db)
+			request.auth.login(user)
 		} catch {
 			request.logger.report(error: error)
 		}

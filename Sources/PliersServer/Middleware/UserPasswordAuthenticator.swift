@@ -9,7 +9,21 @@ struct UserPasswordAuthenticator: AsyncCredentialsAuthenticator {
 	}
 
 	func authenticate(credentials: Credentials, for request: Request) async throws {
-		// TODO: authenticate with password and totp
-		// https://docs.vapor.codes/security/crypto/#totp
+		do {
+			let user = try await User.find(username: credentials.username, on: request.db)
+			guard let user, user.password != nil, user.totp != nil else { return }
+
+			guard user.totp!.verify(credentials.totp) else {
+				return
+			}
+
+			guard try request.password.verify(credentials.password, created: user.password!) else {
+				return
+			}
+
+			request.auth.login(user)
+		} catch {
+			request.logger.report(error: error)
+		}
 	}
 }

@@ -14,13 +14,32 @@ final class User: Model, @unchecked Sendable {
 	@Field(key: "username")
 	var username: String
 
-	@Field(key: "password")
+	@OptionalField(key: "password")
 	var password: String?
 
-	@Field(key: "totp")
-	var totp: String?
+	@OptionalField(key: "totp")
+	var totp: TOTPConfig?
 
 	init() {}
+
+	public static func find(username: String, on database: Database) async throws -> User? {
+		return try await Self.query(on: database)
+			.filter(\.$username == username)
+			.first()
+	}
+
+	public static func findOrCreate(username: String, on database: Database) async throws -> User {
+		let existing = try await Self.find(username: username, on: database)
+		if let existing {
+			return existing
+		}
+
+		let creating = User()
+		creating.username = username
+
+		try await creating.create(on: database)
+		return creating
+	}
 }
 
 extension User: ModelSessionAuthenticatable {}
