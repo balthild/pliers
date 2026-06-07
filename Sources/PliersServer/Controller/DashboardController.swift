@@ -4,8 +4,8 @@ import VaporElementary
 
 struct DashboardController: RouteCollection {
 	func boot(routes: any RoutesBuilder) throws {
-		let auth = routes.grouped(User.requireLoggedIn())
-		auth.get("dashboard", use: self.dashboard)
+		let group = routes.grouped(User.requireLoggedIn())
+		group.get("dashboard", use: self.dashboard)
 	}
 
 	@Sendable

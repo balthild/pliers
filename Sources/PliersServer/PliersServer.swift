@@ -1,5 +1,6 @@
 import Fluent
 import FluentSQLiteDriver
+import JWT
 import Logging
 import NIOCore
 import NIOPosix
@@ -108,8 +109,12 @@ extension PliersServer {
 		app.middleware.use(app.sessions.middleware)
 
 		try app.register(collection: HomeController())
+
+		try app.register(collection: AuthController())
+		try app.register(collection: TokenLoginController())
+		try app.register(collection: PasskeyLoginController())
+		try app.register(collection: PasswordLoginController())
+
 		try app.register(collection: DashboardController())
-		try app.register(collection: LoginController())
-		try app.register(collection: LogoutController())
 	}
 }
