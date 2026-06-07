@@ -8,8 +8,8 @@ struct HomeController: RouteCollection {
 	}
 
 	@Sendable
-	func index(req: Request) async throws -> View {
-		try await req.view.render("index", ["title": "Hello Vapor!"])
+	func index(req: Request) async throws -> Response {
+		return req.redirect(to: "/dashboard")
 	}
 
 	@Sendable

@@ -1,6 +1,5 @@
 import Fluent
 import FluentSQLiteDriver
-import Leaf
 import Logging
 import NIOCore
 import NIOPosix
@@ -80,8 +79,6 @@ extension PliersServer {
 		try await console()
 		try await http()
 
-		app.views.use(.leaf)
-
 		// jwt is used for short-lived temporary login tokens only,
 		// so the key can be randomly generated on each launch
 		let key = SymmetricKey(size: .bits256)
@@ -98,6 +95,7 @@ extension PliersServer {
 		let config = DatabaseConfigurationFactory.sqlite(.file(file.path))
 		app.databases.use(config, as: .sqlite)
 
+		app.migrations.add(SessionRecord.migration)
 		app.migrations.add(CreateUser())
 		try await app.autoMigrate()
 	}
@@ -106,9 +104,12 @@ extension PliersServer {
 		app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
 
 		app.sessions.configuration.cookieName = "pliers_session"
+		app.sessions.use(.fluent)
 		app.middleware.use(app.sessions.middleware)
 
 		try app.register(collection: HomeController())
+		try app.register(collection: DashboardController())
 		try app.register(collection: LoginController())
+		try app.register(collection: LogoutController())
 	}
 }

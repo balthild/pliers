@@ -1,5 +1,4 @@
 import Foundation
-import Parsing
 
 public struct Config: Sendable {
 	public let port: UInt16

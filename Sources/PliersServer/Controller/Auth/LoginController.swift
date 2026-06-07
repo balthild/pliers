@@ -1,5 +1,6 @@
 import Fluent
 import Vapor
+import VaporElementary
 
 struct LoginController: RouteCollection {
 	func boot(routes: any RoutesBuilder) throws {
@@ -17,8 +18,10 @@ struct LoginController: RouteCollection {
 	}
 
 	@Sendable
-	func login(req: Request) async throws -> String {
-		return "TODO: show login form"
+	func login(req: Request) async throws -> HTMLResponse {
+		return HTMLResponse {
+			UI.Page.Auth.Login()
+		}
 	}
 
 	@Sendable
@@ -36,6 +39,6 @@ struct LoginController: RouteCollection {
 	@Sendable
 	func redirect(req: Request) async throws -> Response {
 		// authentication is handled by the middlewares
-		return req.redirect(to: "dashboard")
+		return req.redirect(to: "/dashboard")
 	}
 }

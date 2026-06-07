@@ -1,5 +1,5 @@
 {
-  "originHash" : "31db4621880bb4dcc6543ef6632bf64dcbf1cecee627924de656a1e7c0814f2e",
+  "originHash" : "e2884437036aa23b39d0419e8355376dd8dc21b7299193ce5096b97f92e0583e",
   "pins" : [
     {
       "identity" : "async-http-client",
@@ -26,6 +26,15 @@
       "state" : {
         "revision" : "32ad16dfc7677b927b225595ed18f3debb32f577",
         "version" : "4.16.0"
+      }
+    },
+    {
+      "identity" : "elementary",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/elementary-swift/elementary.git",
+      "state" : {
+        "revision" : "37b26923e73156f524b52e649855277bc7ead2c2",
+        "version" : "0.7.1"
       }
     },
     {
@@ -71,24 +80,6 @@
       "state" : {
         "revision" : "a93a262fefb0938b799191b54f581ffa43422d96",
         "version" : "5.5.0"
-      }
-    },
-    {
-      "identity" : "leaf",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/vapor/leaf.git",
-      "state" : {
-        "revision" : "b70a6108e4917f338f6b8848407bf655aa7e405f",
-        "version" : "4.5.1"
-      }
-    },
-    {
-      "identity" : "leaf-kit",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/vapor/leaf-kit.git",
-      "state" : {
-        "revision" : "6044b844caa858a0c5f2505ac166f5a057c990dc",
-        "version" : "1.14.2"
       }
     },
     {
@@ -359,6 +350,15 @@
       "state" : {
         "revision" : "cfd8f434843ac7850e2d97f46c1aa5ddb906cf1c",
         "version" : "4.121.4"
+      }
+    },
+    {
+      "identity" : "vapor-elementary",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/vapor-community/vapor-elementary.git",
+      "state" : {
+        "revision" : "e1326d2439a9d4bd271c24b9765c195f7f793e77",
+        "version" : "0.2.2"
       }
     },
     {

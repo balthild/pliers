@@ -5,7 +5,7 @@ struct LogoutController: RouteCollection {
 	func boot(routes: any RoutesBuilder) throws {
 		let group = routes.grouped("/logout").grouped(User.requireLoggedIn())
 
-		group.post("/", use: self.logout)
+		group.post(use: self.logout)
 	}
 
 	@Sendable

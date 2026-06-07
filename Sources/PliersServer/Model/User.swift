@@ -23,7 +23,7 @@ final class User: Model, @unchecked Sendable {
 	init() {}
 
 	public static func find(username: String, on database: Database) async throws -> User? {
-		return try await Self.query(on: database)
+		return try await User.query(on: database)
 			.filter(\.$username == username)
 			.first()
 	}
@@ -49,7 +49,7 @@ extension User {
 	public static func requireLoggedIn() -> [Middleware] {
 		return [
 			User.sessionAuthenticator(),
-			User.redirectMiddleware(path: "login"),
+			User.redirectMiddleware(path: "/login"),
 		]
 	}
 
@@ -57,7 +57,7 @@ extension User {
 	public static func requireLoggedOut() -> [Middleware] {
 		return [
 			User.sessionAuthenticator(),
-			User.guestMiddleware(path: "dashboard"),
+			User.guestMiddleware(path: "/dashboard"),
 		]
 	}
 }
