@@ -12,7 +12,8 @@ struct AuthCommand: AsyncCommand, Sendable {
 	let help = "generate a temporary login token"
 
 	func run(using context: CommandContext, signature: Signature) async throws {
-		let url = "http://localhost:\(context.config.port)/login/token"
+		let username = NSUserName()
+		let url = "http://localhost:\(context.config.port)/login/token?username=\(username)"
 		let deadline = NIODeadline.now() + .seconds(5)
 		let response = try await HTTPClient.shared.get(url: url, deadline: deadline).get()
 		guard let body = response.body else {
@@ -20,6 +21,8 @@ struct AuthCommand: AsyncCommand, Sendable {
 		}
 
 		let token = String(decoding: body.readableBytesView, as: UTF8.self)
+		let nonce = SymmetricKey(size: .bits256).withUnsafeBytes({ $0.bcryptBase64String() })
+		let full = "\(token);\(nonce)"
 
 		let home = FileManager.default.homeDirectoryForCurrentUser
 		let file = home.appending(path: Constants.userTokenPath)
@@ -31,7 +34,7 @@ struct AuthCommand: AsyncCommand, Sendable {
 
 		let created = FileManager.default.createFile(
 			atPath: file.path,
-			contents: Data(token.utf8),
+			contents: Data(full.utf8),
 			attributes: [.posixPermissions: 0o600],
 		)
 
@@ -40,6 +43,6 @@ struct AuthCommand: AsyncCommand, Sendable {
 		}
 
 		context.console.info("Login token generated. Note that it will expire soon.")
-		context.console.print(token)
+		context.console.print(full)
 	}
 }

@@ -58,11 +58,6 @@ extension UI.Page.Auth {
 
 			form(.method(.post), .action("/login/token")) {
 				label {
-					span { "Username" }
-					input(.name("username"), .type(.text), .required)
-				}
-
-				label {
 					span { "Token" }
 					input(.name("token"), .type(.text), .required)
 				}
