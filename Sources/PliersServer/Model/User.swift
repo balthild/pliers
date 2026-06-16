@@ -57,7 +57,7 @@ extension User {
 	public static func requireLoggedOut() -> [Middleware] {
 		return [
 			User.sessionAuthenticator(),
-			User.guestMiddleware(path: "/dashboard"),
+			User.guestMiddleware(path: "/"),
 		]
 	}
 }

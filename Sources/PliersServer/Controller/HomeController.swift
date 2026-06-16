@@ -1,19 +1,16 @@
 import Fluent
 import Vapor
+import VaporElementary
 
 struct HomeController: RouteCollection {
 	func boot(routes: any RoutesBuilder) throws {
-		routes.get(use: self.index)
-		routes.get("hello", use: self.hello)
+		routes.grouped(User.requireLoggedIn()).get(use: self.overview)
 	}
 
 	@Sendable
-	func index(req: Request) async throws -> Response {
-		return req.redirect(to: "/dashboard")
-	}
-
-	@Sendable
-	func hello(req: Request) async throws -> String {
-		return "Hello, world!"
+	func overview(req: Request) async throws -> HTMLResponse {
+		return req.render {
+			UI.Page.Overview()
+		}
 	}
 }

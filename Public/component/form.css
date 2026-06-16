@@ -1,0 +1,26 @@
+.form {
+	display: grid;
+	grid-template-columns: max-content 1fr;
+	gap: 0.5rem;
+
+	> * {
+		grid-column: 1 / -1;
+
+		&.field {
+			display: grid;
+			grid-template-columns: subgrid;
+			align-items: baseline;
+
+			> :first-child {
+				font-size: 0.9em;
+				text-align: right;
+			}
+		}
+
+		&.actions {
+			display: flex;
+			justify-content: flex-end;
+			gap: 0.5rem;
+		}
+	}
+}

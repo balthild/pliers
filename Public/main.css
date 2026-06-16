@@ -1,0 +1,30 @@
+@layer base, global, component, page;
+
+@import url('https://cdn.jsdelivr.net/npm/modern-normalize@3.0.1/modern-normalize.min.css')
+	layer(base);
+@import url('https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap-utilities.min.css')
+	layer(base);
+
+@import url('./component/layout.css') layer(component);
+@import url('./component/link.css') layer(component);
+@import url('./component/form.css') layer(component);
+
+@layer global {
+	body {
+		width: 100%;
+		min-height: 100dvh;
+		min-height: 100vh;
+		overflow-x: hidden;
+		display: flex;
+		flex-direction: column;
+		align-items: stretch;
+	}
+
+	button {
+		font-size: 0.85em;
+	}
+
+	[x-cloak] {
+		display: none !important;
+	}
+}

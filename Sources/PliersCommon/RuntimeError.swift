@@ -19,9 +19,15 @@ public struct RuntimeError: Error {
 	}
 }
 
+extension RuntimeError: CustomStringConvertible {
+	public var description: String {
+		return "\(message) [\(file):\(line) \(function)]"
+	}
+}
+
 extension RuntimeError: LocalizedError {
 	public var errorDescription: String? {
-		return "\(message) [\(file):\(line) \(function)]"
+		return description
 	}
 }
 

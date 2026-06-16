@@ -1,0 +1,22 @@
+a, button.link {
+	color: blue;
+	text-decoration: none;
+
+	&:hover {
+		text-decoration: underline;
+	}
+
+	&.current {
+		font-weight: bold;
+		color: navy;
+	}
+}
+
+button.link {
+	font-size: inherit;
+	margin: 0;
+	padding: 0;
+	border: none;
+	background: none;
+	cursor: pointer;
+}

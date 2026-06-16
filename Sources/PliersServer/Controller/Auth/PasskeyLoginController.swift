@@ -27,6 +27,6 @@ struct PasskeyLoginController: RouteCollection {
 		// TODO: authenticate with passkey
 		print(credentials)
 
-		return req.redirect(to: "/dashboard")
+		return req.redirect(to: "/")
 	}
 }

@@ -71,6 +71,6 @@ struct TokenLoginController: RouteCollection {
 		let user = try await User.findOrCreate(username: payload.sub.value, on: req.db)
 		req.auth.login(user)
 
-		return req.redirect(to: "/dashboard")
+		return req.redirect(to: "/")
 	}
 }

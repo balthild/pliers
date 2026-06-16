@@ -4,13 +4,20 @@ public struct ChainError: Error {
 	public let chain: [Error]
 
 	fileprivate init(_ chain: [Error]) {
+		precondition(!chain.isEmpty, "ChainError must have at least one error")
 		self.chain = chain
+	}
+}
+
+extension ChainError: CustomStringConvertible {
+	public var description: String {
+		return chain.map { $0.localizedDescription }.joined(separator: "\n--> ")
 	}
 }
 
 extension ChainError: LocalizedError {
 	public var errorDescription: String? {
-		return chain.map { $0.localizedDescription }.joined(separator: "\n--> ")
+		return description
 	}
 }
 

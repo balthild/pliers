@@ -33,6 +33,6 @@ struct PasswordLoginController: RouteCollection {
 
 		req.auth.login(user)
 
-		return req.redirect(to: "/dashboard")
+		return req.redirect(to: "/")
 	}
 }
