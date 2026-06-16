@@ -1,0 +1,17 @@
+@import 'tailwindcss';
+@plugin '@tailwindcss/forms';
+
+@import './component/link.css' layer(component);
+@import './component/form.css' layer(component);
+@import './component/button.css' layer(component);
+
+@layer base {
+	body {
+		@apply w-full min-h-screen overflow-x-hidden;
+		@apply flex flex-col items-stretch;
+	}
+
+	[x-cloak] {
+		@apply hidden!;
+	}
+}

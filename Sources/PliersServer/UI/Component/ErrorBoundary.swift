@@ -25,7 +25,7 @@ extension UI.Component {
 			case .failure(let error):
 				let _ = req.logger.report(error: error)
 
-				span(.style("color: red;")) {
+				span(.class("text-red-500")) {
 					"An error occurred while rendering"
 				}
 			}

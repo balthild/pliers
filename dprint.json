@@ -2,7 +2,7 @@
 	"includes": [
 		".swift-format",
 		"dprint.json",
-		"Public/**/*.{js,css}",
+		"Resources/**/*.{js,css}",
 		".vscode/*.json",
 	],
 	"excludes": [

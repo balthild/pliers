@@ -12,10 +12,10 @@ extension UI.Layout {
 		}
 
 		var body: some HTML {
-			div(.class("root dashboard")) {
+			div(.class("flex items-stretch flex-1")) {
 				sidebar
 
-				main(.class("p-4")) {
+				main(.class("px-4 py-3")) {
 					content
 				}
 			}
@@ -23,30 +23,35 @@ extension UI.Layout {
 
 		@HTMLBuilder
 		private var sidebar: some HTML {
-			aside(.class("sidebar")) {
-				h1(.class("panel logo")) { "Pliers" }
+			let cls = (
+				panel: "py-2 px-3 border-b border-gray-300",
+				logo: "text-lg font-bold bg-gray-100 text-gray-500",
+			)
 
-				section(.class("panel vstack gap-1")) {
+			aside(.class("w-64 border-r border-gray-300")) {
+				h1(.class("\(cls.panel) \(cls.logo)")) { "Pliers" }
+
+				section(.class("\(cls.panel)")) {
 					UI.Component.ErrorBoundary {
 						let user = try req.auth.require(User.self)
 
 						p(.class("my-0")) {
 							user.username
-							span(.class("mx-1 text-secondary")) { "@" }
+							span(.class("mx-1 text-gray-500")) { "@" }
 							ProcessInfo.processInfo.hostName
 						}
 					}
 
-					div(.class("hstack gap-2")) {
+					div(.class("flex gap-2")) {
 						NavLink(text: "Settings", path: "/settings")
 
-						form(.method(.post), .action("/logout"), .class("d-inline")) {
+						form(.method(.post), .action("/logout"), .class("inline")) {
 							button(.class("link")) { "Logout" }
 						}
 					}
 				}
 
-				nav(.class("panel vstack gap-1")) {
+				nav(.class("\(cls.panel)")) {
 					div { NavLink(text: "Overview", path: "/") }
 					div { NavLink(text: "Files", path: "/files") }
 					div { NavLink(text: "Caddy", path: "/caddy") }
@@ -63,8 +68,7 @@ extension UI.Layout {
 			let path: String
 
 			var body: some HTML {
-				let active = req.url.path.starts(with: path)
-				a(.href(path), .class("current").when(active)) {
+				a(.href(path), .class("current").when(req.url.path == path)) {
 					text
 				}
 			}

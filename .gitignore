@@ -8,6 +8,8 @@ Packages
 .swiftpm
 default.profraw
 
+node_modules
+
 *.sqlite
 .env
 .env.*

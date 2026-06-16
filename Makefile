@@ -19,12 +19,16 @@ configure:
 
 build:
 	@if [ ! -f $(GENERATE_PATH) ]; then echo 'Please run "make configure" first'; exit 1; fi
+	npx @tailwindcss/cli -i ./Resources/Style/main.css -o ./Public/dist/main.css
 	swift build -c release
 
 dev.%:
 	@if [ ! -f $(GENERATE_PATH) ]; then echo 'Please run "make configure" first'; exit 1; fi
 	swift build -c debug
 	sudo ./.build/debug/pliers $*
+
+dev.css:
+	npx @tailwindcss/cli -i ./Resources/Style/main.css -o ./Public/dist/main.css --watch
 
 fmt:
 	dprint fmt

@@ -11,8 +11,8 @@ extension UI.Page {
 		var body: some HTML {
 			UI.Layout.Auth {
 				div(.xData("{ tab: 'passkey' }")) {
-					header(.class("hstack gap-2 mb-3")) {
-						h2(.class("my-0 fs-6 flex-grow-1")) { "Login" }
+					header(.class("flex gap-3 mb-3")) {
+						h2(.class("text-base font-bold grow")) { "Login" }
 
 						button(
 							.class("link"),
@@ -33,7 +33,7 @@ extension UI.Page {
 						) { "Token" }
 					}
 
-					main(.class("flex-grow-1")) {
+					main(.class("grow")) {
 						div(.xCloak, .xShow("tab === 'password'")) { password }
 						div(.xCloak, .xShow("tab === 'token'")) { token }
 					}
@@ -60,7 +60,7 @@ extension UI.Page {
 				}
 
 				div(.class("actions")) {
-					button { "Login" }
+					button(.class("primary")) { "Login" }
 				}
 			}
 		}
@@ -74,7 +74,7 @@ extension UI.Page {
 				}
 
 				div(.class("actions")) {
-					button { "Login" }
+					button(.class("primary")) { "Login" }
 				}
 			}
 		}

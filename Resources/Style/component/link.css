@@ -1,0 +1,18 @@
+a, button.link {
+	@apply text-blue-600;
+	@apply no-underline;
+
+	&:hover {
+		@apply underline;
+	}
+
+	&.current {
+		@apply font-bold text-blue-900;
+	}
+}
+
+button.link {
+	display: inline;
+	font-size: inherit;
+	cursor: pointer;
+}

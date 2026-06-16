@@ -1,3 +1,7 @@
 {
-	"recommendations": ["swiftlang.swift-vscode", "Vapor.vapor-vscode"],
+	"recommendations": [
+		"swiftlang.swift-vscode",
+		"Vapor.vapor-vscode",
+		"bradlc.vscode-tailwindcss",
+	],
 }
