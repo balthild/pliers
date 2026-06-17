@@ -10,33 +10,33 @@ extension UI.Page {
 
 		var body: some HTML {
 			UI.Layout.Auth {
-				div(.xData("{ tab: 'passkey' }")) {
+				div(.x.data("{ tab: 'passkey' }")) {
 					header(.class("flex gap-3 mb-3 -mt-1")) {
 						h2(.class("text-base font-bold grow")) { "Login" }
 
 						button(
 							.class("link"),
-							.xBind("class", "{ current: tab === 'passkey' }"),
-							.xOn("click", "tab = 'passkey'"),
+							.x.bind("class", "{ current: tab === 'passkey' }"),
+							.x.on("click", "tab = 'passkey'"),
 						) { "Passkey" }
 
 						button(
 							.class("link"),
-							.xBind("class", "{ current: tab === 'password' }"),
-							.xOn("click", "tab = 'password'"),
+							.x.bind("class", "{ current: tab === 'password' }"),
+							.x.on("click", "tab = 'password'"),
 						) { "Password" }
 
 						button(
 							.class("link"),
-							.xBind("class", "{ current: tab === 'token' }"),
-							.xOn("click", "tab = 'token'"),
+							.x.bind("class", "{ current: tab === 'token' }"),
+							.x.on("click", "tab = 'token'"),
 						) { "Token" }
 					}
 
 					main(.class("grow")) {
-						div(.xCloak, .xShow("tab === 'passkey'")) { passkey }
-						div(.xCloak, .xShow("tab === 'password'")) { password }
-						div(.xCloak, .xShow("tab === 'token'")) { token }
+						div(.x.cloak, .x.show("tab === 'passkey'")) { passkey }
+						div(.x.cloak, .x.show("tab === 'password'")) { password }
+						div(.x.cloak, .x.show("tab === 'token'")) { token }
 					}
 				}
 			}
