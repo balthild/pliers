@@ -8,7 +8,7 @@ extension UI.Component {
 
 			link(.rel(.stylesheet), .href("/dist/main.css"))
 
-			script(.src("//unpkg.com/alpinejs"), .defer) {}
+			script(.src("https://unpkg.com/alpinejs@3"), .defer) {}
 		}
 	}
 }

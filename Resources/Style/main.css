@@ -11,6 +11,13 @@
 		@apply flex flex-col items-stretch;
 	}
 
+	code {
+		@apply text-gray-800 bg-gray-100;
+		@apply border border-gray-300;
+		@apply py-px px-0.75;
+		font-size: 0.9em;
+	}
+
 	[x-cloak] {
 		@apply hidden!;
 	}

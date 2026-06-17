@@ -10,6 +10,7 @@
 
 			> :first-child {
 				@apply text-sm text-right;
+				@apply py-0.5;
 			}
 		}
 
