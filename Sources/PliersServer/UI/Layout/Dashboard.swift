@@ -12,10 +12,10 @@ extension UI.Layout {
 		}
 
 		var body: some HTML {
-			div(.class("flex items-stretch flex-1")) {
+			div(.class("flex items-stretch grow")) {
 				sidebar
 
-				main(.class("px-4 py-3")) {
+				main(.class("px-4 py-3 grow")) {
 					content
 				}
 			}
@@ -45,7 +45,7 @@ extension UI.Layout {
 					div(.class("flex gap-2")) {
 						NavLink(text: "Settings", path: "/settings")
 
-						form(.method(.post), .action("/logout"), .class("inline")) {
+						form(.method(.post), .action("/logout")) {
 							button(.class("link")) { "Logout" }
 						}
 					}

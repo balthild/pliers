@@ -44,5 +44,8 @@ extension PliersServer {
 		try app.register(collection: TokenLoginController())
 		try app.register(collection: PasskeyLoginController())
 		try app.register(collection: PasswordLoginController())
+
+		try app.register(collection: SettingsController())
+		try app.register(collection: PasswordSettingsController())
 	}
 }

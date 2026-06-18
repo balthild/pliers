@@ -1,21 +1,15 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/forms';
 
-@import './component/link.css' layer(component);
+@import './component/common.css' layer(component);
 @import './component/form.css' layer(component);
 @import './component/button.css' layer(component);
+@import './component/table.css' layer(component);
 
 @layer base {
 	body {
 		@apply w-full min-h-screen overflow-x-hidden;
 		@apply flex flex-col items-stretch;
-	}
-
-	code {
-		@apply text-gray-800 bg-gray-100;
-		@apply border border-gray-300;
-		@apply py-px px-0.75;
-		font-size: 0.9em;
 	}
 
 	[x-cloak] {

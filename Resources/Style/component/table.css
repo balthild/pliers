@@ -1,0 +1,17 @@
+table {
+	@apply text-sm;
+	@apply border-spacing-0 border-collapse;
+
+	thead tr, tfoot tr {
+		@apply bg-gray-200;
+	}
+
+	tbody tr:hover {
+		@apply bg-gray-100;
+	}
+
+	th, td {
+		@apply border border-gray-400;
+		@apply px-2 py-0.5;
+	}
+}

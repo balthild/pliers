@@ -11,7 +11,26 @@ extension HTMLAttribute {
 	}
 }
 
-extension HTMLAttribute {
+extension HTMLAttribute where Tag == HTMLTag.input {
+	@inlinable
+	public static var readonly: Self {
+		.init(name: "readonly", value: nil)
+	}
+}
+
+extension HTMLAttribute where Tag == HTMLTag.td {
+	@inlinable
+	public static func colspan(_ value: Int) -> Self {
+		.init(name: "colspan", value: String(value))
+	}
+
+	@inlinable
+	public static func rowspan(_ value: Int) -> Self {
+		.init(name: "rowspan", value: String(value))
+	}
+}
+
+extension HTMLAttribute where Tag: HTMLTrait.Attributes.Global {
 	/// A namespace for Alpine.js attributes.
 	/// See the [Alpine.js docs](https://alpinejs.dev) for more information.
 	public enum x {}

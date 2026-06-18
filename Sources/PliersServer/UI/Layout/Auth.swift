@@ -12,7 +12,7 @@ extension UI.Layout {
 		}
 
 		var body: some HTML {
-			div(.class("flex-1 bg-gray-100")) {
+			div(.class("grow bg-gray-100")) {
 				main(.class("w-full max-w-lg border border-gray-400 p-4 mt-24 mx-auto bg-white")) {
 					content
 				}
