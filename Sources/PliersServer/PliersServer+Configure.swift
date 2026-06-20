@@ -1,6 +1,7 @@
 import Fluent
 import FluentSQLiteDriver
 import JWT
+import Path
 import PliersCommon
 import Vapor
 
@@ -22,8 +23,8 @@ extension PliersServer {
 	}
 
 	private func database() async throws {
-		let file = config.state.appending(path: "db.sqlite")
-		let config = DatabaseConfigurationFactory.sqlite(.file(file.path))
+		let path = config.state / "db.sqlite"
+		let config = DatabaseConfigurationFactory.sqlite(.file(path.string))
 		app.databases.use(config, as: .sqlite)
 
 		app.migrations.add(SessionRecord.migration)

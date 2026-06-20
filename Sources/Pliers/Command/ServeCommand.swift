@@ -1,5 +1,6 @@
 import ConsoleKit
 import Glibc
+import Path
 import PliersCommon
 import PliersServer
 import Vapor
@@ -15,7 +16,7 @@ struct ServeCommand: AsyncCommand, Sendable {
 			throw RuntimeError("the server must be run as root.")
 		}
 
-		let attrs = try FileManager.default.attributesOfItem(atPath: context.config.state.path)
+		let attrs = try context.config.state.attrs.expect("read state dir attributes")
 		if attrs[.ownerAccountID] as? UInt32 != 0 {
 			throw RuntimeError("state dir must be owned by root")
 		}

@@ -1,23 +1,24 @@
 import Foundation
+import Path
 
 public struct Config: Sendable {
 	public let port: UInt16
-	public let state: URL
+	public let state: Path
 
 	public static func load() throws -> Self {
-		let path = Constants.configDir.appending(path: "pliers.conf")
+		let path = Constants.configDir / "pliers.conf"
 		let text = try Result { try String(contentsOf: path, encoding: .utf8) }
-			.expect("failed to read config file \(path.path)")
+			.expect("failed to read config file \(path.string)")
 
 		let entries = try Result { try parse(text) }
-			.expect("failed to parse config file \(path.path)")
+			.expect("failed to parse config file \(path.string)")
 
 		let port: String = try entries["port"].expect("missing option 'port'")
 		let state: String = try entries["state"].expect("missing option 'state'")
 
 		let config = try Self(
 			port: UInt16(port).expect("invalid port"),
-			state: URL(filePath: state, directoryHint: .isDirectory),
+			state: Path(state).expect("invalid state path"),
 		)
 
 		guard config.port >= 1024 else {

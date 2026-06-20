@@ -16,6 +16,7 @@ let package = Package(
 		.package(url: "https://github.com/swift-server/swift-webauthn.git", from: "1.0.0-beta.1"),
 		.package(url: "https://github.com/elementary-swift/elementary.git", from: "0.6.0"),
 		.package(url: "https://github.com/vapor-community/vapor-elementary.git", from: "0.1.0"),
+		.package(url: "https://github.com/mxcl/Path.swift.git", from: "1.6.0"),
 	],
 	targets: [
 		.executableTarget(
@@ -39,13 +40,16 @@ let package = Package(
 				.product(name: "WebAuthn", package: "swift-webauthn"),
 				.product(name: "Elementary", package: "elementary"),
 				.product(name: "VaporElementary", package: "vapor-elementary"),
+				.product(name: "Path", package: "Path.swift"),
 				.target(name: "PliersCommon"),
 			],
 			swiftSettings: swiftSettings,
 		),
 		.target(
 			name: "PliersCommon",
-			dependencies: [],
+			dependencies: [
+				.product(name: "Path", package: "Path.swift")
+			],
 			swiftSettings: swiftSettings,
 		),
 		.testTarget(

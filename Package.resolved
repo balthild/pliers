@@ -1,5 +1,5 @@
 {
-  "originHash" : "e2884437036aa23b39d0419e8355376dd8dc21b7299193ce5096b97f92e0583e",
+  "originHash" : "f8f4ef933189dba24ef02c26179285f1c517ef6e859c01a0f6a2b1173eeab5d2",
   "pins" : [
     {
       "identity" : "async-http-client",
@@ -89,6 +89,15 @@
       "state" : {
         "revision" : "3498e60218e6003894ff95192d756e238c01f44e",
         "version" : "4.7.1"
+      }
+    },
+    {
+      "identity" : "path.swift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/mxcl/Path.swift.git",
+      "state" : {
+        "revision" : "74ec90bbe50a3376e399286fed48b60db9b91bb1",
+        "version" : "1.6.0"
       }
     },
     {

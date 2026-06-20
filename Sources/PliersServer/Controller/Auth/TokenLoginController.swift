@@ -1,6 +1,7 @@
 import Fluent
 import Foundation
 import JWT
+import Path
 import PliersCommon
 import Vapor
 import VaporElementary
@@ -52,21 +53,20 @@ struct TokenLoginController: RouteCollection {
 
 		let payload = try await req.jwt.verify(String(parts[0]), as: Payload.self)
 
-		let home = try FileManager.default.homeDirectory(forUser: payload.sub.value)
-			.expect("get home dir for user")
-		let file = home.appending(path: Constants.userTokenPath)
+		let home = try Path.home(for: payload.sub.value).expect("get home dir for user")
+		let path = home / Constants.userTokenPath
 
-		let attrs = try FileManager.default.attributesOfItem(atPath: file.path)
+		let attrs = try path.attrs.expect("get file attributes")
 		if attrs[.posixPermissions] as? UInt16 != 0o600 {
 			throw RuntimeError("token file must not be accessible by other users")
 		}
 
-		let stored = try await req.fileio.collectFile(at: file.path)
+		let stored = try await req.fileio.collectFile(at: path.string)
 		guard stored == .init(string: credentials.token) else {
 			throw Abort(.unauthorized, reason: "invalid token")
 		}
 
-		try FileManager.default.removeItem(at: file)
+		try path.delete()
 
 		let user = try await User.findOrCreate(username: payload.sub.value, on: req.db)
 		req.auth.login(user)

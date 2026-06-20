@@ -2,6 +2,7 @@ import AsyncHTTPClient
 import ConsoleKit
 import Glibc
 import NIOCore
+import Path
 import PliersCommon
 import PliersServer
 import Vapor
@@ -24,16 +25,12 @@ struct AuthCommand: AsyncCommand, Sendable {
 		let nonce = SymmetricKey(size: .bits256).withUnsafeBytes({ $0.bcryptBase64String() })
 		let full = "\(token);\(nonce)"
 
-		let home = FileManager.default.homeDirectoryForCurrentUser
-		let file = home.appending(path: Constants.userTokenPath)
-
-		try FileManager.default.createDirectory(
-			at: file.deletingLastPathComponent(),
-			withIntermediateDirectories: true,
-		)
+		let path = Path.home / Constants.userTokenPath
+		try path.parent.mkdir(.p)
+		try path.parent.chmod(0o700)
 
 		let created = FileManager.default.createFile(
-			atPath: file.path,
+			atPath: path.string,
 			contents: Data(full.utf8),
 			attributes: [.posixPermissions: 0o600],
 		)

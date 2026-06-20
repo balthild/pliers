@@ -1,19 +1,19 @@
 import Elementary
 import Foundation
+import Path
 import Vapor
 
 extension UI.Page {
 	struct BrowseFiles: HTMLDocument {
 		typealias Entry = (
 			name: String,
-			url: URL,
+			path: Path,
+			dir: Bool,
 			owner: String,
 			mode: UInt16,
-			isDirectory: Bool,
-			isSymlink: Bool,
 		)
 
-		let path: String
+		let path: Path
 		let entries: [Entry]
 
 		var title: String { "Files" }
@@ -29,7 +29,7 @@ extension UI.Page {
 
 				p(.class("text-sm mb-2")) {
 					"Current Path: "
-					code { path }
+					code { path.string }
 				}
 
 				table {
@@ -42,11 +42,10 @@ extension UI.Page {
 					}
 
 					tbody {
-						if path != "/" {
-							let parent = URL(filePath: path).deletingLastPathComponent()
+						if path.string != "/" {
 							tr {
 								td {
-									a(.href(link(to: parent))) { ".." }
+									a(.href(link(to: path.parent))) { ".." }
 								}
 								td {}
 								td {}
@@ -56,8 +55,8 @@ extension UI.Page {
 						for entry in entries {
 							tr {
 								td {
-									if entry.isDirectory {
-										a(.href(link(to: entry.url))) { "\(entry.name)/" }
+									if entry.dir {
+										a(.href(link(to: entry.path))) { "\(entry.name)/" }
 									} else {
 										entry.name
 									}
@@ -79,15 +78,11 @@ extension UI.Page {
 			}
 		}
 
-		private func link(to url: URL) -> String {
-			guard !url.path.isEmpty else {
-				return "/files"
-			}
-
+		private func link(to path: Path) -> String {
 			var url = URLComponents()
 			url.path = "/files"
 			url.queryItems = [
-				.init(name: "path", value: url.path)
+				.init(name: "path", value: path.string)
 			]
 
 			return url.string ?? "/files"

@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import 'tailwindcss' source('../../Sources');
 @plugin '@tailwindcss/forms';
 
 @import './component/common.css' layer(component);

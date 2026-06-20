@@ -1,4 +1,6 @@
 import Foundation
+import Path
+import PliersCommon
 import Vapor
 import VaporElementary
 
@@ -10,50 +12,44 @@ struct FilesController: RouteCollection {
 	@Sendable
 	func index(req: Request) async throws -> HTMLResponse {
 		let user = try req.auth.require(User.self)
-		let home = try FileManager.default.homeDirectory(forUser: user.username)
-			.expect("get home directory")
+		let home = try Path.home(for: user.username).expect("get home directory")
 
-		let path = req.query["path"] ?? home.path
+		let path = try Path(req.query["path"] ?? home.string).expect("resolve path")
 
-		// TODO: check if user has access to the path
+		// TODO: check access with child process running as the actual user
+		if user.username != "root" && path.canonical?.hasPrefix(home) != true {
+			throw Abort(.forbidden, reason: "Access denied")
+		}
 
-		var isDirectory: ObjCBool = false
-		guard FileManager.default.fileExists(atPath: path, isDirectory: &isDirectory) else {
-			// TODO: display error message
+		guard path.exists else {
 			throw Abort(.notFound, reason: "path does not exist")
 		}
 
-		if isDirectory.boolValue {
+		if path.isDirectory {
 			return try await self.browse(req: req, path: path)
 		} else {
 			return try await self.edit(req: req, path: path)
 		}
 	}
 
-	private func browse(req: Request, path: String) async throws -> HTMLResponse {
-		let dir = URL(filePath: path)
-
-		let entries = try FileManager.default.contentsOfDirectory(atPath: path)
-			.map { name in
-				let url = dir.appendingPathComponent(name)
-
-				let attrs = try FileManager.default.attributesOfItem(atPath: url.path)
-				let type = attrs[.type] as? FileAttributeType
+	private func browse(req: Request, path: Path) async throws -> HTMLResponse {
+		let entries = try path.ls(.aUnsorted)
+			.map { path in
+				let attrs = try path.attrs.expect("get file attributes")
 				let owner = attrs[.ownerAccountName] as! String
 				let mode = attrs[.posixPermissions] as! UInt16
 
 				return (
-					name: name,
-					url: url,
+					name: path.basename(),
+					path: path,
+					dir: path.isDirectory,
 					owner: owner,
 					mode: mode,
-					isDirectory: type == .typeDirectory,
-					isSymlink: type == .typeSymbolicLink,
 				)
 			}
 			.sorted {
-				if $0.isDirectory != $1.isDirectory {
-					return $0.isDirectory && !$1.isDirectory
+				if $0.path.isDirectory != $1.path.isDirectory {
+					return $0.path.isDirectory && !$1.path.isDirectory
 				}
 
 				return $0.name.localizedStandardCompare($1.name) == .orderedAscending
@@ -67,7 +63,7 @@ struct FilesController: RouteCollection {
 		}
 	}
 
-	private func edit(req: Request, path: String) async throws -> HTMLResponse {
+	private func edit(req: Request, path: Path) async throws -> HTMLResponse {
 		return req.render {
 			"TODO"
 		}
