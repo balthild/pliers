@@ -62,7 +62,26 @@ struct FileMutationController: RouteCollection {
 
 	@Sendable
 	func chmod(req: Request) async throws -> Response {
-		throw Abort(.notImplemented)
+		let user = try req.auth.require(User.self)
+
+		let path: Path = try req.query["path"].expect("invalid path")
+		let mode: String = try req.query["mode"].expect("invalid mode")
+
+		guard let mode = Int(mode, radix: 8), mode >= 0 && mode <= 0o777 else {
+			throw Abort(.badRequest, reason: "invalid mode")
+		}
+
+		if user.username != "root" {
+			let attrs = try path.attrs.expect("read file attributes")
+			let owner = attrs[.ownerAccountName] as? String
+			guard owner == user.username else {
+				throw Abort(.notFound, reason: "invalid path or access denied")
+			}
+		}
+
+		try path.chmod(mode)
+
+		return req.redirect(.back)
 	}
 
 	@Sendable

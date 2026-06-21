@@ -40,6 +40,20 @@ extension HTMLAttribute where Tag == HTMLTag.td {
 	}
 }
 
+extension HTMLAttribute where Tag == HTMLTag.dialog {
+	public struct ClosedBy: Sendable, Equatable {
+		fileprivate let value: String
+
+		public static var none: Self { .init(value: "none") }
+		public static var any: Self { .init(value: "any") }
+		public static var closerequest: Self { .init(value: "closerequest") }
+	}
+
+	public static func closedby(_ value: ClosedBy) -> Self {
+		.init(name: "closedby", value: value.value)
+	}
+}
+
 extension HTMLAttribute where Tag: HTMLTrait.Attributes.Global {
 	/// A namespace for Alpine.js attributes.
 	/// See the [Alpine.js docs](https://alpinejs.dev) for more information.
@@ -47,7 +61,7 @@ extension HTMLAttribute where Tag: HTMLTrait.Attributes.Global {
 }
 
 extension HTMLAttribute.x {
-	public static func data(_ expr: String) -> HTMLAttribute {
+	public static func data(_ expr: String? = nil) -> HTMLAttribute {
 		.init(name: "x-data", value: expr)
 	}
 
@@ -119,5 +133,27 @@ extension HTMLAttribute.x where Tag == HTMLTag.template {
 
 	public static func teleport(_ expr: String) -> HTMLAttribute {
 		.init(name: "x-teleport", value: expr)
+	}
+}
+
+public enum Alpine {
+	public static func data(_ name: String, _ expr: String) -> some HTML {
+		call("data", name, expr)
+	}
+
+	public static func store(_ name: String, _ expr: String) -> some HTML {
+		call("store", name, expr)
+	}
+
+	private static func call(_ method: String, _ name: String, _ expr: String) -> some HTML {
+		script {
+			HTMLRaw(
+				"""
+				document.addEventListener('alpine:init', () => {
+					Alpine.\(method)('\(name)', \(expr))
+				})
+				"""
+			)
+		}
 	}
 }

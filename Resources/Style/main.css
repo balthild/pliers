@@ -8,6 +8,7 @@
 @import './component/form.css' layer(components);
 @import './component/button.css' layer(components);
 @import './component/table.css' layer(components);
+@import './component/dialog.css' layer(components);
 
 @layer base {
 	body {

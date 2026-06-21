@@ -1,0 +1,19 @@
+dialog {
+	@apply fixed top-1/2 left-1/2 -translate-1/2 mt-[-10vh];
+	@apply border border-gray-400;
+	box-shadow: --spacing(1.5) --spacing(1.5) --alpha(var(--color-gray-500) / 25%);
+
+	> header {
+		@apply py-2 px-3;
+		@apply border-b border-gray-400;
+		@apply bg-gray-200;
+	}
+
+	> main {
+		@apply p-3;
+	}
+
+	&::backdrop {
+		@apply bg-gray-700/20;
+	}
+}
