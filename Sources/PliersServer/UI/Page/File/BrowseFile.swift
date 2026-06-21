@@ -32,10 +32,42 @@ extension UI.Page {
 					code { path.string }
 				}
 
-				div(.class("mb-2"), .x.data("{ action: '' }")) {
+				div(.class("mb-2"), .x.data("{ action: false }")) {
 					div(.class("flex gap-2"), .x.show("!action")) {
-						button(.class("btn")) { "Upload" }
-						button(.class("btn")) { "Create Dir" }
+						button(.class("btn"), .x.on("click", "action = 'upload'")) { "Upload" }
+						button(.class("btn"), .x.on("click", "action = 'mkdir'")) { "Create Dir" }
+					}
+
+					form(
+						.method(.post),
+						.action(link(to: path, action: "create")),
+						.enctype(.multipartFormData),
+						.class("form max-w-100 p-2 border border-gray-400"),
+						.x.cloak,
+						.x.show("action == 'upload'"),
+					) {
+						label(.class("field")) {
+							span { "Filename" }
+							input(
+								.name("filename"),
+								.type(.text),
+								.required,
+							)
+						}
+
+						label(.class("field")) {
+							span { "Content" }
+							input(
+								.type(.file),
+								.name("content"),
+								.required,
+							)
+						}
+
+						div(.class("actions")) {
+							button(.type(.button), .x.on("click", "action = false")) { "Cancel" }
+							button(.type(.submit), .class("primary")) { "Upload" }
+						}
 					}
 				}
 
@@ -73,8 +105,21 @@ extension UI.Page {
 								td { entry.owner }
 								td { "\(String(entry.mode, radix: 8))" }
 								td {
-									if !entry.dir {
-										a(.href(link(to: entry.path, action: "download"))) { "Download" }
+									div(.class("flex gap-2")) {
+										if !entry.dir {
+											a(.href(link(to: entry.path, action: "download"))) { "Download" }
+
+											form(
+												.method(.post),
+												.action(link(to: entry.path, action: "delete")),
+												.on(
+													.submit,
+													"return confirm('Are you sure you want to delete this file? This action cannot be undone.');",
+												),
+											) {
+												button(.type(.submit), .class("link text-red-700")) { "Delete" }
+											}
+										}
 									}
 								}
 							}

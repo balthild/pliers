@@ -27,8 +27,9 @@ struct FileController: RouteCollection {
 
 	private func list(req: Request, path: Path) async throws -> HTMLResponse {
 		let user = try req.auth.require(User.self)
+
 		guard try await path.hasAccess(.rx, by: user.username) else {
-			throw Abort(.notFound, reason: "not found or access denied")
+			throw Abort(.notFound, reason: "invalid path or access denied")
 		}
 
 		let entries = try path.ls(.aUnsorted)
@@ -63,8 +64,9 @@ struct FileController: RouteCollection {
 
 	private func edit(req: Request, path: Path) async throws -> HTMLResponse {
 		let user = try req.auth.require(User.self)
+
 		guard try await path.hasAccess(.rw, by: user.username) else {
-			throw Abort(.notFound, reason: "not found or access denied")
+			throw Abort(.notFound, reason: "invalid path or access denied")
 		}
 
 		return req.render {
@@ -77,7 +79,7 @@ struct FileController: RouteCollection {
 
 		let user = try req.auth.require(User.self)
 		guard try await path.hasAccess(.r, by: user.username) else {
-			throw Abort(.notFound, reason: "not found or access denied")
+			throw Abort(.notFound, reason: "invalid path or access denied")
 		}
 
 		return try await req.fileio.asyncStreamFile(at: path.string)

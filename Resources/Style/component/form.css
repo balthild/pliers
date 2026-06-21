@@ -24,3 +24,13 @@ input, textarea, select {
 	@apply text-sm;
 	@apply py-0.5 px-1.5;
 }
+
+input[type='file'] {
+	@apply border border-gray-500;
+
+	&:focus {
+		@apply outline-2 outline-offset-2 outline-transparent;
+		@apply border-blue-600;
+		@apply ring ring-blue-600;
+	}
+}

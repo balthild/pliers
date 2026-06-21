@@ -10,6 +10,20 @@ extension HTMLAttribute {
 	}
 }
 
+extension HTMLAttribute where Tag == HTMLTag.form {
+	public struct EncType: Sendable, Equatable {
+		fileprivate let value: String
+
+		public static var multipartFormData: Self {
+			.init(value: "multipart/form-data")
+		}
+	}
+
+	public static func enctype(_ value: EncType) -> Self {
+		.init(name: "enctype", value: value.value)
+	}
+}
+
 extension HTMLAttribute where Tag == HTMLTag.input {
 	public static var readonly: Self {
 		.init(name: "readonly", value: nil)

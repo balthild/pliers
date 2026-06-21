@@ -16,7 +16,27 @@ struct FileMutationController: RouteCollection {
 
 	@Sendable
 	func create(req: Request) async throws -> Response {
-		throw Abort(.notImplemented)
+		struct Input: Content {
+			let filename: String
+			let content: Data
+		}
+
+		let user = try req.auth.require(User.self)
+		let input = try req.content.decode(Input.self)
+
+		let dir: Path = try req.query["path"].expect("invalid path")
+		guard try await dir.hasAccess(.rx, by: user.username) else {
+			throw Abort(.notFound, reason: "invalid path or access denied")
+		}
+
+		let path = dir / input.filename
+		if path.exists {
+			throw Abort(.conflict, reason: "file already exists")
+		}
+
+		try await req.fileio.writeFile(ByteBuffer(data: input.content), at: path.string)
+
+		return req.redirect(.back)
 	}
 
 	@Sendable
@@ -26,7 +46,18 @@ struct FileMutationController: RouteCollection {
 
 	@Sendable
 	func delete(req: Request) async throws -> Response {
-		throw Abort(.notImplemented)
+		let user = try req.auth.require(User.self)
+
+		let path: Path = try req.query["path"].expect("invalid path")
+
+		let dir = path.parent
+		guard try await dir.hasAccess(.rx, by: user.username) else {
+			throw Abort(.notFound, reason: "invalid path or access denied")
+		}
+
+		try path.delete()
+
+		return req.redirect(.back)
 	}
 
 	@Sendable
