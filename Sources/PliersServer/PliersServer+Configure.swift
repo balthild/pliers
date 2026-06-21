@@ -40,7 +40,6 @@ extension PliersServer {
 		app.middleware.use(app.sessions.middleware)
 
 		try app.register(collection: HomeController())
-		try app.register(collection: FileController())
 
 		try app.register(collection: AuthController())
 		try app.register(collection: TokenLoginController())
@@ -49,5 +48,8 @@ extension PliersServer {
 
 		try app.register(collection: SettingsController())
 		try app.register(collection: PasswordSettingsController())
+
+		try app.register(collection: FileController())
+		try app.register(collection: FileTransferController())
 	}
 }

@@ -51,8 +51,15 @@ let package = Package(
 			dependencies: [
 				.product(name: "Path", package: "Path.swift"),
 				.product(name: "Subprocess", package: "swift-subprocess"),
+				.target(name: "PliersShim"),
 			],
 			swiftSettings: swiftSettings,
+		),
+		.target(
+			name: "PliersShim",
+			cSettings: [
+				.unsafeFlags(["-Wall", "-Wextra"])
+			],
 		),
 		.testTarget(
 			name: "PliersTests",
