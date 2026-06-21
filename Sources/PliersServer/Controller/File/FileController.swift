@@ -4,9 +4,9 @@ import PliersCommon
 import Vapor
 import VaporElementary
 
-struct FilesController: RouteCollection {
+struct FileController: RouteCollection {
 	func boot(routes: any RoutesBuilder) throws {
-		routes.grouped(User.requireLoggedIn()).get("files", use: self.index)
+		routes.grouped(User.requireLoggedIn()).get("file", use: self.index)
 	}
 
 	@Sendable
@@ -15,14 +15,8 @@ struct FilesController: RouteCollection {
 		let home = try Path.home(for: user.username).expect("get home directory")
 
 		let path = try Path(req.query["path"] ?? home.string).expect("resolve path")
-
-		// TODO: check access with child process running as the actual user
-		if user.username != "root" && path.canonical?.hasPrefix(home) != true {
-			throw Abort(.forbidden, reason: "Access denied")
-		}
-
-		guard path.exists else {
-			throw Abort(.notFound, reason: "path does not exist")
+		guard try await path.hasAccess(.rx, by: user.username) else {
+			throw Abort(.notFound, reason: "path not exist or access denied")
 		}
 
 		if path.isDirectory {
@@ -56,7 +50,7 @@ struct FilesController: RouteCollection {
 			}
 
 		return req.render {
-			UI.Page.BrowseFiles(
+			UI.Page.BrowseFile(
 				path: path,
 				entries: entries,
 			)

@@ -53,7 +53,7 @@ extension UI.Layout {
 
 				nav(.class("\(cls.panel)")) {
 					div { NavLink(text: "Overview", path: "/") }
-					div { NavLink(text: "Files", path: "/files") }
+					div { NavLink(text: "Filesystem", path: "/file") }
 					div { NavLink(text: "Caddy", path: "/caddy") }
 					div { NavLink(text: "MySQL", path: "/mysql") }
 					div { NavLink(text: "Cron", path: "/cron") }

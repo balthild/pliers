@@ -4,7 +4,7 @@ import Path
 import Vapor
 
 extension UI.Page {
-	struct BrowseFiles: HTMLDocument {
+	struct BrowseFile: HTMLDocument {
 		typealias Entry = (
 			name: String,
 			path: Path,
@@ -16,7 +16,7 @@ extension UI.Page {
 		let path: Path
 		let entries: [Entry]
 
-		var title: String { "Files" }
+		var title: String { "Filesystem" }
 
 		var head: some HTML {
 			UI.Component.CommonHead()
@@ -24,7 +24,7 @@ extension UI.Page {
 
 		var body: some HTML {
 			UI.Layout.Dashboard {
-				h2 { "Files" }
+				h2 { "Filesystem" }
 				hr()
 
 				p(.class("text-sm mb-2")) {
@@ -80,12 +80,12 @@ extension UI.Page {
 
 		private func link(to path: Path) -> String {
 			var url = URLComponents()
-			url.path = "/files"
+			url.path = "/file"
 			url.queryItems = [
 				.init(name: "path", value: path.string)
 			]
 
-			return url.string ?? "/files"
+			return url.string ?? "/file"
 		}
 	}
 }

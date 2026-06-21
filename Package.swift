@@ -17,6 +17,7 @@ let package = Package(
 		.package(url: "https://github.com/elementary-swift/elementary.git", from: "0.6.0"),
 		.package(url: "https://github.com/vapor-community/vapor-elementary.git", from: "0.1.0"),
 		.package(url: "https://github.com/mxcl/Path.swift.git", from: "1.6.0"),
+		.package(url: "https://github.com/swiftlang/swift-subprocess.git", from: "0.4.0"),
 	],
 	targets: [
 		.executableTarget(
@@ -48,7 +49,8 @@ let package = Package(
 		.target(
 			name: "PliersCommon",
 			dependencies: [
-				.product(name: "Path", package: "Path.swift")
+				.product(name: "Path", package: "Path.swift"),
+				.product(name: "Subprocess", package: "swift-subprocess"),
 			],
 			swiftSettings: swiftSettings,
 		),
