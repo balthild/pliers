@@ -6,7 +6,9 @@ import VaporElementary
 
 struct FileController: RouteCollection {
 	func boot(routes: any RoutesBuilder) throws {
-		routes.grouped(User.requireLoggedIn()).get("file", use: self.index)
+		let group = routes.grouped("file").grouped(User.requireLoggedIn())
+		group.get(use: self.index)
+		group.get("download", use: self.download)
 	}
 
 	@Sendable
@@ -14,19 +16,21 @@ struct FileController: RouteCollection {
 		let user = try req.auth.require(User.self)
 		let home = try Path.home(for: user.username).expect("get home directory")
 
-		let path = try Path(req.query["path"] ?? home.string).expect("resolve path")
-		guard try await path.hasAccess(.rx, by: user.username) else {
-			throw Abort(.notFound, reason: "path not exist or access denied")
-		}
+		let path = try Path(req.query["path"] ?? home.string).expect("invalid path")
 
 		if path.isDirectory {
-			return try await self.browse(req: req, path: path)
+			return try await self.list(req: req, path: path)
 		} else {
 			return try await self.edit(req: req, path: path)
 		}
 	}
 
-	private func browse(req: Request, path: Path) async throws -> HTMLResponse {
+	private func list(req: Request, path: Path) async throws -> HTMLResponse {
+		let user = try req.auth.require(User.self)
+		guard try await path.hasAccess(.rx, by: user.username) else {
+			throw Abort(.notFound, reason: "not found or access denied")
+		}
+
 		let entries = try path.ls(.aUnsorted)
 			.map { path in
 				let attrs = try path.attrs.expect("get file attributes")
@@ -58,8 +62,24 @@ struct FileController: RouteCollection {
 	}
 
 	private func edit(req: Request, path: Path) async throws -> HTMLResponse {
+		let user = try req.auth.require(User.self)
+		guard try await path.hasAccess(.rw, by: user.username) else {
+			throw Abort(.notFound, reason: "not found or access denied")
+		}
+
 		return req.render {
 			"TODO"
 		}
+	}
+
+	private func download(req: Request) async throws -> Response {
+		let path: Path = try req.query["path"].expect("invalid path")
+
+		let user = try req.auth.require(User.self)
+		guard try await path.hasAccess(.r, by: user.username) else {
+			throw Abort(.notFound, reason: "not found or access denied")
+		}
+
+		return try await req.fileio.asyncStreamFile(at: path.string)
 	}
 }

@@ -32,12 +32,20 @@ extension UI.Page {
 					code { path.string }
 				}
 
+				div(.class("mb-2"), .x.data("{ action: '' }")) {
+					div(.class("flex gap-2"), .x.show("!action")) {
+						button(.class("btn")) { "Upload" }
+						button(.class("btn")) { "Create Dir" }
+					}
+				}
+
 				table {
 					thead {
 						tr {
 							th { "Name" }
 							th { "Owner" }
 							th { "Mode" }
+							th {}
 						}
 					}
 
@@ -47,6 +55,7 @@ extension UI.Page {
 								td {
 									a(.href(link(to: path.parent))) { ".." }
 								}
+								td {}
 								td {}
 								td {}
 							}
@@ -63,12 +72,17 @@ extension UI.Page {
 								}
 								td { entry.owner }
 								td { "\(String(entry.mode, radix: 8))" }
+								td {
+									if !entry.dir {
+										a(.href(link(to: entry.path, action: "download"))) { "Download" }
+									}
+								}
 							}
 						}
 
 						if entries.isEmpty {
 							tr {
-								td(.colspan(3), .class("text-center text-gray-500")) {
+								td(.colspan(4), .class("text-center text-gray-500")) {
 									"This directory is empty."
 								}
 							}
@@ -78,9 +92,15 @@ extension UI.Page {
 			}
 		}
 
-		private func link(to path: Path) -> String {
+		private func link(to path: Path, action: String? = nil) -> String {
 			var url = URLComponents()
-			url.path = "/file"
+
+			if let action {
+				url.path = "/file/\(action)"
+			} else {
+				url.path = "/file"
+			}
+
 			url.queryItems = [
 				.init(name: "path", value: path.string)
 			]

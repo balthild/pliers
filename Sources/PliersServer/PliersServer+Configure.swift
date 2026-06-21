@@ -50,6 +50,6 @@ extension PliersServer {
 		try app.register(collection: PasswordSettingsController())
 
 		try app.register(collection: FileController())
-		try app.register(collection: FileTransferController())
+		try app.register(collection: FileMutationController())
 	}
 }
