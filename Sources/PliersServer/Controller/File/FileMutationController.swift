@@ -24,7 +24,8 @@ struct FileMutationController: RouteCollection {
 		let input = try req.content.decode(Input.self)
 
 		let dir: Path = try req.query["path"].expect("invalid path")
-		guard try await dir.hasAccess(.rx, by: user.username) else {
+		// TODO: do no check access as it's unreliable. just run the operation as the user
+		guard try await dir.hasAccess(.wx, by: user.username) else {
 			throw Abort(.notFound, reason: "invalid path or access denied")
 		}
 
@@ -45,12 +46,22 @@ struct FileMutationController: RouteCollection {
 
 	@Sendable
 	func delete(req: Request) async throws -> Response {
+		struct Input: Content {
+			let confirm: String
+		}
+
 		let user = try req.auth.require(User.self)
+		let input = try req.content.decode(Input.self)
 
 		let path: Path = try req.query["path"].expect("invalid path")
 
+		guard input.confirm == path.string else {
+			throw Abort(.badRequest, reason: "confirmation does not match the file path")
+		}
+
 		let dir = path.parent
-		guard try await dir.hasAccess(.rx, by: user.username) else {
+		// TODO: do no check access as it's unreliable. just run the operation as the user
+		guard try await dir.hasAccess(.wx, by: user.username) else {
 			throw Abort(.notFound, reason: "invalid path or access denied")
 		}
 

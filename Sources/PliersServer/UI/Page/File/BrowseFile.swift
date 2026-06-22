@@ -75,16 +75,27 @@ extension UI.Page {
 							"Deleting "
 							code(.x.text("path")) {}
 						}
-						p { "This action cannot be undone." }
+						p { "This action cannot be undone. Type the path below to confirm." }
 					}
 
 					form(
 						.method(.post),
-						.class("flex justify-end gap-2"),
+						.class("form"),
 						.x.bind("action", "url"),
 					) {
-						button(.type(.button), .x.on("click", "cancel()")) { "Cancel" }
-						button(.type(.submit), .class("danger")) { "Delete" }
+						label(.class("field")) {
+							span { "Path" }
+							input(
+								.name("confirm"),
+								.type(.text),
+								.required,
+							)
+						}
+
+						div(.class("actions")) {
+							button(.type(.button), .x.on("click", "cancel()")) { "Cancel" }
+							button(.type(.submit), .class("danger")) { "Delete" }
+						}
 					}
 				}
 			}
