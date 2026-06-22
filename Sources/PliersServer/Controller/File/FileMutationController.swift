@@ -11,7 +11,6 @@ struct FileMutationController: RouteCollection {
 		group.post("update", use: self.update)
 		group.post("delete", use: self.delete)
 		group.post("chmod", use: self.chmod)
-		group.post("chown", use: self.chown)
 	}
 
 	@Sendable
@@ -62,12 +61,16 @@ struct FileMutationController: RouteCollection {
 
 	@Sendable
 	func chmod(req: Request) async throws -> Response {
+		struct Input: Content {
+			let mode: String
+		}
+
 		let user = try req.auth.require(User.self)
+		let input = try req.content.decode(Input.self)
 
 		let path: Path = try req.query["path"].expect("invalid path")
-		let mode: String = try req.query["mode"].expect("invalid mode")
 
-		guard let mode = Int(mode, radix: 8), mode >= 0 && mode <= 0o777 else {
+		guard let mode = Int(input.mode, radix: 8), mode >= 0 && mode <= 0o777 else {
 			throw Abort(.badRequest, reason: "invalid mode")
 		}
 
@@ -82,10 +85,5 @@ struct FileMutationController: RouteCollection {
 		try path.chmod(mode)
 
 		return req.redirect(.back)
-	}
-
-	@Sendable
-	func chown(req: Request) async throws -> Response {
-		throw Abort(.notImplemented)
 	}
 }

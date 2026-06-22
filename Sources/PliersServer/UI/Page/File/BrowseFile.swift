@@ -40,66 +40,117 @@ extension UI.Page {
 
 		@HTMLBuilder
 		private var dialogs: some HTML {
-			Alpine.store(
-				"fileActions",
+			Alpine.data(
+				"delete_dialog",
 				"""
-				{
-					action: false,
+				() => ({
 					path: '',
 
-					url(action) {
-						// DEBUG
-						console.log(`Generating URL for action: ${action}`);
-						return '';
-
-						if (action !== this.action) return '';
-
-						const url = new URL(`/file/${action}`, window.location.origin);
+					get url() {
+						if (!this.path) return '';
+						const url = new URL(`/file/delete`, window.location.origin);
 						url.searchParams.set('path', this.path);
 						return url.toString();
 					},
 
-					delete(path) {
-						this.action = 'delete';
+					show(path) {
 						this.path = path;
-						document.getElementById('file_actions').showModal();
-					},
-
-					chmod(path) {
-						this.action = 'chmod';
-						this.path = path;
-						document.getElementById('file_actions').showModal();
+						this.$root.showModal();
 					},
 
 					cancel() {
-						this.action = false;
 						this.path = '';
-						document.getElementById('file_actions').close();
-					}
-				}
+						this.$root.close();
+					},
+				})
 				""",
 			)
 
-			dialog(.closedby(.none), .id("file_actions"), .class("w-100"), .x.data()) {
-				header(.x.show("$store.fileActions.action === 'delete'")) { "Delete" }
-				header(.x.show("$store.fileActions.action === 'chmod'")) { "Change Mode" }
+			dialog(.closedby(.none), .class("w-100"), .id("delete_dialog"), .x.data("delete_dialog")) {
+				header { "Delete" }
 
-				main(.x.show("$store.fileActions.action === 'delete'")) {
-					section(.class("mb-2 text-sm space-y-1")) {
+				main {
+					section(.class("mb-3 text-sm space-y-1")) {
 						p {
 							"Deleting "
-							code(.x.text("$store.fileActions.path")) {}
+							code(.x.text("path")) {}
 						}
-						p { "Are you sure? This action cannot be undone." }
+						p { "This action cannot be undone." }
 					}
 
 					form(
 						.method(.post),
 						.class("flex justify-end gap-2"),
-						.x.bind("action", "$store.fileActions.url('delete')"),
+						.x.bind("action", "url"),
 					) {
-						button(.type(.button), .x.on("click", "$store.fileActions.cancel()")) { "Cancel" }
+						button(.type(.button), .x.on("click", "cancel()")) { "Cancel" }
 						button(.type(.submit), .class("danger")) { "Delete" }
+					}
+				}
+			}
+
+			Alpine.data(
+				"chmod_dialog",
+				"""
+				() => ({
+					path: '',
+					mode: '',
+
+					get url() {
+						if (!this.path) return '';
+						const url = new URL(`/file/chmod`, window.location.origin);
+						url.searchParams.set('path', this.path);
+						return url.toString();
+					},
+
+					show(path, mode) {
+						this.path = path;
+						this.mode = mode;
+						this.$root.showModal();
+					},
+
+					cancel() {
+						this.path = '';
+						this.mode = '';
+						this.$root.close();
+					},
+				})
+				""",
+			)
+
+			dialog(.closedby(.none), .class("w-100"), .id("chmod_dialog"), .x.data("chmod_dialog")) {
+				header { "Chmod" }
+
+				main {
+					section(.class("mb-3 text-sm space-y-1")) {
+						p {
+							"Changing mode for "
+							code(.x.text("path")) {}
+						}
+						p { "Enter the new mode in octal format." }
+						p { "Setting the Sticky/SUID/SGID bits are not allowed here." }
+					}
+
+					form(
+						.method(.post),
+						.class("form"),
+						.x.bind("action", "url"),
+					) {
+						label(.class("field")) {
+							span { "Mode" }
+							input(
+								.name("mode"),
+								.type(.text),
+								.pattern("[0-7]{3}"),
+								.required,
+								.x.bind("value", "mode"),
+							)
+						}
+
+						div(.class("actions")) {
+							button(.type(.button), .x.on("click", "cancel()")) { "Cancel" }
+							button(.type(.submit), .class("primary")) { "Save" }
+						}
 					}
 				}
 			}
@@ -188,15 +239,27 @@ extension UI.Page {
 										a(.href(link(to: entry.path, action: "download"))) { "Download" }
 
 										button(
-											.class("link text-orange-400"),
+											.class("link text-yellow-600"),
 											.x.data(),
-											.x.on("click", "$store.fileActions.chmod('\(entry.path.string)')"),
+											.x.on(
+												"click",
+												"""
+												const app = Alpine.$data(window.chmod_dialog);
+												app.show('\(entry.path.string)', '\(String(entry.mode, radix: 8))');
+												""",
+											),
 										) { "Chmod" }
 
 										button(
 											.class("link text-red-700"),
 											.x.data(),
-											.x.on("click", "$store.fileActions.delete('\(entry.path.string)')"),
+											.x.on(
+												"click",
+												"""
+												const app = Alpine.$data(window.delete_dialog);
+												app.show('\(entry.path.string)');
+												""",
+											),
 										) { "Delete" }
 									}
 								}

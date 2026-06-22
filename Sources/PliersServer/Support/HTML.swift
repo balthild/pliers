@@ -28,6 +28,10 @@ extension HTMLAttribute where Tag == HTMLTag.input {
 	public static var readonly: Self {
 		.init(name: "readonly", value: nil)
 	}
+
+	public static func pattern(_ value: String) -> HTMLAttribute {
+		.init(name: "pattern", value: value)
+	}
 }
 
 extension HTMLAttribute where Tag == HTMLTag.td {
@@ -150,8 +154,8 @@ public enum Alpine {
 			HTMLRaw(
 				"""
 				document.addEventListener('alpine:init', () => {
-					Alpine.\(method)('\(name)', \(expr))
-				})
+					Alpine.\(method)('\(name)', \(expr));
+				});
 				"""
 			)
 		}
