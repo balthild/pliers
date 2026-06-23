@@ -1,6 +1,9 @@
 import Foundation
+import Glibc
 import Path
 import PliersCommon
+import PliersShim
+import Subprocess
 import Vapor
 import VaporElementary
 
@@ -24,17 +27,16 @@ struct FileMutationController: RouteCollection {
 		let input = try req.content.decode(Input.self)
 
 		let dir: Path = try req.query["path"].expect("invalid path")
-		// TODO: do no check access as it's unreliable. just run the operation as the user
-		guard try await dir.hasAccess(.wx, by: user.username) else {
+		let path = dir / input.filename
+
+		let result = PliersShim::create_file(user.username, path.string)
+		if result == EEXIST {
+			throw Abort(.conflict, reason: "file already exists")
+		} else if result != 0 {
 			throw Abort(.notFound, reason: "invalid path or access denied")
 		}
 
-		let path = dir / input.filename
-		if path.exists {
-			throw Abort(.conflict, reason: "file already exists")
-		}
-
-		try await req.fileio.writeFile(ByteBuffer(data: input.content), at: path.string)
+		try await req.fileio.fillFile(ByteBuffer(data: input.content), at: path.string)
 
 		return req.redirect(.back)
 	}
@@ -59,13 +61,20 @@ struct FileMutationController: RouteCollection {
 			throw Abort(.badRequest, reason: "confirmation does not match the file path")
 		}
 
-		let dir = path.parent
-		// TODO: do no check access as it's unreliable. just run the operation as the user
-		guard try await dir.hasAccess(.wx, by: user.username) else {
+		let cmd = Constants.coreutilsDir / "rm"
+		let args = ["-rf", path.string]
+
+		let result = try await Subprocess.run(
+			.path(.init(cmd.string)),
+			arguments: .init(.init(args)),
+			environment: .custom([]),
+			platformOptions: try .su(user.username),
+			output: .discarded,
+		)
+
+		guard result.terminationStatus == .exited(0) else {
 			throw Abort(.notFound, reason: "invalid path or access denied")
 		}
-
-		try path.delete()
 
 		return req.redirect(.back)
 	}
@@ -81,19 +90,14 @@ struct FileMutationController: RouteCollection {
 
 		let path: Path = try req.query["path"].expect("invalid path")
 
-		guard let mode = Int(input.mode, radix: 8), mode >= 0 && mode <= 0o777 else {
+		guard let mode = UInt32(input.mode, radix: 8), mode >= 0 && mode <= 0o777 else {
 			throw Abort(.badRequest, reason: "invalid mode")
 		}
 
-		if user.username != "root" {
-			let attrs = try path.attrs.expect("read file attributes")
-			let owner = attrs[.ownerAccountName] as? String
-			guard owner == user.username else {
-				throw Abort(.notFound, reason: "invalid path or access denied")
-			}
+		let result = PliersShim::change_mode(user.username, path.string, mode)
+		if result != 0 {
+			throw Abort(.notFound, reason: "invalid path or access denied")
 		}
-
-		try path.chmod(mode)
 
 		return req.redirect(.back)
 	}

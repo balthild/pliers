@@ -1,10 +1,12 @@
 PLIERS_CONFIG_DIR ?= /etc/pliers
+PLIERS_COREUTILS_DIR ?= /usr/bin
 
 override GENERATE_PATH = ./Sources/PliersCommon/Constants+Generated.swift
 override define GENERATE_CODE
 import Path
 extension Constants {
-	static let configDir = Path("$(PLIERS_CONFIG_DIR)")!
+	public static let configDir = Path("$(PLIERS_CONFIG_DIR)")!
+	public static let coreutilsDir = Path("$(PLIERS_COREUTILS_DIR)")!
 }
 endef
 export GENERATE_CODE
@@ -14,6 +16,7 @@ help:
 
 configure:
 	@echo "PLIERS_CONFIG_DIR=$(PLIERS_CONFIG_DIR)"
+	@echo "PLIERS_COREUTILS_DIR=$(PLIERS_COREUTILS_DIR)"
 	@echo "Generating $(GENERATE_PATH)"
 	@echo "$$GENERATE_CODE" > $(GENERATE_PATH)
 

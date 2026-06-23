@@ -53,11 +53,11 @@ extension Path {
 
 		public static let rw: Self = [.r, .w]
 		public static let rx: Self = [.r, .x]
-		public static let wx: Self = [.w, .x]
 		public static let rwx: Self = [.r, .w, .x]
 	}
 
-	public func hasAccess(_ mode: AccessMode, by username: String) async throws -> Bool {
-		return PliersShim::has_access(mode.rawValue, username, self.string)
+	public func hasAccess(_ mode: AccessMode, by username: String) -> Bool {
+		let result = PliersShim::check_access(mode.rawValue, username, self.string)
+		return result == 0
 	}
 }

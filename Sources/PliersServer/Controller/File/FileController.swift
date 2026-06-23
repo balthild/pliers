@@ -28,7 +28,7 @@ struct FileController: RouteCollection {
 	private func list(req: Request, path: Path) async throws -> HTMLResponse {
 		let user = try req.auth.require(User.self)
 
-		guard try await path.hasAccess(.rx, by: user.username) else {
+		guard path.hasAccess(.rx, by: user.username) else {
 			throw Abort(.notFound, reason: "invalid path or access denied")
 		}
 
@@ -65,9 +65,14 @@ struct FileController: RouteCollection {
 	private func edit(req: Request, path: Path) async throws -> HTMLResponse {
 		let user = try req.auth.require(User.self)
 
-		guard try await path.hasAccess(.rw, by: user.username) else {
+		guard path.hasAccess(.rw, by: user.username) else {
 			throw Abort(.notFound, reason: "invalid path or access denied")
 		}
+
+		// let buffer = try await req.fileio.collectFile(at: path.string)
+		// guard let text = buffer.readString(length: buffer.readableBytes) else {
+		// 	throw Abort(.internalServerError, reason: "not a UTF-8 text file")
+		// }
 
 		return req.render {
 			"TODO"
@@ -78,7 +83,7 @@ struct FileController: RouteCollection {
 		let path: Path = try req.query["path"].expect("invalid path")
 
 		let user = try req.auth.require(User.self)
-		guard try await path.hasAccess(.r, by: user.username) else {
+		guard path.hasAccess(.r, by: user.username) else {
 			throw Abort(.notFound, reason: "invalid path or access denied")
 		}
 
