@@ -12,7 +12,7 @@ struct FileController: RouteCollection {
 	}
 
 	@Sendable
-	func index(req: Request) async throws -> HTMLResponse {
+	func index(req: Request) async throws -> Response {
 		let user = try req.auth.require(User.self)
 		let home = try Path.home(for: user.username).alert("failed to get home directory")
 
@@ -25,7 +25,7 @@ struct FileController: RouteCollection {
 		}
 	}
 
-	private func list(req: Request, path: Path) async throws -> HTMLResponse {
+	private func list(req: Request, path: Path) async throws -> Response {
 		let user = try req.auth.require(User.self)
 
 		guard path.hasAccess(.rx, by: user.username) else {
@@ -54,7 +54,7 @@ struct FileController: RouteCollection {
 				return $0.name.localizedStandardCompare($1.name) == .orderedAscending
 			}
 
-		return req.render {
+		return try await req.render {
 			UI.Page.File.Browse(
 				path: path,
 				entries: entries,
@@ -62,7 +62,7 @@ struct FileController: RouteCollection {
 		}
 	}
 
-	private func edit(req: Request, path: Path) async throws -> HTMLResponse {
+	private func edit(req: Request, path: Path) async throws -> Response {
 		let user = try req.auth.require(User.self)
 
 		guard path.hasAccess(.rw, by: user.username) else {
@@ -74,7 +74,7 @@ struct FileController: RouteCollection {
 		// 	throw AlertError("not a UTF-8 text file")
 		// }
 
-		return req.render {
+		return try await req.render {
 			"TODO"
 		}
 	}

@@ -20,7 +20,7 @@ extension UI.Page {
 		}
 
 		@HTMLBuilder
-		func passkey() throws -> some HTML {
+		private func passkey() throws -> some HTML {
 			h3(.class("mb-1")) { "Passkey (TODO)" }
 
 			table {
@@ -46,7 +46,7 @@ extension UI.Page {
 		}
 
 		@HTMLBuilder
-		func password() throws -> some HTML {
+		private func password() throws -> some HTML {
 			h3(.class("mb-1")) { "Password" }
 
 			let user = try req.auth.require(User.self)

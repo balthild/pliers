@@ -32,12 +32,15 @@ build:
 	npx @tailwindcss/cli -i ./Resources/Style/main.css -o ./Public/dist/main.css
 	swift build -c release
 
+dev.%: SWIFT_BACKTRACE = timeout=none
 dev.%:
+	@printf "\033]0;dev.$*\007"
 	@if [ ! -f $(GENERATE_PATH) ]; then echo 'Please run "make configure" first'; exit 1; fi
 	swift build -c debug
 	sudo ./.build/debug/pliers $*
 
 dev.css:
+	@printf "\033]0;dev.css\007"
 	npx @tailwindcss/cli -i ./Resources/Style/main.css -o ./Public/dist/main.css --watch
 
 fmt:

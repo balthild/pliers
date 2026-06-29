@@ -9,8 +9,8 @@ struct AuthController: RouteCollection {
 	}
 
 	@Sendable
-	func login(req: Request) async throws -> HTMLResponse {
-		return req.render {
+	func login(req: Request) async throws -> Response {
+		return try await req.render {
 			UI.Page.Login()
 		}
 	}

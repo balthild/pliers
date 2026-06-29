@@ -1,4 +1,5 @@
 import Elementary
+import PliersCommon
 import Vapor
 
 extension UI.Layout {
@@ -55,7 +56,7 @@ extension UI.Layout {
 					}
 
 					div(.class("flex gap-2")) {
-						NavLink(text: "Settings", path: "/settings")
+						link(text: "Settings", path: "/settings")
 
 						form(.method(.post), .action("/logout")) {
 							button(.class("link")) { "Logout" }
@@ -64,25 +65,19 @@ extension UI.Layout {
 				}
 
 				nav(.class("\(cls.panel)")) {
-					div { NavLink(text: "Overview", path: "/") }
-					div { NavLink(text: "Filesystem", path: "/file") }
-					div { NavLink(text: "Caddy", path: "/caddy") }
-					div { NavLink(text: "MySQL", path: "/mysql") }
-					div { NavLink(text: "Cron", path: "/cron") }
+					div { link(text: "Overview", path: "/") }
+					div { link(text: "Filesystem", path: "/file") }
+					div { link(text: "Caddy", path: "/caddy") }
+					div { link(text: "MySQL", path: "/mysql") }
+					div { link(text: "Cron", path: "/cron") }
 				}
 			}
 		}
 
-		private struct NavLink: HTML {
-			@UI.Context var req: Request
-
-			let text: String
-			let path: String
-
-			var body: some HTML {
-				a(.href(path), .class("current").when(req.url.path == path)) {
-					text
-				}
+		@HTMLBuilder
+		private func link(text: String, path: String) -> some HTML {
+			a(.href(path), .class("current").when(req.url.path == path)) {
+				text
 			}
 		}
 	}

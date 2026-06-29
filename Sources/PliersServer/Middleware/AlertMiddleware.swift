@@ -6,8 +6,7 @@ final class AlertMiddleware: AsyncMiddleware {
 		do {
 			return try await next.respond(to: request)
 		} catch {
-			let response = request.render { UI.Page.Error(error: error) }
-			return try await response.encodeResponse(for: request)
+			return try await request.render { UI.Page.Error(error: error) }
 		}
 	}
 }

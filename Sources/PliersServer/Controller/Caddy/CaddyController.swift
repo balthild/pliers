@@ -8,10 +8,10 @@ struct CaddyController: RouteCollection {
 	}
 
 	@Sendable
-	func index(req: Request) async throws -> HTMLResponse {
+	func index(req: Request) async throws -> Response {
 		let sites = try await Caddy.query(on: req.db).all()
 
-		return req.render {
+		return try await req.render {
 			UI.Page.Caddy.List(
 				sites: sites
 			)

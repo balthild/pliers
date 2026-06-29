@@ -8,8 +8,8 @@ struct HomeController: RouteCollection {
 	}
 
 	@Sendable
-	func overview(req: Request) async throws -> HTMLResponse {
-		return req.render {
+	func overview(req: Request) async throws -> Response {
+		return try await req.render {
 			UI.Page.Overview()
 		}
 	}
