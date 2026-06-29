@@ -39,10 +39,9 @@ extension Error {
 	) -> ChainError {
 		let head = RuntimeError(message, file: file, line: line, function: function)
 
-		switch self {
-		case let chain as ChainError:
-			return ChainError([head] + chain.chain)
-		default:
+		if let error = self as? ChainError {
+			return ChainError([head] + error.chain)
+		} else {
 			return ChainError([head, self])
 		}
 	}

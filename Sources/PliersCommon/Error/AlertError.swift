@@ -47,6 +47,10 @@ extension Error {
 		line: Int = #line,
 		function: String = #function,
 	) -> AlertError {
+		if let error = self as? AlertError {
+			return error.inner.alert(message, file: file, line: line, function: function)
+		}
+
 		let inner = self.context(message, file: file, line: line, function: function)
 		return AlertError(inner: inner)
 	}
