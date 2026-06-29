@@ -16,7 +16,7 @@ final class Caddy: Model, @unchecked Sendable {
 	var domains: [String]
 
 	@Field(key: "config")
-	var config: Config?
+	var config: Config
 
 	init() {}
 

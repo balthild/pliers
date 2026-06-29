@@ -26,14 +26,14 @@ struct FileMutationController: RouteCollection {
 		let user = try req.auth.require(User.self)
 		let input = try req.content.decode(Input.self)
 
-		let dir: Path = try req.query["path"].expect("invalid path")
+		let dir: Path = try req.query["path"].alert("invalid path")
 		let path = dir / input.filename
 
 		let result = PliersShim::create_file(user.username, path.string)
 		if result == EEXIST {
-			throw Abort(.conflict, reason: "file already exists")
+			throw AlertError("file already exists")
 		} else if result != 0 {
-			throw Abort(.notFound, reason: "invalid path or access denied")
+			throw AlertError("invalid path or access denied")
 		}
 
 		try await req.fileio.fillFile(ByteBuffer(data: input.content), at: path.string)
@@ -55,10 +55,10 @@ struct FileMutationController: RouteCollection {
 		let user = try req.auth.require(User.self)
 		let input = try req.content.decode(Input.self)
 
-		let path: Path = try req.query["path"].expect("invalid path")
+		let path: Path = try req.query["path"].alert("invalid path")
 
 		guard input.confirm == path.string else {
-			throw Abort(.badRequest, reason: "confirmation does not match the file path")
+			throw AlertError("confirmation does not match the file path")
 		}
 
 		let cmd = Constants.coreutils / "rm"
@@ -73,7 +73,7 @@ struct FileMutationController: RouteCollection {
 		)
 
 		guard result.terminationStatus == .exited(0) else {
-			throw Abort(.notFound, reason: "invalid path or access denied")
+			throw AlertError("invalid path or access denied")
 		}
 
 		return req.redirect(.back)
@@ -88,15 +88,15 @@ struct FileMutationController: RouteCollection {
 		let user = try req.auth.require(User.self)
 		let input = try req.content.decode(Input.self)
 
-		let path: Path = try req.query["path"].expect("invalid path")
+		let path: Path = try req.query["path"].alert("invalid path")
 
 		guard let mode = UInt32(input.mode, radix: 8), mode >= 0 && mode <= 0o777 else {
-			throw Abort(.badRequest, reason: "invalid mode")
+			throw AlertError("invalid mode number")
 		}
 
 		let result = PliersShim::change_mode(user.username, path.string, mode)
 		if result != 0 {
-			throw Abort(.notFound, reason: "invalid path or access denied")
+			throw AlertError("invalid path or access denied")
 		}
 
 		return req.redirect(.back)

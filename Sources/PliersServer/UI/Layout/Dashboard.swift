@@ -2,21 +2,35 @@ import Elementary
 import Vapor
 
 extension UI.Layout {
-	struct Dashboard<Content: HTML>: HTML {
+	struct Dashboard<Page: HTMLPage>: HTMLLayout {
+		typealias Page = Page
+
 		@UI.Context var req: Request
 
-		let content: Content
-
-		init(@HTMLBuilder content: () -> Content) {
-			self.content = content()
+		func title(_ page: borrowing Page) -> String {
+			return "\(page.title) - Pliers"
 		}
 
-		var body: some HTML {
+		@HTMLBuilder
+		func error(_ error: Swift.Error) -> some HTML {
+			UI.Page.Error(error: error)
+		}
+
+		@HTMLBuilder
+		func head(_ page: borrowing Page) throws -> some HTML {
+			UI.Component.CommonHead()
+			try page.head()
+		}
+
+		@HTMLBuilder
+		func body(_ page: borrowing Page) throws -> some HTML {
+			let body = try page.body()
+
 			div(.class("flex items-stretch grow")) {
 				sidebar
 
 				main(.class("px-4 py-3 grow")) {
-					content
+					body
 				}
 			}
 		}
@@ -32,14 +46,12 @@ extension UI.Layout {
 				h1(.class("\(cls.panel) \(cls.logo)")) { "Pliers" }
 
 				section(.class("\(cls.panel)")) {
-					UI.Component.ErrorBoundary {
-						let user = try req.auth.require(User.self)
+					let user = try req.auth.require(User.self)
 
-						p(.class("my-0")) {
-							user.username
-							span(.class("mx-1 text-gray-500")) { "@" }
-							ProcessInfo.processInfo.hostName
-						}
+					p(.class("my-0")) {
+						user.username
+						span(.class("mx-1 text-gray-500")) { "@" }
+						ProcessInfo.processInfo.hostName
 					}
 
 					div(.class("flex gap-2")) {

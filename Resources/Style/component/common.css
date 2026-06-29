@@ -37,3 +37,7 @@ hr {
 	@apply border-gray-300;
 	@apply my-2;
 }
+
+summary {
+	@apply cursor-pointer;
+}

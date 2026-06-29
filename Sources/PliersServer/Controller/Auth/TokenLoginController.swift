@@ -31,7 +31,7 @@ struct TokenLoginController: RouteCollection {
 	@Sendable
 	func generate(req: Request) async throws -> String {
 		let username: String = try req.query["username"]
-			.expect("username is required")
+			.alert("username is required")
 
 		let payload = Payload(
 			sub: .init(value: username),
@@ -48,25 +48,25 @@ struct TokenLoginController: RouteCollection {
 
 		let parts = credentials.token.split(separator: ";")
 		guard parts.count == 2 else {
-			throw Abort(.badRequest, reason: "invalid token")
+			throw AlertError("invalid token")
 		}
 
 		let payload = try await req.jwt.verify(String(parts[0]), as: Payload.self)
 
-		let home = try Path.home(for: payload.sub.value).expect("get home dir for user")
+		let home = try Path.home(for: payload.sub.value).alert("invalid token")
 		let path = home / Constants.userTokenFile
 
-		let attrs = try path.attrs.expect("get file attributes")
+		let attrs = try path.attrs.alert("failed to check token file")
 		if attrs[.posixPermissions] as? UInt16 != 0o600 {
-			throw RuntimeError("token file must not be accessible by other users")
+			throw AlertError("token file must not be accessible by other users")
 		}
 
 		let stored = try await req.fileio.collectFile(at: path.string)
 		guard stored == .init(string: credentials.token) else {
-			throw Abort(.unauthorized, reason: "invalid token")
+			throw AlertError("invalid token")
 		}
 
-		try path.delete()
+		try Result { try path.delete() }.alert("invalid token file status")
 
 		let user = try await User.findOrCreate(username: payload.sub.value, on: req.db)
 		req.auth.login(user)

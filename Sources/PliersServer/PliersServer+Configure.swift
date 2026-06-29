@@ -34,6 +34,7 @@ extension PliersServer {
 	}
 
 	private func http() async throws {
+		app.middleware.use(AlertMiddleware())
 		app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
 
 		app.sessions.configuration.cookieName = "pliers_session"

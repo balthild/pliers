@@ -3,19 +3,16 @@ import PliersCommon
 import Vapor
 
 extension UI.Page {
-	struct Overview: HTMLDocument {
+	struct Overview: HTMLPage {
 		@UI.Context var req: Request
+
+		let layout = UI.Layout.Dashboard<Self>()
 
 		var title: String { "Overview" }
 
-		var head: some HTML {
-			UI.Component.CommonHead()
-		}
-
-		var body: some HTML {
-			UI.Layout.Dashboard {
-				"TODO: Overview Page"
-			}
+		@HTMLBuilder
+		func body() throws -> some HTML {
+			"TODO: Overview Page"
 		}
 	}
 }

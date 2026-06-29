@@ -14,9 +14,9 @@ struct FileController: RouteCollection {
 	@Sendable
 	func index(req: Request) async throws -> HTMLResponse {
 		let user = try req.auth.require(User.self)
-		let home = try Path.home(for: user.username).expect("get home directory")
+		let home = try Path.home(for: user.username).alert("failed to get home directory")
 
-		let path = try Path(req.query["path"] ?? home.string).expect("invalid path")
+		let path = try Path(req.query["path"] ?? home.string).alert("invalid path")
 
 		if path.isDirectory {
 			return try await self.list(req: req, path: path)
@@ -29,12 +29,12 @@ struct FileController: RouteCollection {
 		let user = try req.auth.require(User.self)
 
 		guard path.hasAccess(.rx, by: user.username) else {
-			throw Abort(.notFound, reason: "invalid path or access denied")
+			throw AlertError("invalid path or access denied")
 		}
 
 		let entries = try path.ls(.aUnsorted)
 			.map { path in
-				let attrs = try path.attrs.expect("get file attributes")
+				let attrs = try path.attrs.alert("failed to get file attributes")
 				let owner = attrs[.ownerAccountName] as! String
 				let mode = attrs[.posixPermissions] as! UInt16
 
@@ -66,12 +66,12 @@ struct FileController: RouteCollection {
 		let user = try req.auth.require(User.self)
 
 		guard path.hasAccess(.rw, by: user.username) else {
-			throw Abort(.notFound, reason: "invalid path or access denied")
+			throw AlertError("invalid path or access denied")
 		}
 
 		// let buffer = try await req.fileio.collectFile(at: path.string)
 		// guard let text = buffer.readString(length: buffer.readableBytes) else {
-		// 	throw Abort(.internalServerError, reason: "not a UTF-8 text file")
+		// 	throw AlertError("not a UTF-8 text file")
 		// }
 
 		return req.render {
@@ -80,11 +80,11 @@ struct FileController: RouteCollection {
 	}
 
 	private func download(req: Request) async throws -> Response {
-		let path: Path = try req.query["path"].expect("invalid path")
+		let path: Path = try req.query["path"].alert("invalid path")
 
 		let user = try req.auth.require(User.self)
 		guard path.hasAccess(.r, by: user.username) else {
-			throw Abort(.notFound, reason: "invalid path or access denied")
+			throw AlertError("invalid path or access denied")
 		}
 
 		return try await req.fileio.asyncStreamFile(at: path.string)

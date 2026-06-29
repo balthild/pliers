@@ -6,9 +6,7 @@ struct CreateCaddy: AsyncMigration {
 		try await database.schema("caddy")
 			.id()
 			.field("domains", .string, .required)
-			.field("tls", .string)
-			.field("backend", .string)
-			.field("custom", .string, .required, .sql(.default("")))
+			.field("config", .string, .required)
 			.create()
 	}
 

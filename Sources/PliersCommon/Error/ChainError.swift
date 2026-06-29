@@ -7,6 +7,15 @@ public struct ChainError: Error {
 		precondition(!chain.isEmpty, "ChainError must have at least one error")
 		self.chain = chain
 	}
+
+	public var message: String {
+		let head = chain[0]
+		if let head = head as? RuntimeError {
+			return head.message
+		} else {
+			return String(describing: head)
+		}
+	}
 }
 
 extension ChainError: CustomStringConvertible {
@@ -30,9 +39,10 @@ extension Error {
 	) -> ChainError {
 		let head = RuntimeError(message, file: file, line: line, function: function)
 
-		if let self = self as? ChainError {
-			return ChainError([head] + self.chain)
-		} else {
+		switch self {
+		case let chain as ChainError:
+			return ChainError([head] + chain.chain)
+		default:
 			return ChainError([head, self])
 		}
 	}

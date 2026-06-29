@@ -25,11 +25,11 @@ struct PasswordSettingsController: RouteCollection {
 		let input = try req.content.decode(Input.self)
 
 		guard input.password == input.password_confirmation else {
-			throw RuntimeError("Passwords do not match")
+			throw AlertError("passwords do not match")
 		}
 
 		guard input.totp_config.verify(input.totp_code) else {
-			throw RuntimeError("Invalid TOTP code")
+			throw AlertError("invalid TOTP code")
 		}
 
 		let user = try req.auth.require(User.self)
@@ -51,12 +51,12 @@ struct PasswordSettingsController: RouteCollection {
 		let input = try req.content.decode(Input.self)
 
 		guard input.password == input.password_confirmation else {
-			throw RuntimeError("Passwords do not match")
+			throw AlertError("passwords do not match")
 		}
 
 		let user = try req.auth.require(User.self)
 		guard user.password != nil && user.totp != nil else {
-			throw RuntimeError("Password auth is not enabled")
+			throw AlertError("password auth is not enabled")
 		}
 
 		user.password = try req.password.hash(input.password)

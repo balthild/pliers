@@ -1,4 +1,5 @@
 import Fluent
+import PliersCommon
 import Vapor
 import VaporElementary
 
@@ -20,15 +21,15 @@ struct PasswordLoginController: RouteCollection {
 
 		let user = try await User.find(username: credentials.username, on: req.db)
 		guard let user, user.password != nil, user.totp != nil else {
-			throw Abort(.unauthorized)
+			throw AlertError("invalid credentials")
 		}
 
 		guard user.totp!.verify(credentials.totp) else {
-			throw Abort(.unauthorized)
+			throw AlertError("invalid credentials")
 		}
 
 		guard try req.password.verify(credentials.password, created: user.password!) else {
-			throw Abort(.unauthorized)
+			throw AlertError("invalid credentials")
 		}
 
 		req.auth.login(user)

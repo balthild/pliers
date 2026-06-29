@@ -8,12 +8,12 @@ extension Path {
 			return nil
 		}
 
-		return Self(url: url)
+		return .init(url: url)
 	}
 
 	public var canonical: Self? {
 		let url = self.url.resolvingSymlinksInPath()
-		return Self(url: url)
+		return .init(url: url)
 	}
 
 	public var attrs: Result<[FileAttributeKey: Any], Error> {

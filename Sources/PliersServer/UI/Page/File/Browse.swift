@@ -4,7 +4,7 @@ import Path
 import Vapor
 
 extension UI.Page.File {
-	struct Browse: HTMLDocument {
+	struct Browse: HTMLPage {
 		typealias Entry = (
 			name: String,
 			path: Path,
@@ -16,26 +16,23 @@ extension UI.Page.File {
 		let path: Path
 		let entries: [Entry]
 
+		let layout = UI.Layout.Dashboard<Self>()
+
 		var title: String { "Filesystem" }
 
-		var head: some HTML {
-			UI.Component.CommonHead()
-		}
+		@HTMLBuilder
+		func body() throws -> some HTML {
+			h2 { title }
+			hr()
 
-		var body: some HTML {
-			UI.Layout.Dashboard {
-				h2 { title }
-				hr()
-
-				p(.class("text-sm mb-2")) {
-					"Current Path: "
-					code { path.string }
-				}
-
-				dialogs
-				actions
-				files
+			p(.class("text-sm mb-2")) {
+				"Current Path: "
+				code { path.string }
 			}
+
+			dialogs
+			actions
+			files
 		}
 
 		@HTMLBuilder

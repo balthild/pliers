@@ -12,16 +12,19 @@ public struct PliersServer {
 	let config: Config
 	let app: Application
 
+	private init(config: Config, app: Application) {
+		self.config = config
+		self.app = app
+		self.app.config = config
+	}
+
 	public static func make(_ config: Config) async throws -> Self {
 		var env = Environment.production
 		try LoggingSystem.bootstrap(from: &env)
 
 		let app = try await Application.make(env)
 
-		return .init(
-			config: config,
-			app: app,
-		)
+		return .init(config: config, app: app)
 	}
 
 	public func run() async throws {
