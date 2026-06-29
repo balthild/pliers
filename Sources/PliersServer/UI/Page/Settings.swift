@@ -14,7 +14,7 @@ extension UI.Page {
 
 		var body: some HTML {
 			UI.Layout.Dashboard {
-				h2 { "Settings" }
+				h2 { title }
 				hr()
 				passkey
 				hr()

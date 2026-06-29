@@ -55,7 +55,7 @@ struct FileController: RouteCollection {
 			}
 
 		return req.render {
-			UI.Page.BrowseFile(
+			UI.Page.File.Browse(
 				path: path,
 				entries: entries,
 			)

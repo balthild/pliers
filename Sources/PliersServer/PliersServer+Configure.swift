@@ -29,6 +29,7 @@ extension PliersServer {
 
 		app.migrations.add(SessionRecord.migration)
 		app.migrations.add(CreateUser())
+		app.migrations.add(CreateCaddy())
 		try await app.autoMigrate()
 	}
 
@@ -51,5 +52,7 @@ extension PliersServer {
 
 		try app.register(collection: FileController())
 		try app.register(collection: FileMutationController())
+
+		try app.register(collection: CaddyController())
 	}
 }

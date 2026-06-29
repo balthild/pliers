@@ -61,7 +61,7 @@ struct FileMutationController: RouteCollection {
 			throw Abort(.badRequest, reason: "confirmation does not match the file path")
 		}
 
-		let cmd = Constants.coreutilsDir / "rm"
+		let cmd = Constants.coreutils / "rm"
 		let args = ["-rf", path.string]
 
 		let result = try await Subprocess.run(

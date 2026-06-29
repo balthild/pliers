@@ -1,12 +1,20 @@
-PLIERS_CONFIG_DIR ?= /etc/pliers
-PLIERS_COREUTILS_DIR ?= /usr/bin
+PLIERS_CONF ?= /etc/pliers
+PLIERS_PKGS ?= /opt/pliers
+PLIERS_COREUTILS ?= /usr/bin
+PLIERS_CADDY_EXEC ?= /usr/bin/caddy
+PLIERS_CADDY_CONF ?= /etc/caddy
 
 override GENERATE_PATH = ./Sources/PliersCommon/Constants+Generated.swift
 override define GENERATE_CODE
 import Path
 extension Constants {
-	public static let configDir = Path("$(PLIERS_CONFIG_DIR)")!
-	public static let coreutilsDir = Path("$(PLIERS_COREUTILS_DIR)")!
+	public static let conf = Path("$(PLIERS_CONF)")!
+	public static let pkgs = Path("$(PLIERS_PKGS)")!
+	public static let coreutils = Path("$(PLIERS_COREUTILS)")!
+	public enum caddy {
+		public static let exec = Path("$(PLIERS_CADDY_EXEC)")!
+		public static let conf = Path("$(PLIERS_CADDY_CONF)")!
+	}
 }
 endef
 export GENERATE_CODE
@@ -15,8 +23,7 @@ help:
 	@echo "Usage: make [configure|build|fmt]"
 
 configure:
-	@echo "PLIERS_CONFIG_DIR=$(PLIERS_CONFIG_DIR)"
-	@echo "PLIERS_COREUTILS_DIR=$(PLIERS_COREUTILS_DIR)"
+	@$(foreach v, $(sort $(filter PLIERS_%, $(.VARIABLES))), echo "$(v)=$($(v))";)
 	@echo "Generating $(GENERATE_PATH)"
 	@echo "$$GENERATE_CODE" > $(GENERATE_PATH)
 

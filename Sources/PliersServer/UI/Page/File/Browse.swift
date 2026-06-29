@@ -3,8 +3,8 @@ import Foundation
 import Path
 import Vapor
 
-extension UI.Page {
-	struct BrowseFile: HTMLDocument {
+extension UI.Page.File {
+	struct Browse: HTMLDocument {
 		typealias Entry = (
 			name: String,
 			path: Path,
@@ -24,7 +24,7 @@ extension UI.Page {
 
 		var body: some HTML {
 			UI.Layout.Dashboard {
-				h2 { "Filesystem" }
+				h2 { title }
 				hr()
 
 				p(.class("text-sm mb-2")) {

@@ -54,7 +54,7 @@ struct TokenLoginController: RouteCollection {
 		let payload = try await req.jwt.verify(String(parts[0]), as: Payload.self)
 
 		let home = try Path.home(for: payload.sub.value).expect("get home dir for user")
-		let path = home / Constants.userTokenPath
+		let path = home / Constants.userTokenFile
 
 		let attrs = try path.attrs.expect("get file attributes")
 		if attrs[.posixPermissions] as? UInt16 != 0o600 {

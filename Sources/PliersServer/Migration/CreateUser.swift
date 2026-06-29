@@ -4,7 +4,7 @@ struct CreateUser: AsyncMigration {
 	func prepare(on database: any Database) async throws {
 		try await database.schema("user")
 			.id()
-			.field("username", .string)
+			.field("username", .string, .required)
 			.field("password", .string)
 			.field("totp", .string)
 			.unique(on: "username")

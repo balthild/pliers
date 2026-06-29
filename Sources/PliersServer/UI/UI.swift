@@ -1,5 +1,9 @@
 enum UI {
 	enum Layout {}
-	enum Page {}
 	enum Component {}
+
+	enum Page {
+		enum File {}
+		enum Caddy {}
+	}
 }

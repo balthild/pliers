@@ -25,7 +25,7 @@ struct AuthCommand: AsyncCommand, Sendable {
 		let nonce = SymmetricKey(size: .bits256).withUnsafeBytes({ $0.bcryptBase64String() })
 		let full = "\(token);\(nonce)"
 
-		let path = Path.home / Constants.userTokenPath
+		let path = Path.home / Constants.userTokenFile
 		try path.parent.mkdir(.p)
 		try path.parent.chmod(0o700)
 

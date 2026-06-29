@@ -6,7 +6,7 @@ public struct Config: Sendable {
 	public let state: Path
 
 	public static func load() throws -> Self {
-		let path = Constants.configDir / "pliers.conf"
+		let path = Constants.conf / "pliers.conf"
 		let text = try Result { try String(contentsOf: path, encoding: .utf8) }
 			.expect("failed to read config file \(path.string)")
 
