@@ -3,11 +3,11 @@ import Foundation
 import Path
 import Vapor
 
-extension UI.Page.Caddy {
-	struct List: HTMLPage {
+extension View.Page {
+	struct CaddyListPage: HTMLPage {
 		let sites: [Caddy]
 
-		let layout = UI.Layout.Dashboard<Self>()
+		let layout = View.Layout.DashboardLayout<Self>()
 
 		var title: String { "Caddy" }
 
@@ -15,6 +15,10 @@ extension UI.Page.Caddy {
 		func body() throws -> some HTML {
 			h2 { title }
 			hr()
+
+			div(.class("mb-2 flex gap-2")) {
+				a(.class("btn"), .href("/caddy/new")) { "New" }
+			}
 
 			table {
 				thead {

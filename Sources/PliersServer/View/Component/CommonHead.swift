@@ -1,6 +1,6 @@
 import Elementary
 
-extension UI.Component {
+extension View.Component {
 	struct CommonHead: HTML {
 		var body: some HTML {
 			meta(.charset(.utf8))
@@ -8,6 +8,8 @@ extension UI.Component {
 
 			link(.rel(.stylesheet), .href("/dist/main.css"))
 
+			script(.src("https://unpkg.com/@alpinejs/persist@3/dist/cdn.min.js"), .defer) {}
+			script(.src("/js/alpine-history.js"), .defer) {}
 			script(.src("https://unpkg.com/alpinejs@3/dist/cdn.min.js"), .defer) {}
 		}
 	}

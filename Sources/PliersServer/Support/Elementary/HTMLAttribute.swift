@@ -8,6 +8,14 @@ extension HTMLAttribute {
 			return .init(name: "", value: nil)
 		}
 	}
+
+	public static func when(_ condition: Bool, _ attribute: () -> Self) -> Self {
+		if condition {
+			return attribute()
+		} else {
+			return .init(name: "", value: nil)
+		}
+	}
 }
 
 extension HTMLAttribute where Tag == HTMLTag.form {

@@ -1,11 +1,11 @@
 import Elementary
 import Vapor
 
-extension UI.Layout {
-	struct Auth<Page: HTMLPage>: HTMLLayout {
+extension View.Layout {
+	struct AuthLayout<Page: HTMLPage>: HTMLLayout {
 		typealias Page = Page
 
-		@UI.Context var req: Request
+		@View.Context var req: Request
 
 		func title(_ page: borrowing Page) -> String {
 			return "\(page.title) - Pliers"
@@ -13,12 +13,12 @@ extension UI.Layout {
 
 		@HTMLBuilder
 		func error(_ error: Swift.Error) -> some HTML {
-			UI.Page.Error(error: error)
+			View.Page.ErrorPage(error: error)
 		}
 
 		@HTMLBuilder
 		func head(_ page: borrowing Page) throws -> some HTML {
-			UI.Component.CommonHead()
+			View.Component.CommonHead()
 			try page.head()
 		}
 

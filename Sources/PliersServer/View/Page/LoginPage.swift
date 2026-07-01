@@ -1,8 +1,8 @@
 import Elementary
 
-extension UI.Page {
-	struct Login: HTMLPage {
-		let layout = UI.Layout.Auth<Self>()
+extension View.Page {
+	struct LoginPage: HTMLPage {
+		let layout = View.Layout.AuthLayout<Self>()
 
 		var title: String { "Login" }
 

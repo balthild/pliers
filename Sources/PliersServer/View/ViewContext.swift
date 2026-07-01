@@ -1,7 +1,7 @@
 import Elementary
 import Vapor
 
-extension UI {
+extension View {
 	@propertyWrapper
 	struct Context: Sendable {
 		@TaskLocal static var key: Request?

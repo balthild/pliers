@@ -30,15 +30,30 @@ final class Caddy: Model, @unchecked Sendable {
 		@Fallback
 		var custom: String
 
-		enum TLS: Codable {
+		enum TLS: Codable, VariantNamable {
 			case acme
 			case file(cert: String, key: String)
+
+			var variant: String {
+				switch self {
+				case .acme: return CodingKeys.acme.stringValue
+				case .file: return CodingKeys.file.stringValue
+				}
+			}
 		}
 
-		enum Backend: Codable {
+		enum Backend: Codable, VariantNamable {
 			case proxy(upstream: String)
 			case file(root: String)
-			case php(root: String, fcgi: String)
+			case php(root: String, fpm: String)
+
+			var variant: String {
+				switch self {
+				case .proxy: return CodingKeys.proxy.stringValue
+				case .file: return CodingKeys.file.stringValue
+				case .php: return CodingKeys.php.stringValue
+				}
+			}
 		}
 	}
 }

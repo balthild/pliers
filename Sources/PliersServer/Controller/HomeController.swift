@@ -10,7 +10,7 @@ struct HomeController: RouteCollection {
 	@Sendable
 	func overview(req: Request) async throws -> Response {
 		return try await req.render {
-			UI.Page.Overview()
+			View.Page.OverviewPage()
 		}
 	}
 }

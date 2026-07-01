@@ -2,9 +2,9 @@ import Elementary
 import PliersCommon
 import Vapor
 
-extension UI.Component {
+extension View.Component {
 	struct ErrorBoundary<Content: HTML>: HTML {
-		@UI.Context var req: Request
+		@View.Context var req: Request
 
 		let result: Result<Content, ChainError>
 

@@ -1,4 +1,5 @@
 import Elementary
+import Fluent
 import NIOConcurrencyHelpers
 import Vapor
 import VaporElementary
@@ -18,11 +19,26 @@ extension Request {
 }
 
 extension Request {
+	func find<T: Model>(_: T.Type, _ parameter: String) async throws -> T
+	where T.IDValue: LosslessStringConvertible {
+		guard let id: T.IDValue = self.parameters.get(parameter) else {
+			throw Abort(.notFound)
+		}
+
+		guard let model = try await T.find(id, on: self.db) else {
+			throw Abort(.notFound)
+		}
+
+		return model
+	}
+}
+
+extension Request {
 	func render(@HTMLBuilder content: () -> sending some HTML) async throws -> Response {
 		// false-positive warning produced if no type erasure
 		// capture of non-Sendable type '(some HTML).Type' in an isolated closure
 		let content = OnceBox<any HTML>(
-			content().environment(UI.Context.$key, self)
+			content().environment(View.Context.$key, self)
 		)
 
 		// not using `VaporElementary::HTMLResponse` because it does not write `.error` on failure

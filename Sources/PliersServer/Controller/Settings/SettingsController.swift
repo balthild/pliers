@@ -13,7 +13,7 @@ struct SettingsController: RouteCollection {
 	@Sendable
 	func index(req: Request) async throws -> Response {
 		return try await req.render {
-			UI.Page.Settings()
+			View.Page.SettingsPage()
 		}
 	}
 }

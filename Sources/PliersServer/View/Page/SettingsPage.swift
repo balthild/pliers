@@ -2,11 +2,11 @@ import Elementary
 import PliersCommon
 import Vapor
 
-extension UI.Page {
-	struct Settings: HTMLPage {
-		@UI.Context var req: Request
+extension View.Page {
+	struct SettingsPage: HTMLPage {
+		@View.Context var req: Request
 
-		let layout = UI.Layout.Dashboard<Self>()
+		let layout = View.Layout.DashboardLayout<Self>()
 
 		var title: String { "Settings" }
 

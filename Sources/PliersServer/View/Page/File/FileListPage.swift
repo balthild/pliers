@@ -3,8 +3,8 @@ import Foundation
 import Path
 import Vapor
 
-extension UI.Page.File {
-	struct Browse: HTMLPage {
+extension View.Page {
+	struct FileListPage: HTMLPage {
 		typealias Entry = (
 			name: String,
 			path: Path,
@@ -16,7 +16,7 @@ extension UI.Page.File {
 		let path: Path
 		let entries: [Entry]
 
-		let layout = UI.Layout.Dashboard<Self>()
+		let layout = View.Layout.DashboardLayout<Self>()
 
 		var title: String { "Filesystem" }
 
@@ -168,8 +168,8 @@ extension UI.Page.File {
 		private var actions: some HTML {
 			div(.class("mb-2"), .x.data("{ action: false }")) {
 				div(.class("flex gap-2"), .x.show("!action")) {
-					button(.class("btn"), .x.on("click", "action = 'upload'")) { "Upload" }
-					button(.class("btn"), .x.on("click", "action = 'mkdir'")) { "Mkdir" }
+					button(.x.on("click", "action = 'upload'")) { "Upload" }
+					button(.x.on("click", "action = 'mkdir'")) { "Mkdir" }
 				}
 
 				form(
