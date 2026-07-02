@@ -13,10 +13,11 @@ extension View.Page {
 				.x.data(
 					"""
 					{
-						tls: $history('\(model.config.tls.variant)'),
-						backend: $history('\(model.config.backend.variant)')
+						tls: $history('\(model.config.tls.case ?? "")'),
+						backend: $history('\(model.config.backend.case ?? "")')
 					}
-					"""),
+					"""
+				),
 			) {
 				label(.class("field")) {
 					span { "Domains" }
@@ -47,23 +48,23 @@ extension View.Page {
 					}
 				}
 
-				// TODO
-				// fieldset(.x.if("tls == 'acme'"), .x.bind("disabled", "tls != 'acme'")) {}
+				fieldset(.x.show("tls == 'acme'"), .x.bind("disabled", "tls != 'acme'")) {
+					input(
+						.type(.hidden),
+						.name("config[tls][acme]"),
+						.required,
+					)
+				}
 
 				fieldset(.x.show("tls == 'file'"), .x.bind("disabled", "tls != 'file'")) {
-					var cert = ""
-					var key = ""
-					if case .file(let _cert, let _key) = model.config.tls {
-						let _ = cert = _cert
-						let _ = key = _key
-					}
+					let file = model.config.tls?[case: \.file]
 
 					label(.class("field")) {
 						span { "Cert" }
 						input(
 							.type(.text),
-							.name("config[tls][file][cert]"),
-							.value(cert),
+							.name("config[tls][file][_0][cert]"),
+							.value(file?.cert ?? ""),
 							.required,
 						)
 					}
@@ -72,8 +73,8 @@ extension View.Page {
 						span { "Key" }
 						input(
 							.type(.text),
-							.name("config[tls][file][key]"),
-							.value(key),
+							.name("config[tls][file][_0][key]"),
+							.value(file?.key ?? ""),
 							.required,
 						)
 					}
@@ -107,53 +108,42 @@ extension View.Page {
 				}
 
 				fieldset(.x.show("backend == 'proxy'"), .x.bind("disabled", "backend != 'proxy'")) {
-					var upstream = ""
-					if case .proxy(let _upstream) = model.config.backend {
-						let _ = upstream = _upstream
-					}
+					let proxy = model.config.backend?[case: \.proxy]
 
 					label(.class("field")) {
 						span { "Upstream" }
 						input(
 							.type(.text),
-							.name("config[backend][proxy][upstream]"),
-							.value(upstream),
+							.name("config[backend][proxy][_0][upstream]"),
+							.value(proxy?.upstream ?? ""),
 							.required,
 						)
 					}
 				}
 
 				fieldset(.x.show("backend == 'file'"), .x.bind("disabled", "backend != 'file'")) {
-					var root = ""
-					if case .file(let _root) = model.config.backend {
-						let _ = root = _root
-					}
+					let file = model.config.backend?[case: \.file]
 
 					label(.class("field")) {
 						span { "Root" }
 						input(
 							.type(.text),
-							.name("config[backend][file][root]"),
-							.value(root),
+							.name("config[backend][file][_0][root]"),
+							.value(file?.root ?? ""),
 							.required,
 						)
 					}
 				}
 
 				fieldset(.x.show("backend == 'php'"), .x.bind("disabled", "backend != 'php'")) {
-					var root = ""
-					var fpm = ""
-					if case .php(let _root, let _fpm) = model.config.backend {
-						let _ = root = _root
-						let _ = fpm = _fpm
-					}
+					let php = model.config.backend?[case: \.php]
 
 					label(.class("field")) {
 						span { "Root" }
 						input(
 							.type(.text),
-							.name("config[backend][php][root]"),
-							.value(root),
+							.name("config[backend][php][_0][root]"),
+							.value(php?.root ?? ""),
 							.required,
 						)
 					}
@@ -162,8 +152,8 @@ extension View.Page {
 						span { "FPM" }
 						input(
 							.type(.text),
-							.name("config[backend][php][fpm]"),
-							.value(fpm),
+							.name("config[backend][php][_0][fpm]"),
+							.value(php?.fpm ?? ""),
 							.required,
 						)
 					}

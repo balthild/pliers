@@ -1,3 +1,4 @@
+import CasePaths
 import Fluent
 import Foundation
 import PliersCommon
@@ -30,29 +31,49 @@ final class Caddy: Model, @unchecked Sendable {
 		@Fallback
 		var custom: String
 
-		enum TLS: Codable, VariantNamable {
+		@CasePathable
+		enum TLS: Codable, CaseNamable {
 			case acme
-			case file(cert: String, key: String)
+			case file(File)
 
-			var variant: String {
+			var `case`: String {
 				switch self {
 				case .acme: return CodingKeys.acme.stringValue
 				case .file: return CodingKeys.file.stringValue
 				}
 			}
+
+			struct File: Codable {
+				let cert: String
+				let key: String
+			}
 		}
 
-		enum Backend: Codable, VariantNamable {
-			case proxy(upstream: String)
-			case file(root: String)
-			case php(root: String, fpm: String)
+		@CasePathable
+		enum Backend: Codable, CaseNamable {
+			case proxy(Proxy)
+			case file(File)
+			case php(PHP)
 
-			var variant: String {
+			var `case`: String {
 				switch self {
 				case .proxy: return CodingKeys.proxy.stringValue
 				case .file: return CodingKeys.file.stringValue
 				case .php: return CodingKeys.php.stringValue
 				}
+			}
+
+			struct Proxy: Codable {
+				let upstream: String
+			}
+
+			struct File: Codable {
+				let root: String
+			}
+
+			struct PHP: Codable {
+				let root: String
+				let fpm: String
 			}
 		}
 	}

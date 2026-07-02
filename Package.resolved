@@ -1,5 +1,5 @@
 {
-  "originHash" : "82855686edb3906d7044324344a8d210bdfa1d5ca122d237ff08706c8b526821",
+  "originHash" : "a48a78d5649e950e03c90d543b03fe37d6b7e65d0b103caa750f320d22600f1c",
   "pins" : [
     {
       "identity" : "async-http-client",
@@ -173,6 +173,15 @@
       }
     },
     {
+      "identity" : "swift-case-paths",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/swift-case-paths.git",
+      "state" : {
+        "revision" : "1197e80bc7e4b177051b6869ef93d8ac3ad677da",
+        "version" : "1.8.0"
+      }
+    },
+    {
       "identity" : "swift-certificates",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-certificates.git",
@@ -335,6 +344,15 @@
       }
     },
     {
+      "identity" : "swift-syntax",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/swiftlang/swift-syntax",
+      "state" : {
+        "revision" : "79e4b74a295b6eb74a8b585e3a39d29e70c1dbd1",
+        "version" : "603.0.2"
+      }
+    },
+    {
       "identity" : "swift-system",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-system.git",
@@ -386,6 +404,15 @@
       "state" : {
         "revision" : "90bbbdab3ede12c803cfbe91646f291c092517a3",
         "version" : "2.16.2"
+      }
+    },
+    {
+      "identity" : "xctest-dynamic-overlay",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/pointfreeco/xctest-dynamic-overlay",
+      "state" : {
+        "revision" : "401bf70d95bfe8db2a1dc619f9e175a85c089321",
+        "version" : "1.10.1"
       }
     }
   ],

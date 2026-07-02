@@ -1,14 +1,9 @@
-public protocol VariantNamable {
-	var variant: String { get }
+public protocol CaseNamable {
+	var `case`: String { get }
 }
 
-extension Optional where Wrapped: VariantNamable {
-	public var variant: String {
-		switch self {
-		case .some(let value):
-			return value.variant
-		case .none:
-			return ""
-		}
+extension Optional where Wrapped: CaseNamable {
+	public var `case`: String? {
+		self.map { $0.case }
 	}
 }
