@@ -44,8 +44,8 @@ extension View.Page {
 					path: '',
 
 					get url() {
-						if (!this.path) return '';
-						const url = new URL(`/file/delete`, window.location.origin);
+						if (!this.path) return '/404';
+						const url = new URL(`/file/delete`, location.origin);
 						url.searchParams.set('path', this.path);
 						return url.toString();
 					},
@@ -105,8 +105,8 @@ extension View.Page {
 					mode: '',
 
 					get url() {
-						if (!this.path) return '';
-						const url = new URL(`/file/chmod`, window.location.origin);
+						if (!this.path) return '/404';
+						const url = new URL(`/file/chmod`, location.origin);
 						url.searchParams.set('path', this.path);
 						return url.toString();
 					},

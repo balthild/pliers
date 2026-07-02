@@ -56,6 +56,18 @@ extension View.Page {
 							td {
 								div(.class("flex gap-2")) {
 									a(.href("/caddy/\(try site.requireID())")) { "Edit" }
+
+									button(
+										.class("link text-red-700"),
+										.x.data(),
+										.x.on(
+											"click",
+											"""
+											const app = Alpine.$data(window.delete_dialog);
+											app.show('\(try site.requireID())');
+											""",
+										),
+									) { "Delete" }
 								}
 							}
 						}
@@ -66,6 +78,64 @@ extension View.Page {
 							td(.colspan(4), .class("text-center text-gray-500")) {
 								"No data."
 							}
+						}
+					}
+				}
+			}
+
+			Alpine.data(
+				"delete_dialog",
+				"""
+				() => ({
+					id: '',
+
+					get url() {
+						if (!this.id) return '/404';
+						return `/caddy/${this.id}/delete`;
+					},
+
+					show(id) {
+						this.id = id;
+						this.$root.showModal();
+					},
+
+					cancel() {
+						this.id = '';
+						this.$root.close();
+					},
+				})
+				""",
+			)
+
+			dialog(.closedby(.none), .class("w-100"), .id("delete_dialog"), .x.data("delete_dialog")) {
+				header { "Delete" }
+
+				main {
+					section(.class("mb-3 text-sm space-y-1")) {
+						p {
+							"Deleting "
+							code(.x.text("id")) {}
+						}
+						p { "This action cannot be undone. Type the id below to confirm." }
+					}
+
+					form(
+						.method(.post),
+						.class("form"),
+						.x.bind("action", "url"),
+					) {
+						label(.class("field")) {
+							span { "ID" }
+							input(
+								.name("confirm"),
+								.type(.text),
+								.required,
+							)
+						}
+
+						div(.class("actions")) {
+							button(.type(.button), .x.on("click", "cancel()")) { "Cancel" }
+							button(.type(.submit), .class("danger")) { "Delete" }
 						}
 					}
 				}

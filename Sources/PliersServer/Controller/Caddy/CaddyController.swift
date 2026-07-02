@@ -16,7 +16,7 @@ struct CaddyController: RouteCollection {
 			group.group(":id") { group in
 				group.get(use: self.edit)
 				group.post("update", use: self.update)
-				// group.post("delete", use: self.delete)
+				group.post("delete", use: self.delete)
 			}
 		}
 	}

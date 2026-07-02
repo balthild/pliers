@@ -13,8 +13,8 @@ extension View.Page {
 				.x.data(
 					"""
 					{
-						tls: $history('\(model.config.tls.case ?? "")'),
-						backend: $history('\(model.config.backend.case ?? "")')
+						tls: $history('\(model.config.tls?.case ?? "")'),
+						backend: $history('\(model.config.backend?.case ?? "")')
 					}
 					"""
 				),
