@@ -66,6 +66,10 @@ struct TOTPConfig {
 	}
 }
 
+// TODO: remove this after dbus publishes a new version supporting swift-crypto 4.x
+// swift-crypto 3.x is pre-concurrency where SymmetricKey didn't implement Sendable
+extension TOTPConfig: @unchecked Sendable {}
+
 extension TOTPConfig: Codable {
 	public init(from decoder: Decoder) throws {
 		let container = try decoder.singleValueContainer()

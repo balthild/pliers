@@ -43,6 +43,11 @@ dev.css:
 	@printf "\033]0;dev.css\007"
 	npx @tailwindcss/cli -i ./Resources/Style/main.css -o ./Public/dist/main.css --watch
 
+dbus:
+	busctl introspect --xml-interface org.freedesktop.systemd1 /org/freedesktop/systemd1 > ./Sources/PliersServer/Support/DBus/Systemd1.xml
+	swift run dbus-codegen ./Sources/PliersServer/Support/DBus/Systemd1.xml
+	swift format --in-place ./Sources/PliersServer/Support/DBus/Systemd1.swift
+
 fmt:
 	dprint fmt
 	swift format --in-place --recursive Sources Tests Package.swift

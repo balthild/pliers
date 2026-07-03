@@ -19,6 +19,7 @@ let package = Package(
 		.package(url: "https://github.com/mxcl/Path.swift.git", from: "1.6.0"),
 		.package(url: "https://github.com/swiftlang/swift-subprocess.git", from: "0.4.0"),
 		.package(url: "https://github.com/pointfreeco/swift-case-paths.git", from: "1.8.0"),
+		.package(url: "https://github.com/wendylabsinc/dbus.git", from: "0.4.0"),
 	],
 	targets: [
 		.executableTarget(
@@ -44,6 +45,7 @@ let package = Package(
 				.product(name: "VaporElementary", package: "vapor-elementary"),
 				.product(name: "Path", package: "Path.swift"),
 				.product(name: "CasePaths", package: "swift-case-paths"),
+				.product(name: "DBUS", package: "DBUS"),
 				.target(name: "PliersCommon"),
 			],
 			swiftSettings: swiftSettings,
