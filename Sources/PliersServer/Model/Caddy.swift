@@ -19,7 +19,10 @@ final class Caddy: Model, @unchecked Sendable {
 	@Field(key: "config")
 	var config: Config
 
-	init() {}
+	init() {
+		self.domains = []
+		self.config = .init()
+	}
 
 	struct Config: Codable {
 		@Fallback
@@ -29,7 +32,7 @@ final class Caddy: Model, @unchecked Sendable {
 		var backend: Backend?
 
 		@Fallback
-		var custom: String
+		var custom: String = ""
 
 		@CasePathable
 		enum TLS: Codable, CaseNamable {

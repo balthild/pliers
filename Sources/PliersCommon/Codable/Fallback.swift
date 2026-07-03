@@ -7,6 +7,10 @@ where T: Codable & Default {
 		self.wrappedValue = T.defaultValue
 	}
 
+	public init(wrappedValue: T) {
+		self.wrappedValue = wrappedValue
+	}
+
 	public init(from decoder: Decoder) throws {
 		let container = try decoder.singleValueContainer()
 
