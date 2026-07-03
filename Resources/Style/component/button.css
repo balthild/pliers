@@ -17,6 +17,15 @@ button:not(.link), a.btn {
 		}
 	}
 
+	&.success {
+		@apply bg-green-600 border-green-700;
+		@apply text-white;
+
+		&:hover {
+			@apply bg-green-700 border-green-800;
+		}
+	}
+
 	&.warning {
 		@apply bg-yellow-600 border-yellow-700;
 		@apply text-white;

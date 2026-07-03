@@ -25,9 +25,13 @@ struct CaddyController: RouteCollection {
 	func index(req: Request) async throws -> Response {
 		let sites = try await Caddy.query(on: req.db).all()
 
+		let status = try await req.dbus.systemd.status("caddy.service")
+			.alert("failed to get caddy service status")
+
 		return try await req.render {
 			View.Page.CaddyListPage(
-				sites: sites
+				sites: sites,
+				status: status,
 			)
 		}
 	}

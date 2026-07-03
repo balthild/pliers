@@ -6,6 +6,7 @@ import Vapor
 extension View.Page {
 	struct CaddyListPage: HTMLPage {
 		let sites: [Caddy]
+		let status: String
 
 		let layout = View.Layout.DashboardLayout<Self>()
 
@@ -15,6 +16,39 @@ extension View.Page {
 		func body() throws -> some HTML {
 			h2 { title }
 			hr()
+
+			div(.class("text-sm mb-2 flex gap-1.5 items-center")) {
+				span(
+					.class("size-1.75 rounded-full"),
+					.class("bg-green-600").when(status == "active"),
+					.class("bg-red-600").when(status == "inactive"),
+					.class("bg-yellow-600").when(status != "active" && status != "inactive"),
+				) {}
+
+				span(.class("mr-2")) { status.capitalized }
+
+				if status == "active" {
+					form(.method(.post), .action("/caddy/service/stop")) {
+						button(.type(.submit), .class("danger text-xs")) { "Stop" }
+					}
+					form(.method(.post), .action("/caddy/service/restart")) {
+						button(.type(.submit), .class("text-xs")) { "Restart" }
+					}
+					form(.method(.post), .action("/caddy/service/reload")) {
+						button(.type(.submit), .class("text-xs")) { "Reload" }
+					}
+				}
+
+				if status == "inactive" {
+					form(.method(.post), .action("/caddy/service/start")) {
+						button(.type(.submit), .class("success text-xs")) { "Start" }
+					}
+				}
+			}
+
+			hr()
+
+			h3(.class("mb-2")) { "Sites" }
 
 			div(.class("mb-2 flex gap-2")) {
 				a(.class("btn"), .href("/caddy/new")) { "New" }

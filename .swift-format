@@ -3,5 +3,7 @@
 	"tabWidth": 2,
 	"lineLength": 100,
 	"indentation": { "tabs": 1 },
+	"lineBreakBeforeEachArgument": true,
+	"prioritizeKeepingFunctionOutputTogether": true,
 	"multilineTrailingCommaBehavior": "alwaysUsed"
 }
