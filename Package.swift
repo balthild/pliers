@@ -47,6 +47,7 @@ let package = Package(
 				.product(name: "CasePaths", package: "swift-case-paths"),
 				.product(name: "DBUS", package: "DBUS"),
 				.target(name: "PliersCommon"),
+				.target(name: "PliersSystemd"),
 			],
 			swiftSettings: swiftSettings,
 		),
@@ -58,6 +59,16 @@ let package = Package(
 				.target(name: "PliersShim"),
 			],
 			swiftSettings: swiftSettings,
+		),
+		.target(
+			name: "PliersSystemd",
+			dependencies: [
+				.product(name: "DBUS", package: "DBUS")
+			],
+			exclude: ["Systemd1.xml"],
+			swiftSettings: [
+				.unsafeFlags(["-suppress-warnings"])
+			],
 		),
 		.target(
 			name: "PliersShim",

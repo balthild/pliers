@@ -209,7 +209,7 @@ public struct OrgFreedesktopDBusPropertiesProxy: OrgFreedesktopDBusProperties {
 				],
 			))
 		let rawStream = await connection.subscribeToSignal(
-			interface: "org.freedesktop.DBus.Properties", member: "PropertiesChanged", )
+			interface: "org.freedesktop.DBus.Properties", member: "PropertiesChanged",)
 		return AsyncStream<
 			(
 				interfaceName: String, changedProperties: [String: DBusVariant],
@@ -316,7 +316,7 @@ extension OrgFreedesktopDBusPropertiesHandler {
 					throw DBusCodegenError.typeMismatch
 				}
 				try await self.`set`(
-					interfaceName: interfaceName, propertyName: propertyName, value: value, )
+					interfaceName: interfaceName, propertyName: propertyName, value: value,)
 				return []
 			},
 		]
@@ -357,10 +357,10 @@ public protocol OrgFreedesktopSystemd1Manager: Sendable {
 	func resetFailedUnit(name: String) async throws
 	func setUnitProperties(name: String, runtime: Bool, properties: DBusValue) async throws
 	func bindMountUnit(
-		name: String, source: String, destination: String, readOnly: Bool, mkdir: Bool, ) async throws
+		name: String, source: String, destination: String, readOnly: Bool, mkdir: Bool,) async throws
 	func mountImageUnit(
 		name: String, source: String, destination: String, readOnly: Bool, mkdir: Bool,
-		options: DBusValue, ) async throws
+		options: DBusValue,) async throws
 	func refUnit(name: String) async throws
 	func unrefUnit(name: String) async throws
 	func startTransientUnit(name: String, mode: String, properties: DBusValue, aux: DBusValue)
@@ -4272,7 +4272,7 @@ public struct OrgFreedesktopSystemd1ManagerProxy: OrgFreedesktopSystemd1Manager 
 				],
 			))
 		let rawStream = await connection.subscribeToSignal(
-			interface: "org.freedesktop.systemd1.Manager", member: "UnitNew", )
+			interface: "org.freedesktop.systemd1.Manager", member: "UnitNew",)
 		return AsyncStream<(id: String, unit: String)> { continuation in
 			let task = Task {
 				for await message in rawStream {
@@ -4309,7 +4309,7 @@ public struct OrgFreedesktopSystemd1ManagerProxy: OrgFreedesktopSystemd1Manager 
 				],
 			))
 		let rawStream = await connection.subscribeToSignal(
-			interface: "org.freedesktop.systemd1.Manager", member: "UnitRemoved", )
+			interface: "org.freedesktop.systemd1.Manager", member: "UnitRemoved",)
 		return AsyncStream<(id: String, unit: String)> { continuation in
 			let task = Task {
 				for await message in rawStream {
@@ -4346,7 +4346,7 @@ public struct OrgFreedesktopSystemd1ManagerProxy: OrgFreedesktopSystemd1Manager 
 				],
 			))
 		let rawStream = await connection.subscribeToSignal(
-			interface: "org.freedesktop.systemd1.Manager", member: "JobNew", )
+			interface: "org.freedesktop.systemd1.Manager", member: "JobNew",)
 		return AsyncStream<(id: UInt32, job: String, unit: String)> { continuation in
 			let task = Task {
 				for await message in rawStream {
@@ -4391,7 +4391,7 @@ public struct OrgFreedesktopSystemd1ManagerProxy: OrgFreedesktopSystemd1Manager 
 				],
 			))
 		let rawStream = await connection.subscribeToSignal(
-			interface: "org.freedesktop.systemd1.Manager", member: "JobRemoved", )
+			interface: "org.freedesktop.systemd1.Manager", member: "JobRemoved",)
 		return AsyncStream<(id: UInt32, job: String, unit: String, result: String)> { continuation in
 			let task = Task {
 				for await message in rawStream {
@@ -4446,7 +4446,7 @@ public struct OrgFreedesktopSystemd1ManagerProxy: OrgFreedesktopSystemd1Manager 
 				],
 			))
 		let rawStream = await connection.subscribeToSignal(
-			interface: "org.freedesktop.systemd1.Manager", member: "StartupFinished", )
+			interface: "org.freedesktop.systemd1.Manager", member: "StartupFinished",)
 		return AsyncStream<
 			(
 				firmware: UInt64, loader: UInt64, kernel: UInt64, initrd: UInt64, userspace: UInt64,
@@ -4517,7 +4517,7 @@ public struct OrgFreedesktopSystemd1ManagerProxy: OrgFreedesktopSystemd1Manager 
 				],
 			))
 		let rawStream = await connection.subscribeToSignal(
-			interface: "org.freedesktop.systemd1.Manager", member: "UnitFilesChanged", )
+			interface: "org.freedesktop.systemd1.Manager", member: "UnitFilesChanged",)
 		return AsyncStream<Void> { continuation in
 			let task = Task {
 				for await _ in rawStream { continuation.yield(()) }
@@ -4539,7 +4539,7 @@ public struct OrgFreedesktopSystemd1ManagerProxy: OrgFreedesktopSystemd1Manager 
 				],
 			))
 		let rawStream = await connection.subscribeToSignal(
-			interface: "org.freedesktop.systemd1.Manager", member: "Reloading", )
+			interface: "org.freedesktop.systemd1.Manager", member: "Reloading",)
 		return AsyncStream<Bool> { continuation in
 			let task = Task {
 				for await message in rawStream {
@@ -4591,10 +4591,10 @@ public protocol OrgFreedesktopSystemd1ManagerHandler: Sendable {
 	func resetFailedUnit(name: String) async throws
 	func setUnitProperties(name: String, runtime: Bool, properties: DBusValue) async throws
 	func bindMountUnit(
-		name: String, source: String, destination: String, readOnly: Bool, mkdir: Bool, ) async throws
+		name: String, source: String, destination: String, readOnly: Bool, mkdir: Bool,) async throws
 	func mountImageUnit(
 		name: String, source: String, destination: String, readOnly: Bool, mkdir: Bool,
-		options: DBusValue, ) async throws
+		options: DBusValue,) async throws
 	func refUnit(name: String) async throws
 	func unrefUnit(name: String) async throws
 	func startTransientUnit(name: String, mode: String, properties: DBusValue, aux: DBusValue)
@@ -4925,7 +4925,7 @@ extension OrgFreedesktopSystemd1ManagerHandler {
 				}
 				guard case .string(let mode) = ctx.arguments[2] else { throw DBusCodegenError.typeMismatch }
 				let result = try await self.startUnitReplace(
-					oldUnit: oldUnit, newUnit: newUnit, mode: mode, )
+					oldUnit: oldUnit, newUnit: newUnit, mode: mode,)
 				return [.objectPath(result)]
 			},
 			.init(
@@ -5149,7 +5149,7 @@ extension OrgFreedesktopSystemd1ManagerHandler {
 					throw DBusCodegenError.typeMismatch
 				}
 				try await self.bindMountUnit(
-					name: name, source: source, destination: destination, readOnly: readOnly, mkdir: mkdir, )
+					name: name, source: source, destination: destination, readOnly: readOnly, mkdir: mkdir,)
 				return []
 			},
 			.init(
@@ -5177,7 +5177,7 @@ extension OrgFreedesktopSystemd1ManagerHandler {
 				let options = ctx.arguments[5]
 				try await self.mountImageUnit(
 					name: name, source: source, destination: destination, readOnly: readOnly, mkdir: mkdir,
-					options: options, )
+					options: options,)
 				return []
 			},
 			.init(name: "RefUnit", inputArgs: [.init(name: "name", type: "s")], outputArgs: []) {
@@ -5207,7 +5207,7 @@ extension OrgFreedesktopSystemd1ManagerHandler {
 				let properties = ctx.arguments[2]
 				let aux = ctx.arguments[3]
 				let result = try await self.startTransientUnit(
-					name: name, mode: mode, properties: properties, aux: aux, )
+					name: name, mode: mode, properties: properties, aux: aux,)
 				return [.objectPath(result)]
 			},
 			.init(
@@ -5255,7 +5255,7 @@ extension OrgFreedesktopSystemd1ManagerHandler {
 					throw DBusCodegenError.typeMismatch
 				}
 				try await self.removeSubgroupFromUnit(
-					unitName: unitName, subcgroup: subcgroup, flags: flags, )
+					unitName: unitName, subcgroup: subcgroup, flags: flags,)
 				return []
 			},
 			.init(name: "AbandonScope", inputArgs: [.init(name: "name", type: "s")], outputArgs: []) {
@@ -5682,7 +5682,7 @@ extension OrgFreedesktopSystemd1ManagerHandler {
 					throw DBusCodegenError.typeMismatch
 				}
 				let result = try await self.disableUnitFilesWithFlagsAndInstallInfo(
-					files: files, flags: flags, )
+					files: files, flags: flags,)
 				return [.boolean(result.carriesInstallInfo), result.changes]
 			},
 			.init(
@@ -5789,7 +5789,7 @@ extension OrgFreedesktopSystemd1ManagerHandler {
 					throw DBusCodegenError.typeMismatch
 				}
 				let result = try await self.presetUnitFilesWithMode(
-					files: files, mode: mode, runtime: runtime, force: force, )
+					files: files, mode: mode, runtime: runtime, force: force,)
 				return [.boolean(result.carriesInstallInfo), result.changes]
 			},
 			.init(
@@ -5915,7 +5915,7 @@ extension OrgFreedesktopSystemd1ManagerHandler {
 					throw DBusCodegenError.typeMismatch
 				}
 				let result = try await self.addDependencyUnitFiles(
-					files: files, target: target, `type`: `type`, runtime: runtime, force: force, )
+					files: files, target: target, `type`: `type`, runtime: runtime, force: force,)
 				return [result]
 			},
 			.init(
@@ -5975,414 +5975,414 @@ extension OrgFreedesktopSystemd1ManagerHandler {
 		iface.properties = [
 			.init(
 				name: "Version", signature: "s", access: .read,
-				get: { [self] _ in .string(try await self.version) }, ),
+				get: { [self] _ in .string(try await self.version) },),
 			.init(
 				name: "Features", signature: "s", access: .read,
-				get: { [self] _ in .string(try await self.features) }, ),
+				get: { [self] _ in .string(try await self.features) },),
 			.init(
 				name: "Virtualization", signature: "s", access: .read,
-				get: { [self] _ in .string(try await self.virtualization) }, ),
+				get: { [self] _ in .string(try await self.virtualization) },),
 			.init(
 				name: "ConfidentialVirtualization", signature: "s", access: .read,
-				get: { [self] _ in .string(try await self.confidentialVirtualization) }, ),
+				get: { [self] _ in .string(try await self.confidentialVirtualization) },),
 			.init(
 				name: "Architecture", signature: "s", access: .read,
-				get: { [self] _ in .string(try await self.architecture) }, ),
+				get: { [self] _ in .string(try await self.architecture) },),
 			.init(
 				name: "Tainted", signature: "s", access: .read,
-				get: { [self] _ in .string(try await self.tainted) }, ),
+				get: { [self] _ in .string(try await self.tainted) },),
 			.init(
 				name: "FirmwareTimestamp", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.firmwareTimestamp) }, ),
+				get: { [self] _ in .uint64(try await self.firmwareTimestamp) },),
 			.init(
 				name: "FirmwareTimestampMonotonic", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.firmwareTimestampMonotonic) }, ),
+				get: { [self] _ in .uint64(try await self.firmwareTimestampMonotonic) },),
 			.init(
 				name: "LoaderTimestamp", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.loaderTimestamp) }, ),
+				get: { [self] _ in .uint64(try await self.loaderTimestamp) },),
 			.init(
 				name: "LoaderTimestampMonotonic", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.loaderTimestampMonotonic) }, ),
+				get: { [self] _ in .uint64(try await self.loaderTimestampMonotonic) },),
 			.init(
 				name: "KernelTimestamp", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.kernelTimestamp) }, ),
+				get: { [self] _ in .uint64(try await self.kernelTimestamp) },),
 			.init(
 				name: "KernelTimestampMonotonic", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.kernelTimestampMonotonic) }, ),
+				get: { [self] _ in .uint64(try await self.kernelTimestampMonotonic) },),
 			.init(
 				name: "InitRDTimestamp", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.initRDTimestamp) }, ),
+				get: { [self] _ in .uint64(try await self.initRDTimestamp) },),
 			.init(
 				name: "InitRDTimestampMonotonic", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.initRDTimestampMonotonic) }, ),
+				get: { [self] _ in .uint64(try await self.initRDTimestampMonotonic) },),
 			.init(
 				name: "UserspaceTimestamp", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.userspaceTimestamp) }, ),
+				get: { [self] _ in .uint64(try await self.userspaceTimestamp) },),
 			.init(
 				name: "UserspaceTimestampMonotonic", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.userspaceTimestampMonotonic) }, ),
+				get: { [self] _ in .uint64(try await self.userspaceTimestampMonotonic) },),
 			.init(
 				name: "FinishTimestamp", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.finishTimestamp) }, ),
+				get: { [self] _ in .uint64(try await self.finishTimestamp) },),
 			.init(
 				name: "FinishTimestampMonotonic", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.finishTimestampMonotonic) }, ),
+				get: { [self] _ in .uint64(try await self.finishTimestampMonotonic) },),
 			.init(
 				name: "ShutdownStartTimestamp", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.shutdownStartTimestamp) }, ),
+				get: { [self] _ in .uint64(try await self.shutdownStartTimestamp) },),
 			.init(
 				name: "ShutdownStartTimestampMonotonic", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.shutdownStartTimestampMonotonic) }, ),
+				get: { [self] _ in .uint64(try await self.shutdownStartTimestampMonotonic) },),
 			.init(
 				name: "SecurityStartTimestamp", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.securityStartTimestamp) }, ),
+				get: { [self] _ in .uint64(try await self.securityStartTimestamp) },),
 			.init(
 				name: "SecurityStartTimestampMonotonic", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.securityStartTimestampMonotonic) }, ),
+				get: { [self] _ in .uint64(try await self.securityStartTimestampMonotonic) },),
 			.init(
 				name: "SecurityFinishTimestamp", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.securityFinishTimestamp) }, ),
+				get: { [self] _ in .uint64(try await self.securityFinishTimestamp) },),
 			.init(
 				name: "SecurityFinishTimestampMonotonic", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.securityFinishTimestampMonotonic) }, ),
+				get: { [self] _ in .uint64(try await self.securityFinishTimestampMonotonic) },),
 			.init(
 				name: "GeneratorsStartTimestamp", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.generatorsStartTimestamp) }, ),
+				get: { [self] _ in .uint64(try await self.generatorsStartTimestamp) },),
 			.init(
 				name: "GeneratorsStartTimestampMonotonic", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.generatorsStartTimestampMonotonic) }, ),
+				get: { [self] _ in .uint64(try await self.generatorsStartTimestampMonotonic) },),
 			.init(
 				name: "GeneratorsFinishTimestamp", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.generatorsFinishTimestamp) }, ),
+				get: { [self] _ in .uint64(try await self.generatorsFinishTimestamp) },),
 			.init(
 				name: "GeneratorsFinishTimestampMonotonic", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.generatorsFinishTimestampMonotonic) }, ),
+				get: { [self] _ in .uint64(try await self.generatorsFinishTimestampMonotonic) },),
 			.init(
 				name: "UnitsLoadStartTimestamp", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.unitsLoadStartTimestamp) }, ),
+				get: { [self] _ in .uint64(try await self.unitsLoadStartTimestamp) },),
 			.init(
 				name: "UnitsLoadStartTimestampMonotonic", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.unitsLoadStartTimestampMonotonic) }, ),
+				get: { [self] _ in .uint64(try await self.unitsLoadStartTimestampMonotonic) },),
 			.init(
 				name: "UnitsLoadFinishTimestamp", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.unitsLoadFinishTimestamp) }, ),
+				get: { [self] _ in .uint64(try await self.unitsLoadFinishTimestamp) },),
 			.init(
 				name: "UnitsLoadFinishTimestampMonotonic", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.unitsLoadFinishTimestampMonotonic) }, ),
+				get: { [self] _ in .uint64(try await self.unitsLoadFinishTimestampMonotonic) },),
 			.init(
 				name: "UnitsLoadTimestamp", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.unitsLoadTimestamp) }, ),
+				get: { [self] _ in .uint64(try await self.unitsLoadTimestamp) },),
 			.init(
 				name: "UnitsLoadTimestampMonotonic", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.unitsLoadTimestampMonotonic) }, ),
+				get: { [self] _ in .uint64(try await self.unitsLoadTimestampMonotonic) },),
 			.init(
 				name: "InitRDSecurityStartTimestamp", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.initRDSecurityStartTimestamp) }, ),
+				get: { [self] _ in .uint64(try await self.initRDSecurityStartTimestamp) },),
 			.init(
 				name: "InitRDSecurityStartTimestampMonotonic", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.initRDSecurityStartTimestampMonotonic) }, ),
+				get: { [self] _ in .uint64(try await self.initRDSecurityStartTimestampMonotonic) },),
 			.init(
 				name: "InitRDSecurityFinishTimestamp", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.initRDSecurityFinishTimestamp) }, ),
+				get: { [self] _ in .uint64(try await self.initRDSecurityFinishTimestamp) },),
 			.init(
 				name: "InitRDSecurityFinishTimestampMonotonic", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.initRDSecurityFinishTimestampMonotonic) }, ),
+				get: { [self] _ in .uint64(try await self.initRDSecurityFinishTimestampMonotonic) },),
 			.init(
 				name: "InitRDGeneratorsStartTimestamp", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.initRDGeneratorsStartTimestamp) }, ),
+				get: { [self] _ in .uint64(try await self.initRDGeneratorsStartTimestamp) },),
 			.init(
 				name: "InitRDGeneratorsStartTimestampMonotonic", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.initRDGeneratorsStartTimestampMonotonic) }, ),
+				get: { [self] _ in .uint64(try await self.initRDGeneratorsStartTimestampMonotonic) },),
 			.init(
 				name: "InitRDGeneratorsFinishTimestamp", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.initRDGeneratorsFinishTimestamp) }, ),
+				get: { [self] _ in .uint64(try await self.initRDGeneratorsFinishTimestamp) },),
 			.init(
 				name: "InitRDGeneratorsFinishTimestampMonotonic", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.initRDGeneratorsFinishTimestampMonotonic) }, ),
+				get: { [self] _ in .uint64(try await self.initRDGeneratorsFinishTimestampMonotonic) },),
 			.init(
 				name: "InitRDUnitsLoadStartTimestamp", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.initRDUnitsLoadStartTimestamp) }, ),
+				get: { [self] _ in .uint64(try await self.initRDUnitsLoadStartTimestamp) },),
 			.init(
 				name: "InitRDUnitsLoadStartTimestampMonotonic", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.initRDUnitsLoadStartTimestampMonotonic) }, ),
+				get: { [self] _ in .uint64(try await self.initRDUnitsLoadStartTimestampMonotonic) },),
 			.init(
 				name: "InitRDUnitsLoadFinishTimestamp", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.initRDUnitsLoadFinishTimestamp) }, ),
+				get: { [self] _ in .uint64(try await self.initRDUnitsLoadFinishTimestamp) },),
 			.init(
 				name: "InitRDUnitsLoadFinishTimestampMonotonic", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.initRDUnitsLoadFinishTimestampMonotonic) }, ),
+				get: { [self] _ in .uint64(try await self.initRDUnitsLoadFinishTimestampMonotonic) },),
 			.init(
 				name: "LogLevel", signature: "s", access: .readWrite,
 				get: { [self] _ in .string(try await self.logLevel) },
 				set: { [self] _newVal, _ in
 					guard case .string(let _decoded) = _newVal else { throw DBusCodegenError.typeMismatch }
 					try await self.setLogLevel(_decoded)
-				}, ),
+				},),
 			.init(
 				name: "LogTarget", signature: "s", access: .readWrite,
 				get: { [self] _ in .string(try await self.logTarget) },
 				set: { [self] _newVal, _ in
 					guard case .string(let _decoded) = _newVal else { throw DBusCodegenError.typeMismatch }
 					try await self.setLogTarget(_decoded)
-				}, ),
+				},),
 			.init(
 				name: "NNames", signature: "u", access: .read,
-				get: { [self] _ in .uint32(try await self.nNames) }, ),
+				get: { [self] _ in .uint32(try await self.nNames) },),
 			.init(
 				name: "NFailedUnits", signature: "u", access: .read,
-				get: { [self] _ in .uint32(try await self.nFailedUnits) }, ),
+				get: { [self] _ in .uint32(try await self.nFailedUnits) },),
 			.init(
 				name: "NJobs", signature: "u", access: .read,
-				get: { [self] _ in .uint32(try await self.nJobs) }, ),
+				get: { [self] _ in .uint32(try await self.nJobs) },),
 			.init(
 				name: "NInstalledJobs", signature: "u", access: .read,
-				get: { [self] _ in .uint32(try await self.nInstalledJobs) }, ),
+				get: { [self] _ in .uint32(try await self.nInstalledJobs) },),
 			.init(
 				name: "NFailedJobs", signature: "u", access: .read,
-				get: { [self] _ in .uint32(try await self.nFailedJobs) }, ),
+				get: { [self] _ in .uint32(try await self.nFailedJobs) },),
 			.init(
 				name: "TransactionsWithOrderingCycle", signature: "at", access: .read,
-				get: { [self] _ in try await self.transactionsWithOrderingCycle }, ),
+				get: { [self] _ in try await self.transactionsWithOrderingCycle },),
 			.init(
 				name: "Progress", signature: "d", access: .read,
-				get: { [self] _ in .double(try await self.progress) }, ),
+				get: { [self] _ in .double(try await self.progress) },),
 			.init(
 				name: "Environment", signature: "as", access: .read,
-				get: { [self] _ in .array(try await self.environment.map { .string($0) }) }, ),
+				get: { [self] _ in .array(try await self.environment.map { .string($0) }) },),
 			.init(
 				name: "ConfirmSpawn", signature: "b", access: .read,
-				get: { [self] _ in .boolean(try await self.confirmSpawn) }, ),
+				get: { [self] _ in .boolean(try await self.confirmSpawn) },),
 			.init(
 				name: "ShowStatus", signature: "b", access: .read,
-				get: { [self] _ in .boolean(try await self.showStatus) }, ),
+				get: { [self] _ in .boolean(try await self.showStatus) },),
 			.init(
 				name: "UnitPath", signature: "as", access: .read,
-				get: { [self] _ in .array(try await self.unitPath.map { .string($0) }) }, ),
+				get: { [self] _ in .array(try await self.unitPath.map { .string($0) }) },),
 			.init(
 				name: "DefaultStandardOutput", signature: "s", access: .read,
-				get: { [self] _ in .string(try await self.defaultStandardOutput) }, ),
+				get: { [self] _ in .string(try await self.defaultStandardOutput) },),
 			.init(
 				name: "DefaultStandardError", signature: "s", access: .read,
-				get: { [self] _ in .string(try await self.defaultStandardError) }, ),
+				get: { [self] _ in .string(try await self.defaultStandardError) },),
 			.init(
 				name: "WatchdogDevice", signature: "s", access: .read,
-				get: { [self] _ in .string(try await self.watchdogDevice) }, ),
+				get: { [self] _ in .string(try await self.watchdogDevice) },),
 			.init(
 				name: "WatchdogLastPingTimestamp", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.watchdogLastPingTimestamp) }, ),
+				get: { [self] _ in .uint64(try await self.watchdogLastPingTimestamp) },),
 			.init(
 				name: "WatchdogLastPingTimestampMonotonic", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.watchdogLastPingTimestampMonotonic) }, ),
+				get: { [self] _ in .uint64(try await self.watchdogLastPingTimestampMonotonic) },),
 			.init(
 				name: "RuntimeWatchdogUSec", signature: "t", access: .readWrite,
 				get: { [self] _ in .uint64(try await self.runtimeWatchdogUSec) },
 				set: { [self] _newVal, _ in
 					guard case .uint64(let _decoded) = _newVal else { throw DBusCodegenError.typeMismatch }
 					try await self.setRuntimeWatchdogUSec(_decoded)
-				}, ),
+				},),
 			.init(
 				name: "RuntimeWatchdogPreUSec", signature: "t", access: .readWrite,
 				get: { [self] _ in .uint64(try await self.runtimeWatchdogPreUSec) },
 				set: { [self] _newVal, _ in
 					guard case .uint64(let _decoded) = _newVal else { throw DBusCodegenError.typeMismatch }
 					try await self.setRuntimeWatchdogPreUSec(_decoded)
-				}, ),
+				},),
 			.init(
 				name: "RuntimeWatchdogPreGovernor", signature: "s", access: .readWrite,
 				get: { [self] _ in .string(try await self.runtimeWatchdogPreGovernor) },
 				set: { [self] _newVal, _ in
 					guard case .string(let _decoded) = _newVal else { throw DBusCodegenError.typeMismatch }
 					try await self.setRuntimeWatchdogPreGovernor(_decoded)
-				}, ),
+				},),
 			.init(
 				name: "RebootWatchdogUSec", signature: "t", access: .readWrite,
 				get: { [self] _ in .uint64(try await self.rebootWatchdogUSec) },
 				set: { [self] _newVal, _ in
 					guard case .uint64(let _decoded) = _newVal else { throw DBusCodegenError.typeMismatch }
 					try await self.setRebootWatchdogUSec(_decoded)
-				}, ),
+				},),
 			.init(
 				name: "KExecWatchdogUSec", signature: "t", access: .readWrite,
 				get: { [self] _ in .uint64(try await self.kExecWatchdogUSec) },
 				set: { [self] _newVal, _ in
 					guard case .uint64(let _decoded) = _newVal else { throw DBusCodegenError.typeMismatch }
 					try await self.setKExecWatchdogUSec(_decoded)
-				}, ),
+				},),
 			.init(
 				name: "ServiceWatchdogs", signature: "b", access: .readWrite,
 				get: { [self] _ in .boolean(try await self.serviceWatchdogs) },
 				set: { [self] _newVal, _ in
 					guard case .boolean(let _decoded) = _newVal else { throw DBusCodegenError.typeMismatch }
 					try await self.setServiceWatchdogs(_decoded)
-				}, ),
+				},),
 			.init(
 				name: "ControlGroup", signature: "s", access: .read,
-				get: { [self] _ in .string(try await self.controlGroup) }, ),
+				get: { [self] _ in .string(try await self.controlGroup) },),
 			.init(
 				name: "SystemState", signature: "s", access: .read,
-				get: { [self] _ in .string(try await self.systemState) }, ),
+				get: { [self] _ in .string(try await self.systemState) },),
 			.init(
 				name: "ExitCode", signature: "y", access: .read,
-				get: { [self] _ in .byte(try await self.exitCode) }, ),
+				get: { [self] _ in .byte(try await self.exitCode) },),
 			.init(
 				name: "DefaultTimerAccuracyUSec", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.defaultTimerAccuracyUSec) }, ),
+				get: { [self] _ in .uint64(try await self.defaultTimerAccuracyUSec) },),
 			.init(
 				name: "DefaultTimeoutStartUSec", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.defaultTimeoutStartUSec) }, ),
+				get: { [self] _ in .uint64(try await self.defaultTimeoutStartUSec) },),
 			.init(
 				name: "DefaultTimeoutStopUSec", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.defaultTimeoutStopUSec) }, ),
+				get: { [self] _ in .uint64(try await self.defaultTimeoutStopUSec) },),
 			.init(
 				name: "DefaultTimeoutAbortUSec", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.defaultTimeoutAbortUSec) }, ),
+				get: { [self] _ in .uint64(try await self.defaultTimeoutAbortUSec) },),
 			.init(
 				name: "DefaultDeviceTimeoutUSec", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.defaultDeviceTimeoutUSec) }, ),
+				get: { [self] _ in .uint64(try await self.defaultDeviceTimeoutUSec) },),
 			.init(
 				name: "DefaultRestartUSec", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.defaultRestartUSec) }, ),
+				get: { [self] _ in .uint64(try await self.defaultRestartUSec) },),
 			.init(
 				name: "DefaultStartLimitIntervalUSec", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.defaultStartLimitIntervalUSec) }, ),
+				get: { [self] _ in .uint64(try await self.defaultStartLimitIntervalUSec) },),
 			.init(
 				name: "DefaultStartLimitBurst", signature: "u", access: .read,
-				get: { [self] _ in .uint32(try await self.defaultStartLimitBurst) }, ),
+				get: { [self] _ in .uint32(try await self.defaultStartLimitBurst) },),
 			.init(
 				name: "DefaultIOAccounting", signature: "b", access: .read,
-				get: { [self] _ in .boolean(try await self.defaultIOAccounting) }, ),
+				get: { [self] _ in .boolean(try await self.defaultIOAccounting) },),
 			.init(
 				name: "DefaultIPAccounting", signature: "b", access: .read,
-				get: { [self] _ in .boolean(try await self.defaultIPAccounting) }, ),
+				get: { [self] _ in .boolean(try await self.defaultIPAccounting) },),
 			.init(
 				name: "DefaultMemoryAccounting", signature: "b", access: .read,
-				get: { [self] _ in .boolean(try await self.defaultMemoryAccounting) }, ),
+				get: { [self] _ in .boolean(try await self.defaultMemoryAccounting) },),
 			.init(
 				name: "DefaultTasksAccounting", signature: "b", access: .read,
-				get: { [self] _ in .boolean(try await self.defaultTasksAccounting) }, ),
+				get: { [self] _ in .boolean(try await self.defaultTasksAccounting) },),
 			.init(
 				name: "DefaultLimitCPU", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.defaultLimitCPU) }, ),
+				get: { [self] _ in .uint64(try await self.defaultLimitCPU) },),
 			.init(
 				name: "DefaultLimitCPUSoft", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.defaultLimitCPUSoft) }, ),
+				get: { [self] _ in .uint64(try await self.defaultLimitCPUSoft) },),
 			.init(
 				name: "DefaultLimitFSIZE", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.defaultLimitFSIZE) }, ),
+				get: { [self] _ in .uint64(try await self.defaultLimitFSIZE) },),
 			.init(
 				name: "DefaultLimitFSIZESoft", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.defaultLimitFSIZESoft) }, ),
+				get: { [self] _ in .uint64(try await self.defaultLimitFSIZESoft) },),
 			.init(
 				name: "DefaultLimitDATA", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.defaultLimitDATA) }, ),
+				get: { [self] _ in .uint64(try await self.defaultLimitDATA) },),
 			.init(
 				name: "DefaultLimitDATASoft", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.defaultLimitDATASoft) }, ),
+				get: { [self] _ in .uint64(try await self.defaultLimitDATASoft) },),
 			.init(
 				name: "DefaultLimitSTACK", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.defaultLimitSTACK) }, ),
+				get: { [self] _ in .uint64(try await self.defaultLimitSTACK) },),
 			.init(
 				name: "DefaultLimitSTACKSoft", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.defaultLimitSTACKSoft) }, ),
+				get: { [self] _ in .uint64(try await self.defaultLimitSTACKSoft) },),
 			.init(
 				name: "DefaultLimitCORE", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.defaultLimitCORE) }, ),
+				get: { [self] _ in .uint64(try await self.defaultLimitCORE) },),
 			.init(
 				name: "DefaultLimitCORESoft", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.defaultLimitCORESoft) }, ),
+				get: { [self] _ in .uint64(try await self.defaultLimitCORESoft) },),
 			.init(
 				name: "DefaultLimitRSS", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.defaultLimitRSS) }, ),
+				get: { [self] _ in .uint64(try await self.defaultLimitRSS) },),
 			.init(
 				name: "DefaultLimitRSSSoft", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.defaultLimitRSSSoft) }, ),
+				get: { [self] _ in .uint64(try await self.defaultLimitRSSSoft) },),
 			.init(
 				name: "DefaultLimitNOFILE", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.defaultLimitNOFILE) }, ),
+				get: { [self] _ in .uint64(try await self.defaultLimitNOFILE) },),
 			.init(
 				name: "DefaultLimitNOFILESoft", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.defaultLimitNOFILESoft) }, ),
+				get: { [self] _ in .uint64(try await self.defaultLimitNOFILESoft) },),
 			.init(
 				name: "DefaultLimitAS", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.defaultLimitAS) }, ),
+				get: { [self] _ in .uint64(try await self.defaultLimitAS) },),
 			.init(
 				name: "DefaultLimitASSoft", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.defaultLimitASSoft) }, ),
+				get: { [self] _ in .uint64(try await self.defaultLimitASSoft) },),
 			.init(
 				name: "DefaultLimitNPROC", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.defaultLimitNPROC) }, ),
+				get: { [self] _ in .uint64(try await self.defaultLimitNPROC) },),
 			.init(
 				name: "DefaultLimitNPROCSoft", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.defaultLimitNPROCSoft) }, ),
+				get: { [self] _ in .uint64(try await self.defaultLimitNPROCSoft) },),
 			.init(
 				name: "DefaultLimitMEMLOCK", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.defaultLimitMEMLOCK) }, ),
+				get: { [self] _ in .uint64(try await self.defaultLimitMEMLOCK) },),
 			.init(
 				name: "DefaultLimitMEMLOCKSoft", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.defaultLimitMEMLOCKSoft) }, ),
+				get: { [self] _ in .uint64(try await self.defaultLimitMEMLOCKSoft) },),
 			.init(
 				name: "DefaultLimitLOCKS", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.defaultLimitLOCKS) }, ),
+				get: { [self] _ in .uint64(try await self.defaultLimitLOCKS) },),
 			.init(
 				name: "DefaultLimitLOCKSSoft", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.defaultLimitLOCKSSoft) }, ),
+				get: { [self] _ in .uint64(try await self.defaultLimitLOCKSSoft) },),
 			.init(
 				name: "DefaultLimitSIGPENDING", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.defaultLimitSIGPENDING) }, ),
+				get: { [self] _ in .uint64(try await self.defaultLimitSIGPENDING) },),
 			.init(
 				name: "DefaultLimitSIGPENDINGSoft", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.defaultLimitSIGPENDINGSoft) }, ),
+				get: { [self] _ in .uint64(try await self.defaultLimitSIGPENDINGSoft) },),
 			.init(
 				name: "DefaultLimitMSGQUEUE", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.defaultLimitMSGQUEUE) }, ),
+				get: { [self] _ in .uint64(try await self.defaultLimitMSGQUEUE) },),
 			.init(
 				name: "DefaultLimitMSGQUEUESoft", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.defaultLimitMSGQUEUESoft) }, ),
+				get: { [self] _ in .uint64(try await self.defaultLimitMSGQUEUESoft) },),
 			.init(
 				name: "DefaultLimitNICE", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.defaultLimitNICE) }, ),
+				get: { [self] _ in .uint64(try await self.defaultLimitNICE) },),
 			.init(
 				name: "DefaultLimitNICESoft", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.defaultLimitNICESoft) }, ),
+				get: { [self] _ in .uint64(try await self.defaultLimitNICESoft) },),
 			.init(
 				name: "DefaultLimitRTPRIO", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.defaultLimitRTPRIO) }, ),
+				get: { [self] _ in .uint64(try await self.defaultLimitRTPRIO) },),
 			.init(
 				name: "DefaultLimitRTPRIOSoft", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.defaultLimitRTPRIOSoft) }, ),
+				get: { [self] _ in .uint64(try await self.defaultLimitRTPRIOSoft) },),
 			.init(
 				name: "DefaultLimitRTTIME", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.defaultLimitRTTIME) }, ),
+				get: { [self] _ in .uint64(try await self.defaultLimitRTTIME) },),
 			.init(
 				name: "DefaultLimitRTTIMESoft", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.defaultLimitRTTIMESoft) }, ),
+				get: { [self] _ in .uint64(try await self.defaultLimitRTTIMESoft) },),
 			.init(
 				name: "DefaultTasksMax", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.defaultTasksMax) }, ),
+				get: { [self] _ in .uint64(try await self.defaultTasksMax) },),
 			.init(
 				name: "DefaultMemoryPressureThresholdUSec", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.defaultMemoryPressureThresholdUSec) }, ),
+				get: { [self] _ in .uint64(try await self.defaultMemoryPressureThresholdUSec) },),
 			.init(
 				name: "DefaultMemoryPressureWatch", signature: "s", access: .read,
-				get: { [self] _ in .string(try await self.defaultMemoryPressureWatch) }, ),
+				get: { [self] _ in .string(try await self.defaultMemoryPressureWatch) },),
 			.init(
 				name: "TimerSlackNSec", signature: "t", access: .read,
-				get: { [self] _ in .uint64(try await self.timerSlackNSec) }, ),
+				get: { [self] _ in .uint64(try await self.timerSlackNSec) },),
 			.init(
 				name: "DefaultOOMPolicy", signature: "s", access: .read,
-				get: { [self] _ in .string(try await self.defaultOOMPolicy) }, ),
+				get: { [self] _ in .string(try await self.defaultOOMPolicy) },),
 			.init(
 				name: "DefaultOOMScoreAdjust", signature: "i", access: .read,
-				get: { [self] _ in .int32(try await self.defaultOOMScoreAdjust) }, ),
+				get: { [self] _ in .int32(try await self.defaultOOMScoreAdjust) },),
 			.init(
 				name: "DefaultRestrictSUIDSGID", signature: "b", access: .read,
-				get: { [self] _ in .boolean(try await self.defaultRestrictSUIDSGID) }, ),
+				get: { [self] _ in .boolean(try await self.defaultRestrictSUIDSGID) },),
 			.init(
 				name: "CtrlAltDelBurstAction", signature: "s", access: .read,
-				get: { [self] _ in .string(try await self.ctrlAltDelBurstAction) }, ),
+				get: { [self] _ in .string(try await self.ctrlAltDelBurstAction) },),
 			.init(
 				name: "SoftRebootsCount", signature: "u", access: .read,
-				get: { [self] _ in .uint32(try await self.softRebootsCount) }, ),
+				get: { [self] _ in .uint32(try await self.softRebootsCount) },),
 		]
 		return iface
 	}
