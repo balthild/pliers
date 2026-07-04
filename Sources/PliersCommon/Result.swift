@@ -1,5 +1,5 @@
 extension Result {
-	@inlinable
+	@inline(always)
 	public init(catching body: () async throws(Failure) -> Success) async {
 		do {
 			self = .success(try await body())

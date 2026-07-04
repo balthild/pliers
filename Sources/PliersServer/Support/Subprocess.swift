@@ -4,6 +4,10 @@ import Subprocess
 
 extension PlatformOptions {
 	public static func su(_ username: String) throws -> Self {
+		if username == "root" {
+			return .init()
+		}
+
 		guard let passwd = getpwnam(username) else {
 			throw RuntimeError("invalid user")
 		}

@@ -17,7 +17,12 @@ let package = Package(
 		.package(url: "https://github.com/elementary-swift/elementary.git", from: "0.6.0"),
 		.package(url: "https://github.com/vapor-community/vapor-elementary.git", from: "0.1.0"),
 		.package(url: "https://github.com/mxcl/Path.swift.git", from: "1.6.0"),
-		.package(url: "https://github.com/swiftlang/swift-subprocess.git", from: "0.4.0"),
+		// https://github.com/swiftlang/swift-subprocess/pull/344
+		// .package(url: "https://github.com/swiftlang/swift-subprocess.git", from: "1.0.0-beta.1"),
+		.package(
+			url: "https://github.com/broken-circle/swift-subprocess.git",
+			branch: "shim-user-group-id-342",
+		),
 		.package(url: "https://github.com/pointfreeco/swift-case-paths.git", from: "1.8.0"),
 		.package(url: "https://github.com/wendylabsinc/dbus.git", from: "0.4.0"),
 	],

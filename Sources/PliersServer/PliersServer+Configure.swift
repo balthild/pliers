@@ -56,5 +56,6 @@ extension PliersServer {
 
 		try app.register(collection: CaddyController())
 		try app.register(collection: CaddyServiceController())
+		try app.register(collection: CaddyConfigController())
 	}
 }

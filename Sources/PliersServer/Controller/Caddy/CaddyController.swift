@@ -94,6 +94,13 @@ struct CaddyController: RouteCollection {
 			throw AlertError("at least one domain is required")
 		}
 
+		let regex = /^(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z0-9][a-z0-9-]{0,61}[a-z0-9]$/
+		for domain in input.domains {
+			guard domain.wholeMatch(of: regex) != nil else {
+				throw AlertError("domain \(domain) is invalid")
+			}
+		}
+
 		let existed: [Caddy]
 		if let id = model.id {
 			existed = try await Caddy.query(on: req.db).filter(\.$id != id).all()

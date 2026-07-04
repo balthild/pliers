@@ -52,6 +52,10 @@ extension View.Page {
 
 			div(.class("mb-2 flex gap-2")) {
 				a(.class("btn"), .href("/caddy/new")) { "New" }
+
+				form(.method(.post), .action("/caddy/config/apply")) {
+					button(.type(.submit)) { "Apply" }
+				}
 			}
 
 			table {

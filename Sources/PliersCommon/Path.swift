@@ -22,6 +22,10 @@ extension Path {
 		}
 	}
 
+	public func replace(with other: Path) throws {
+		let _ = try FileManager.default.replaceItemAt(self.url, withItemAt: other.url)
+	}
+
 	public func hasPrefix(_ prefix: Path) -> Bool {
 		let longer = self.components
 		let shorter = prefix.components

@@ -3,6 +3,7 @@ PLIERS_PKGS ?= /opt/pliers
 PLIERS_COREUTILS ?= /usr/bin
 PLIERS_CADDY_EXEC ?= /usr/bin/caddy
 PLIERS_CADDY_CONF ?= /etc/caddy
+PLIERS_CADDY_USER ?= caddy
 
 override GENERATE_PATH = ./Sources/PliersCommon/Constants+Generated.swift
 override define GENERATE_CODE
@@ -14,6 +15,7 @@ extension Constants {
 	public enum caddy {
 		public static let exec = Path("$(PLIERS_CADDY_EXEC)")!
 		public static let conf = Path("$(PLIERS_CADDY_CONF)")!
+		public static let user = "$(PLIERS_CADDY_USER)"
 	}
 }
 endef
