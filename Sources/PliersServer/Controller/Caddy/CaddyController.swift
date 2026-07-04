@@ -48,6 +48,7 @@ struct CaddyController: RouteCollection {
 	@Sendable
 	func create(req: Request) async throws -> Response {
 		let model = Caddy()
+
 		try await prepare(req: req, model: model)
 		try await model.create(on: req.db)
 
@@ -75,7 +76,17 @@ struct CaddyController: RouteCollection {
 
 	@Sendable
 	func delete(req: Request) async throws -> Response {
+		struct Input: Content {
+			let confirm: String
+		}
+
+		let input = try req.content.decode(Input.self)
+
 		let model = try await req.find(Caddy.self, "id")
+
+		guard input.confirm == model.id?.uuidString else {
+			throw AlertError("confirmation does not match the id")
+		}
 
 		try await model.delete(on: req.db)
 
