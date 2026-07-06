@@ -1,10 +1,13 @@
 {
 	"includes": [
+		".vscode/*.json",
 		".swift-format",
 		"dprint.json",
 		"Resources/**/*.{js,css}",
 		"Public/js/*.js",
-		".vscode/*.json",
+		"Sources/PliersSystemd/*.xml",
+		"Sources/**/*.swift",
+		"Package.swift",
 	],
 	"excludes": [
 		".build",
@@ -27,7 +30,7 @@
 		},
 	},
 	"markup": {
-		"associations": ["*.{html,svg,leaf}"],
+		"associations": ["*.{html,svg,xml}"],
 		"styleIndent": true,
 		"scriptIndent": true,
 		"scriptFormatter": "biome",
@@ -47,10 +50,22 @@
 			".vscode/settings.json",
 		],
 	},
+	"exec": {
+		"cwd": "${configDir}",
+		"commands": [
+			{
+				"command": "swift-format {{file_path}}",
+				"exts": ["swift"],
+				"cacheKeyFiles": [".swift-format"],
+				"stdin": false,
+			},
+		],
+	},
 	"plugins": [
-		"https://plugins.dprint.dev/oxc-0.14.0.wasm",
-		"https://plugins.dprint.dev/json-0.21.3.wasm",
-		"https://plugins.dprint.dev/g-plane/markup_fmt-v0.27.0.wasm",
-		"https://plugins.dprint.dev/g-plane/malva-v0.15.2.wasm",
+		"https://plugins.dprint.dev/oxc-0.28.0.wasm",
+		"https://plugins.dprint.dev/json-0.22.0.wasm",
+		"https://plugins.dprint.dev/g-plane/markup_fmt-v0.27.3.wasm",
+		"https://plugins.dprint.dev/g-plane/malva-v0.16.0.wasm",
+		"https://plugins.dprint.dev/exec-0.7.2.json",
 	],
 }

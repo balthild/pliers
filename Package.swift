@@ -20,8 +20,8 @@ let package = Package(
 		// https://github.com/swiftlang/swift-subprocess/pull/344
 		// .package(url: "https://github.com/swiftlang/swift-subprocess.git", from: "1.0.0-beta.1"),
 		.package(
-			url: "https://github.com/broken-circle/swift-subprocess.git",
-			branch: "shim-user-group-id-342",
+			url: "https://github.com/swiftlang/swift-subprocess.git",
+			revision: "daca5529133c51ad4e10c73852002496d486d660",
 		),
 		.package(url: "https://github.com/pointfreeco/swift-case-paths.git", from: "1.8.0"),
 		.package(url: "https://github.com/wendylabsinc/dbus.git", from: "0.4.0"),

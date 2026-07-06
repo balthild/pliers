@@ -1,5 +1,5 @@
 {
-  "originHash" : "a1e811d38b28c2f7d202da4ab3ac0dcefdefe5baf3871313d8c9cff4fbf27439",
+  "originHash" : "9e1180dbbf2a01217ed4d369a7d2be296dc22249301689f5a2568ee94573f738",
   "pins" : [
     {
       "identity" : "async-http-client",
@@ -346,10 +346,9 @@
     {
       "identity" : "swift-subprocess",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/broken-circle/swift-subprocess.git",
+      "location" : "https://github.com/swiftlang/swift-subprocess.git",
       "state" : {
-        "branch" : "shim-user-group-id-342",
-        "revision" : "8271fd3798675c30529a1d7663042d3130d09a19"
+        "revision" : "daca5529133c51ad4e10c73852002496d486d660"
       }
     },
     {

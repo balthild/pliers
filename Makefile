@@ -48,8 +48,7 @@ dev.css:
 dbus:
 	busctl introspect --xml-interface org.freedesktop.systemd1 /org/freedesktop/systemd1 > ./Sources/PliersSystemd/Systemd1.xml
 	swift run dbus-codegen ./Sources/PliersSystemd/Systemd1.xml
-	swift format --in-place ./Sources/PliersSystemd/Systemd1.swift
+	dprint fmt ./Sources/PliersSystemd
 
 fmt:
 	dprint fmt
-	swift format --in-place --recursive Sources Tests Package.swift
