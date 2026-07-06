@@ -25,7 +25,10 @@ extension View.Page {
 					.class("bg-yellow-600").when(status != "active" && status != "inactive"),
 				) {}
 
-				span(.class("mr-2")) { status.capitalized }
+				span { status.capitalized }
+
+				// a dummy button to prevent layout shift
+				span(.class("btn text-xs px-0 w-0 invisible")) { "#" }
 
 				if status == "active" {
 					form(.method(.post), .action("/caddy/service/stop")) {

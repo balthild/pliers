@@ -1,4 +1,4 @@
-button:not(.link), a.btn {
+button:not(.link), .btn {
 	@apply text-sm;
 	@apply py-0.5 px-2;
 	@apply border border-gray-400;
