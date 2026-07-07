@@ -76,7 +76,8 @@ extension View.Layout {
 
 		@HTMLBuilder
 		private func link(text: String, path: String) -> some HTML {
-			a(.href(path), .class("current").when(req.url.path == path)) {
+			let current = req.url.path == path || req.url.path.hasPrefix(path + "/")
+			a(.href(path), .class("current").when(current)) {
 				text
 			}
 		}
