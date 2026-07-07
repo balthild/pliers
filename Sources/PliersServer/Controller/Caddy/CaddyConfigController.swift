@@ -74,7 +74,8 @@ struct CaddyConfigController: RouteCollection {
 		}
 
 		let file = dir / "Caddyfile"
-		try await req.fileio.writeFile(ByteBuffer(string: caddyfile), at: file.string)
+		let buffer = req.byteBufferAllocator.buffer(string: caddyfile)
+		try await req.fileio.writeFile(buffer, at: file.string)
 
 		return dir
 	}

@@ -36,7 +36,8 @@ struct FileMutationController: RouteCollection {
 			throw AlertError("invalid path or access denied")
 		}
 
-		try await req.fileio.fillFile(ByteBuffer(data: input.content), at: path.string)
+		let buffer = req.byteBufferAllocator.buffer(data: input.content)
+		try await req.fileio.fillFile(buffer, at: path.string)
 
 		return req.redirect(.back)
 	}
