@@ -20,15 +20,15 @@ struct PasswordLoginController: RouteCollection {
 		let credentials = try req.content.decode(Credentials.self)
 
 		let user = try await User.find(username: credentials.username, on: req.db)
-		guard let user, user.password != nil, user.totp != nil else {
+		guard let user, let password = user.password, let totp = user.totp else {
+			let _ = try await req.password.async.verify("", created: req.placeholder.password)
+			let _ = req.placeholder.totp.verify(credentials.totp)
 			throw AlertError("invalid credentials")
 		}
 
-		guard user.totp!.verify(credentials.totp) else {
-			throw AlertError("invalid credentials")
-		}
-
-		guard try req.password.verify(credentials.password, created: user.password!) else {
+		let step1 = try await req.password.async.verify(credentials.password, created: password)
+		let step2 = totp.verify(credentials.totp)
+		guard step1 && step2 else {
 			throw AlertError("invalid credentials")
 		}
 

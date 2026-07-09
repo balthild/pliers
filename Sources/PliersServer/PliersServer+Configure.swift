@@ -11,6 +11,8 @@ extension PliersServer {
 		try await console()
 		try await http()
 
+		app.placeholder = try .init(app: app)
+
 		// jwt is used for short-lived temporary login tokens only,
 		// so the key can be randomly generated on each launch
 		let key = SymmetricKey(size: .bits256)
