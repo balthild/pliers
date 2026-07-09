@@ -7,7 +7,7 @@ extension View.Page {
 		var title: String { "Login" }
 
 		@HTMLBuilder
-		func body() -> some HTML {
+		func body() -> sending some HTML {
 			div(.x.data("{ tab: 'passkey' }")) {
 				header(.class("flex gap-3 mb-3 -mt-1")) {
 					h2(.class("text-base font-bold grow")) { title }

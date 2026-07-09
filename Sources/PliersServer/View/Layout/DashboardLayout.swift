@@ -13,18 +13,18 @@ extension View.Layout {
 		}
 
 		@HTMLBuilder
-		func error(_ error: Swift.Error) -> some HTML {
+		func error(_ error: Swift.Error) -> sending some HTML {
 			View.Page.ErrorPage(error: error)
 		}
 
 		@HTMLBuilder
-		func head(_ page: borrowing Page) throws -> some HTML {
+		func head(_ page: borrowing Page) throws -> sending some HTML {
 			View.Component.CommonHead()
 			try page.head()
 		}
 
 		@HTMLBuilder
-		func body(_ page: borrowing Page) throws -> some HTML {
+		func body(_ page: borrowing Page) throws -> sending some HTML {
 			let body = try page.body()
 
 			div(.class("flex items-stretch grow")) {

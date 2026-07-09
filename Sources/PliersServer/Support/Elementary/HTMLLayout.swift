@@ -7,7 +7,7 @@ protocol HTMLLayout: Sendable {
 	associatedtype Body: HTML
 
 	func title(_ page: borrowing Page) -> String
-	func error(_ error: Swift.Error) -> Error
-	func head(_ page: borrowing Page) throws -> Head
-	func body(_ page: borrowing Page) throws -> Body
+	func error(_ error: Swift.Error) -> sending Error
+	func head(_ page: borrowing Page) throws -> sending Head
+	func body(_ page: borrowing Page) throws -> sending Body
 }

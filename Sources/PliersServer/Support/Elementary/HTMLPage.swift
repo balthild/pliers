@@ -8,13 +8,13 @@ protocol HTMLPage: Sendable, HTML {
 	var layout: Layout { get }
 	var title: String { get }
 
-	func head() throws -> PageHead
-	func body() throws -> PageBody
+	func head() throws -> sending PageHead
+	func body() throws -> sending PageBody
 }
 
 extension HTMLPage {
 	@HTMLBuilder
-	func head() throws -> some HTML {}
+	func head() throws -> sending some HTML {}
 
 	static func _render<Renderer: _HTMLRendering>(
 		_ html: consuming Self,

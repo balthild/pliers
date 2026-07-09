@@ -21,7 +21,7 @@ extension View.Page {
 		var title: String { "Filesystem" }
 
 		@HTMLBuilder
-		func body() throws -> some HTML {
+		func body() throws -> sending some HTML {
 			h2 { title }
 			hr()
 

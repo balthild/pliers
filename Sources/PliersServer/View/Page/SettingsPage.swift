@@ -11,7 +11,7 @@ extension View.Page {
 		var title: String { "Settings" }
 
 		@HTMLBuilder
-		func body() throws -> some HTML {
+		func body() throws -> sending some HTML {
 			h2 { title }
 			hr()
 			try passkey()
