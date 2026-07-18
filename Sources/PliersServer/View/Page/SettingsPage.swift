@@ -46,10 +46,11 @@ extension View.Page {
 							td {
 								div(.class("flex gap-2")) {
 									let id = try passkey.requireID()
+									let name = passkey.name
 
 									button(
-										.class("link text-yellow-600"),
-										.on(.click, "$('#passkey_rename_dialog').show('\(id)');"),
+										.class("link"),
+										.on(.click, "$('#passkey_rename_dialog').show('\(id)', \(name.quoteJSON));"),
 									) { "Rename" }
 
 									button(
@@ -83,6 +84,121 @@ extension View.Page {
 				}
 			}
 
+			// MARK: passkey_rename_dialog
+
+			Alpine.data(
+				"passkey_rename_dialog",
+				"""
+				() => ({
+					id: '',
+					name: '',
+
+					get url() {
+						if (!this.id) return '/404';
+						return `/settings/passkey/${this.id}/update`
+					},
+
+					show(id, name) {
+						this.$root.showModal();
+						this.id = id;
+						this.name = name;
+					},
+
+					cancel() {
+						this.id = '';
+						this.name = '';
+						this.$root.close();
+					},
+				})
+				""",
+			)
+
+			dialog(
+				.closedby(.none),
+				.class("w-100"),
+				.id("passkey_rename_dialog"),
+				.x.data("passkey_rename_dialog"),
+			) {
+				header { "Rename Passkey" }
+
+				main {
+					form(
+						.method(.post),
+						.class("form"),
+						.x.bind("action", "url"),
+					) {
+						label(.class("field")) {
+							span { "Name" }
+							input(
+								.name("name"),
+								.type(.text),
+								.required,
+								.x.model("name"),
+								.autocomplete(.off),
+								.custom("data-1p-ignore"),
+							)
+						}
+
+						div(.class("actions")) {
+							button(.type(.button), .x.on("click", "cancel")) { "Cancel" }
+							button(.type(.submit), .class("primary")) { "Save" }
+						}
+					}
+				}
+			}
+
+			// MARK: passkey_delete_dialog
+
+			Alpine.data(
+				"passkey_delete_dialog",
+				"""
+				() => ({
+					id: '',
+
+					get url() {
+						if (!this.id) return '/404';
+						return `/settings/passkey/${this.id}/delete`
+					},
+
+					show(id) {
+						this.$root.showModal();
+						this.id = id;
+					},
+
+					cancel() {
+						this.id = '';
+						this.$root.close();
+					},
+				})
+				""",
+			)
+
+			dialog(
+				.closedby(.none),
+				.class("w-100"),
+				.id("passkey_delete_dialog"),
+				.x.data("passkey_delete_dialog"),
+			) {
+				header { "Delete Passkey" }
+
+				main {
+					p(.class("mb-3 text-sm")) { "This action cannot be undone." }
+
+					form(
+						.method(.post),
+						.class("form"),
+						.x.bind("action", "url"),
+					) {
+						div(.class("actions")) {
+							button(.type(.button), .x.on("click", "cancel")) { "Cancel" }
+							button(.type(.submit), .class("danger")) { "Delete" }
+						}
+					}
+				}
+			}
+
+			// MARK: passkey_new_dialog
+
 			Alpine.data(
 				"passkey_new_dialog",
 				"""
@@ -93,7 +209,6 @@ extension View.Page {
 
 					show() {
 						// cannot use modal dialog because it blocks 1password UI
-						// this.$root.showModal();
 						this.$root.show();
 						this.open = true;
 						this.error = '';
@@ -112,7 +227,7 @@ extension View.Page {
 
 						try {
 							this.error = '';
-							await passkeyCreate();
+							await passkeyCreate(this.name);
 						} catch (error) {
 							this.error = error.message ?? String(error);
 						}

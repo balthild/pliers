@@ -23,7 +23,7 @@ globalThis.fetchJson = async (url, options = {}) => {
 	return await response.json();
 };
 
-globalThis.passkeyCreate = async () => {
+globalThis.passkeyCreate = async (name) => {
 	const options = await fetchJson('/settings/passkey');
 	const publicKey = PublicKeyCredential.parseCreationOptionsFromJSON(options.publicKey);
 
@@ -32,7 +32,7 @@ globalThis.passkeyCreate = async () => {
 	await fetchJson('/settings/passkey', {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify({ name: this.name, passkey }),
+		body: JSON.stringify({ name, passkey }),
 	});
 
 	location.reload();

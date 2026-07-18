@@ -251,12 +251,12 @@ extension View.Page {
 
 										button(
 											.class("link text-yellow-600"),
-											.on(.click, "$('#chmod_dialog').show('\(path)', '\(mode)');"),
+											.on(.click, "$('#chmod_dialog').show(\(path.quoteJSON), '\(mode)');"),
 										) { "Chmod" }
 
 										button(
 											.class("link text-red-700"),
-											.on(.click, "$('#delete_dialog').show('\(path)');"),
+											.on(.click, "$('#delete_dialog').show(\(path.quoteJSON));"),
 										) { "Delete" }
 									}
 								}
