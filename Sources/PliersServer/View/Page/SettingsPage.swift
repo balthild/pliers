@@ -267,7 +267,7 @@ extension View.Page {
 						}
 
 						div(.class("actions")) {
-							button(.type(.button), .x.on("click", "cancel()")) { "Cancel" }
+							button(.type(.button), .x.on("click", "cancel")) { "Cancel" }
 							button(.type(.submit), .class("primary")) { "Create" }
 						}
 					}
@@ -302,6 +302,8 @@ extension View.Page {
 						.x.cloak,
 						.x.show("step"),
 					) {
+						// MARK: change password
+
 						label(.class("field"), .x.show("step === 1")) {
 							span { "Username" }
 							input(
@@ -351,6 +353,8 @@ extension View.Page {
 						.x.cloak,
 						.x.show("step"),
 					) {
+						// MARK: create password step 1
+
 						label(.class("field"), .x.show("step === 1")) {
 							span { "Username" }
 							input(
@@ -386,6 +390,8 @@ extension View.Page {
 							button(.type(.button), .class("primary"), .x.on("click", "step = 2")) { "Next" }
 						}
 
+						// MARK: create password step 2
+
 						div(.class("field"), .x.show("step === 2")) {
 							span {}
 							div(.class("max-w-50")) {
@@ -393,13 +399,10 @@ extension View.Page {
 
 								div(.id("totp-qr-code"), .class("border border-gray-500")) {}
 								script(.type(.module)) {
-									// the url should contain no backticks so I don't do a real escaping
-									let clean = url.replacing("`", with: "")
-
 									HTMLRaw(
 										"""
 										import { renderSVG } from 'https://esm.sh/uqr@0.1.3?exports=renderSVG';
-										document.getElementById('totp-qr-code').innerHTML = renderSVG(`\(clean)`);
+										document.getElementById('totp-qr-code').innerHTML = renderSVG(\(url.quoteJSON));
 										"""
 									)
 								}

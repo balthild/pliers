@@ -90,7 +90,7 @@ extension View.Page {
 						}
 
 						div(.class("actions")) {
-							button(.type(.button), .x.on("click", "cancel()")) { "Cancel" }
+							button(.type(.button), .x.on("click", "cancel")) { "Cancel" }
 							button(.type(.submit), .class("danger")) { "Delete" }
 						}
 					}
@@ -156,7 +156,7 @@ extension View.Page {
 						}
 
 						div(.class("actions")) {
-							button(.type(.button), .x.on("click", "cancel()")) { "Cancel" }
+							button(.type(.button), .x.on("click", "cancel")) { "Cancel" }
 							button(.type(.submit), .class("primary")) { "Save" }
 						}
 					}

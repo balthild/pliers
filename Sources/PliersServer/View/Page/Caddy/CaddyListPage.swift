@@ -61,6 +61,8 @@ extension View.Page {
 				}
 			}
 
+			// MARK: table
+
 			table {
 				thead {
 					tr {
@@ -117,6 +119,8 @@ extension View.Page {
 				}
 			}
 
+			// MARK: delete_dialog
+
 			Alpine.data(
 				"delete_dialog",
 				"""
@@ -168,7 +172,7 @@ extension View.Page {
 						}
 
 						div(.class("actions")) {
-							button(.type(.button), .x.on("click", "cancel()")) { "Cancel" }
+							button(.type(.button), .x.on("click", "cancel")) { "Cancel" }
 							button(.type(.submit), .class("danger")) { "Delete" }
 						}
 					}

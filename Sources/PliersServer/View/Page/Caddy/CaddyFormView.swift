@@ -28,6 +28,8 @@ extension View.Page {
 
 				hr()
 
+				// MARK: tls
+
 				div(.class("field")) {
 					span { "TLS" }
 					div(.class("flex gap-2")) {
@@ -81,6 +83,8 @@ extension View.Page {
 				}
 
 				hr()
+
+				// MARK: backend
 
 				div(.class("field")) {
 					span { "Backend" }
