@@ -22,6 +22,8 @@ extension HTMLAttribute {
 	}
 }
 
+// MARK: form
+
 extension HTMLAttribute where Tag == HTMLTag.form {
 	public struct EncType: Sendable, Equatable {
 		fileprivate let value: String
@@ -36,6 +38,8 @@ extension HTMLAttribute where Tag == HTMLTag.form {
 	}
 }
 
+// MARK: input
+
 extension HTMLAttribute where Tag == HTMLTag.input {
 	public static var readonly: Self {
 		.init(name: "readonly", value: nil)
@@ -46,6 +50,20 @@ extension HTMLAttribute where Tag == HTMLTag.input {
 	}
 }
 
+// MARK: textarea
+
+extension HTMLAttribute where Tag == HTMLTag.textarea {
+	public static func rows(_ value: Int) -> HTMLAttribute {
+		.init(name: "rows", value: String(value))
+	}
+
+	public static func cols(_ value: Int) -> HTMLAttribute {
+		.init(name: "cols", value: String(value))
+	}
+}
+
+// MARK: td
+
 extension HTMLAttribute where Tag == HTMLTag.td {
 	public static func colspan(_ value: Int) -> Self {
 		.init(name: "colspan", value: String(value))
@@ -55,6 +73,8 @@ extension HTMLAttribute where Tag == HTMLTag.td {
 		.init(name: "rowspan", value: String(value))
 	}
 }
+
+// MARK: dialog
 
 extension HTMLAttribute where Tag == HTMLTag.dialog {
 	public struct ClosedBy: Sendable, Equatable {
@@ -69,6 +89,8 @@ extension HTMLAttribute where Tag == HTMLTag.dialog {
 		.init(name: "closedby", value: value.value)
 	}
 }
+
+// MARK: time
 
 extension HTMLAttribute where Tag == HTMLTag.time {
 	public static func datetime(_ value: String) -> Self {

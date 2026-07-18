@@ -174,9 +174,7 @@ extension View.Page {
 
 				div(.class("actions")) {
 					a(.href("/caddy"), .class("btn")) { "Cancel" }
-					button(.type(.submit), .class("primary")) {
-						model.id == nil ? "Create" : "Update"
-					}
+					button(.type(.submit), .class("primary")) { "Save" }
 				}
 			}
 		}

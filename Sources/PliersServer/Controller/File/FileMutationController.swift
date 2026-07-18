@@ -20,7 +20,7 @@ struct FileMutationController: RouteCollection {
 	func create(req: Request) async throws -> Response {
 		struct Input: Content {
 			let filename: String
-			let content: Data
+			let content: Data?
 		}
 
 		let user = try req.auth.require(User.self)
@@ -36,15 +36,33 @@ struct FileMutationController: RouteCollection {
 			throw AlertError("invalid path or access denied")
 		}
 
-		let buffer = req.byteBufferAllocator.buffer(data: input.content)
-		try await req.fileio.fillFile(buffer, at: path.string)
+		if let content = input.content {
+			let buffer = req.byteBufferAllocator.buffer(data: content)
+			try await req.fileio.fillFile(buffer, at: path.string)
+		}
 
 		return req.redirect(.back)
 	}
 
 	@Sendable
 	func update(req: Request) async throws -> Response {
-		throw Abort(.notImplemented)
+		struct Input: Content {
+			let content: String
+		}
+
+		let user = try req.auth.require(User.self)
+		let input = try req.content.decode(Input.self)
+
+		let path: Path = try req.query["path"].alert("invalid path")
+
+		guard path.isFile && path.hasAccess(.rw, by: user.username) else {
+			throw AlertError("invalid path or access denied")
+		}
+
+		let buffer = req.byteBufferAllocator.buffer(string: input.content)
+		try await req.fileio.fillFile(buffer, at: path.string)
+
+		return req.redirect(.back)
 	}
 
 	@Sendable

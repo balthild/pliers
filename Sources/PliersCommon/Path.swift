@@ -57,6 +57,7 @@ extension Path {
 
 		public static let rw: Self = [.r, .w]
 		public static let rx: Self = [.r, .x]
+		public static let wx: Self = [.w, .x]
 		public static let rwx: Self = [.r, .w, .x]
 	}
 

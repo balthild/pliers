@@ -1,10 +1,9 @@
 import Elementary
-import Foundation
 import Path
 import Vapor
 
 extension View.Page {
-	struct FileListPage: HTMLPage {
+	struct FileListPage: HTMLPage, FileViewMixin {
 		typealias Entry = (
 			name: String,
 			path: Path,
@@ -26,7 +25,7 @@ extension View.Page {
 			hr()
 
 			p(.class("text-sm mb-2")) {
-				"Current Path: "
+				"Current Directory: "
 				code { path.string }
 			}
 
@@ -169,7 +168,30 @@ extension View.Page {
 			div(.class("mb-2"), .x.data("{ action: false }")) {
 				div(.class("flex gap-2"), .x.show("!action")) {
 					button(.x.on("click", "action = 'upload'")) { "Upload" }
+					button(.x.on("click", "action = 'create'")) { "Create" }
 					button(.x.on("click", "action = 'mkdir'")) { "Mkdir" }
+				}
+
+				form(
+					.method(.post),
+					.action(link(to: path, action: "create")),
+					.class("form max-w-100 p-2 border border-gray-400"),
+					.x.cloak,
+					.x.show("action == 'create'"),
+				) {
+					label(.class("field")) {
+						span { "Filename" }
+						input(
+							.name("filename"),
+							.type(.text),
+							.required,
+						)
+					}
+
+					div(.class("actions")) {
+						button(.type(.button), .x.on("click", "action = false")) { "Cancel" }
+						button(.type(.submit), .class("primary")) { "Create" }
+					}
 				}
 
 				form(
@@ -236,7 +258,7 @@ extension View.Page {
 								if entry.dir {
 									a(.href(link(to: entry.path))) { "\(entry.name)/" }
 								} else {
-									entry.name
+									a(.href(link(to: entry.path, action: "edit"))) { entry.name }
 								}
 							}
 							td { entry.owner }
@@ -273,22 +295,6 @@ extension View.Page {
 					}
 				}
 			}
-		}
-
-		private func link(to path: Path, action: String? = nil) -> String {
-			var url = URLComponents()
-
-			if let action {
-				url.path = "/file/\(action)"
-			} else {
-				url.path = "/file"
-			}
-
-			url.queryItems = [
-				.init(name: "path", value: path.string)
-			]
-
-			return url.string ?? "/file"
 		}
 	}
 }

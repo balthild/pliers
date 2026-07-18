@@ -8,6 +8,7 @@ struct FileController: RouteCollection {
 	func boot(routes: any RoutesBuilder) throws {
 		let group = routes.grouped("file").grouped(User.requireLoggedIn())
 		group.get(use: self.index)
+		group.get("edit", use: self.edit)
 		group.get("download", use: self.download)
 	}
 
@@ -18,17 +19,7 @@ struct FileController: RouteCollection {
 
 		let path = try Path(req.query["path"] ?? home.string).alert("invalid path")
 
-		if path.isDirectory {
-			return try await self.list(req: req, path: path)
-		} else {
-			return try await self.edit(req: req, path: path)
-		}
-	}
-
-	private func list(req: Request, path: Path) async throws -> Response {
-		let user = try req.auth.require(User.self)
-
-		guard path.hasAccess(.rx, by: user.username) else {
+		guard path.isDirectory && path.hasAccess(.rx, by: user.username) else {
 			throw AlertError("invalid path or access denied")
 		}
 
@@ -62,20 +53,25 @@ struct FileController: RouteCollection {
 		}
 	}
 
-	private func edit(req: Request, path: Path) async throws -> Response {
+	private func edit(req: Request) async throws -> Response {
 		let user = try req.auth.require(User.self)
 
-		guard path.hasAccess(.rw, by: user.username) else {
+		let path: Path = try req.query["path"].alert("invalid path")
+
+		guard path.isFile && path.hasAccess(.rw, by: user.username) else {
 			throw AlertError("invalid path or access denied")
 		}
 
-		// let buffer = try await req.fileio.collectFile(at: path.string)
-		// guard let text = buffer.readString(length: buffer.readableBytes) else {
-		// 	throw AlertError("not a UTF-8 text file")
-		// }
+		var buffer = try await req.fileio.collectFile(at: path.string)
+		guard let text = buffer.readString(length: buffer.readableBytes) else {
+			throw AlertError("not a utf-8 text file")
+		}
 
 		return try await req.render {
-			"TODO"
+			View.Page.FileEditPage(
+				path: path,
+				text: text,
+			)
 		}
 	}
 
