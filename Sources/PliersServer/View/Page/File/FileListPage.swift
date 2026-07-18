@@ -246,28 +246,17 @@ extension View.Page {
 									if !entry.dir {
 										a(.href(link(to: entry.path, action: "download"))) { "Download" }
 
+										let path = entry.path.string
+										let mode = String(entry.mode, radix: 8)
+
 										button(
 											.class("link text-yellow-600"),
-											.x.data(),
-											.x.on(
-												"click",
-												"""
-												const app = Alpine.$data(window.chmod_dialog);
-												app.show('\(entry.path.string)', '\(String(entry.mode, radix: 8))');
-												""",
-											),
+											.on(.click, "$('#chmod_dialog').show('\(path)', '\(mode)');"),
 										) { "Chmod" }
 
 										button(
 											.class("link text-red-700"),
-											.x.data(),
-											.x.on(
-												"click",
-												"""
-												const app = Alpine.$data(window.delete_dialog);
-												app.show('\(entry.path.string)');
-												""",
-											),
+											.on(.click, "$('#delete_dialog').show('\(path)');"),
 										) { "Delete" }
 									}
 								}

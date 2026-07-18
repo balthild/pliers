@@ -8,8 +8,21 @@ final class AlertMiddleware: AsyncMiddleware {
 		} catch let error as AbortError where error.status.code < 400 {
 			throw error
 		} catch {
-			request.logger.report(error: error)
-			return try await request.render { View.Page.ErrorPage(error: error) }
+			let status: HTTPStatus
+			switch error {
+			case let error as AbortError: status = error.status
+			case is AlertError: status = .badRequest
+			default: status = .internalServerError
+			}
+
+			if request.clientAcceptsJson {
+				throw Abort(status, reason: error.localizedDescription)
+			} else {
+				request.logger.report(error: error)
+				return try await request.render(status: status) {
+					View.Page.ErrorPage(error: error)
+				}
+			}
 		}
 	}
 }

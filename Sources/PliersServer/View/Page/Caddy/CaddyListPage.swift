@@ -100,14 +100,7 @@ extension View.Page {
 
 									button(
 										.class("link text-red-700"),
-										.x.data(),
-										.x.on(
-											"click",
-											"""
-											const app = Alpine.$data(window.delete_dialog);
-											app.show('\(try site.requireID())');
-											""",
-										),
+										.on(.click, "$('#delete_dialog').show('\(try site.requireID())');"),
 									) { "Delete" }
 								}
 							}

@@ -3,6 +3,7 @@ import Fluent
 import NIOConcurrencyHelpers
 import Vapor
 import VaporElementary
+import WebAuthn
 
 extension Request {
 	enum SpecialRedirect {
@@ -15,6 +16,11 @@ extension Request {
 			let referrer = self.headers.first(name: .referer) ?? "/"
 			return self.redirect(to: referrer)
 		}
+	}
+
+	var clientAcceptsJson: Bool {
+		guard let accept = self.headers.first(name: .accept) else { return false }
+		return accept.contains("/json") || accept.contains("+json")
 	}
 }
 
@@ -31,10 +37,49 @@ extension Request {
 
 		return model
 	}
+
+	func find<T: Model, U: Model>(
+		_ relation: ChildrenProperty<T, U>,
+		_ parameter: String,
+	) async throws -> U
+	where U.IDValue: LosslessStringConvertible {
+		guard let id: U.IDValue = self.parameters.get(parameter) else {
+			throw Abort(.notFound)
+		}
+
+		let model = try await relation.query(on: self.db)
+			.filter(\._$id == id)
+			.first()
+
+		guard let model else {
+			throw Abort(.notFound)
+		}
+
+		return model
+	}
 }
 
 extension Request {
-	func render(@HTMLBuilder content: () -> sending some HTML) async throws -> Response {
+	var webAuthn: WebAuthnManager {
+		let host = self.url.host ?? "localhost"
+		let proto = self.url.scheme ?? "http"
+		let origin = self.headers.first(name: .origin) ?? "\(proto)://\(host)"
+
+		return .init(
+			configuration: .init(
+				relyingPartyID: host,
+				relyingPartyName: "Pliers",
+				relyingPartyOrigin: origin,
+			)
+		)
+	}
+}
+
+extension Request {
+	func render(
+		status: HTTPStatus = .ok,
+		@HTMLBuilder content: () -> sending some HTML,
+	) async throws -> Response {
 		// false-positive warning produced if no type erasure
 		// capture of non-Sendable type '(some HTML).Type' in an isolated closure
 		let content = OnceBox<any HTML>(
@@ -43,7 +88,7 @@ extension Request {
 
 		// not using `VaporElementary::HTMLResponse` because it does not write `.error` on failure
 		return Response(
-			status: .ok,
+			status: status,
 			headers: ["Content-Type": "text/html; charset=utf-8"],
 			body: .init(asyncStream: { writer in
 				// vapor bug: this callback is invoked multiple times unexpectedly

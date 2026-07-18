@@ -31,6 +31,7 @@ extension PliersServer {
 
 		app.migrations.add(SessionRecord.migration)
 		app.migrations.add(CreateUser())
+		app.migrations.add(CreatePasskey())
 		app.migrations.add(CreateCaddy())
 		try await app.autoMigrate()
 	}
@@ -51,6 +52,7 @@ extension PliersServer {
 		try app.register(collection: PasswordLoginController())
 
 		try app.register(collection: SettingsController())
+		try app.register(collection: PasskeySettingsController())
 		try app.register(collection: PasswordSettingsController())
 
 		try app.register(collection: FileController())

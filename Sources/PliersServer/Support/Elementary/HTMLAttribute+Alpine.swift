@@ -68,6 +68,12 @@ extension HTMLAttribute.x {
 	}
 }
 
+extension HTMLAttribute.x {
+	public static func trap(_ expr: String) -> HTMLAttribute {
+		.init(name: "x-trap", value: expr)
+	}
+}
+
 extension HTMLAttribute.x where Tag == HTMLTag.template {
 	public static func `for`(_ expr: String) -> HTMLAttribute {
 		.init(name: "x-for", value: expr)

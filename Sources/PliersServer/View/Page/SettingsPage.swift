@@ -21,26 +21,145 @@ extension View.Page {
 
 		@HTMLBuilder
 		private func passkey() throws -> some HTML {
-			h3(.class("mb-1")) { "Passkey (TODO)" }
+			let user = try req.auth.require(User.self)
+
+			h3(.class("mb-1")) { "Passkey" }
 
 			table {
 				thead {
 					tr {
 						th { "Name" }
-						th { "Last Change" }
-						th { "Last Use" }
+						th { "Last Used" }
 						th { "Actions" }
 					}
 				}
 
 				tbody {
-					// TODO: passkey
+					for passkey in user.passkeys {
+						tr {
+							td { passkey.name }
+							td {
+								if let date = passkey.lastUsed {
+									time(.datetime("\(date.ISO8601Format())")) {}
+								}
+							}
+							td {
+								div(.class("flex gap-2")) {
+									let id = try passkey.requireID()
 
-					tr {
-						td(.colspan(4), .class("text-center")) {
-							button(.class("link")) { "Add Passkey" }
+									button(
+										.class("link text-yellow-600"),
+										.on(.click, "$('#passkey_rename_dialog').show('\(id)');"),
+									) { "Rename" }
+
+									button(
+										.class("link text-red-700"),
+										.on(.click, "$('#passkey_delete_dialog').show('\(id)');"),
+									) { "Delete" }
+								}
+							}
 						}
 					}
+
+					script {
+						HTMLRaw(
+							"""
+							const parent = document.currentScript.parentElement;
+							parent.querySelectorAll('time').forEach((el) => {
+								const date = new Date(el.dateTime);
+								el.textContent = date.toLocaleString();
+							});
+							"""
+						)
+					}
+
+					tr {
+						td(.colspan(3), .class("text-center")) {
+							button(.class("link"), .on(.click, "$('#passkey_new_dialog').show();")) {
+								"New Passkey"
+							}
+						}
+					}
+				}
+			}
+
+			Alpine.data(
+				"passkey_new_dialog",
+				"""
+				() => ({
+					open: false,
+					error: '',
+					name: '',
+
+					show() {
+						// cannot use modal dialog because it blocks 1password UI
+						// this.$root.showModal();
+						this.$root.show();
+						this.open = true;
+						this.error = '';
+						this.name = '';
+					},
+
+					cancel() {
+						this.open = false;
+						this.error = '';
+						this.name = '';
+						this.$root.close();
+					},
+
+					async submit(event) {
+						event.preventDefault();
+
+						try {
+							this.error = '';
+							await passkeyCreate();
+						} catch (error) {
+							this.error = error.message ?? String(error);
+						}
+					},
+				})
+				""",
+			)
+
+			dialog(
+				.closedby(.none),
+				.class("w-100"),
+				.id("passkey_new_dialog"),
+				.x.data("passkey_new_dialog"),
+				.x.trap("open"),
+			) {
+				header { "New Passkey" }
+
+				main {
+					p(
+						.class("text-sm text-red-700 mb-3"),
+						.x.cloak,
+						.x.show("error"),
+						.x.text("error"),
+					) {}
+
+					form(.class("form"), .x.on("submit", "submit")) {
+						label(.class("field")) {
+							span { "Name" }
+							input(
+								.name("name"),
+								.type(.text),
+								.required,
+								.x.model("name"),
+								.autocomplete(.off),
+								.custom("data-1p-ignore"),
+							)
+						}
+
+						div(.class("actions")) {
+							button(.type(.button), .x.on("click", "cancel()")) { "Cancel" }
+							button(.type(.submit), .class("primary")) { "Create" }
+						}
+					}
+				}
+
+				template(.x.teleport("body")) {
+					div(.class("dialog-backdrop"), .x.cloak, .x.show("open")) {}
 				}
 			}
 		}

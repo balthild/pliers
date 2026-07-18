@@ -1,5 +1,5 @@
 dialog {
-	@apply fixed top-1/2 left-1/2 -translate-1/2 mt-[-10vh];
+	@apply fixed top-1/2 left-1/2 -translate-1/2 mt-[-10vh] z-99999;
 	@apply border border-gray-400;
 	box-shadow: --spacing(1.5) --spacing(1.5) --alpha(var(--color-gray-500) / 25%);
 
@@ -12,8 +12,9 @@ dialog {
 	> main {
 		@apply p-3;
 	}
+}
 
-	&::backdrop {
-		@apply bg-gray-700/20;
-	}
+dialog::backdrop, .dialog-backdrop {
+	@apply fixed inset-0 z-90000;
+	@apply bg-gray-700/20;
 }

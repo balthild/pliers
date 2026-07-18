@@ -41,10 +41,37 @@ extension View.Page {
 
 		@HTMLBuilder
 		private var passkey: some HTML {
-			div(.class("form")) {
+			Alpine.data(
+				"passkey_login_form",
+				"""
+				() => ({
+					error: '',
+
+					async submit(event) {
+						event.preventDefault();
+
+						try {
+							this.error = '';
+							await passkeyLogin();
+						} catch (error) {
+							this.error = error.message ?? String(error);
+						}
+					},
+				})
+				""",
+			)
+
+			form(.class("form"), .x.data("passkey_login_form"), .x.on("submit", "submit")) {
+				p(
+					.class("text-sm text-red-700"),
+					.x.cloak,
+					.x.show("error"),
+					.x.text("error"),
+				) {}
+
 				label(.class("field")) {
-					span { "Passkey (TODO)" }
-					button(.type(.button), .class("primary")) {
+					span { "Passkey" }
+					button(.type(.submit), .class("primary")) {
 						"Login with Passkey"
 					}
 				}

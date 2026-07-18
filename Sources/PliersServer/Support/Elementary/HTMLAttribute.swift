@@ -16,6 +16,10 @@ extension HTMLAttribute {
 			return .init(name: "", value: nil)
 		}
 	}
+
+	public static func custom(_ name: String) -> Self {
+		.init(name: name, value: nil)
+	}
 }
 
 extension HTMLAttribute where Tag == HTMLTag.form {
@@ -63,5 +67,11 @@ extension HTMLAttribute where Tag == HTMLTag.dialog {
 
 	public static func closedby(_ value: ClosedBy) -> Self {
 		.init(name: "closedby", value: value.value)
+	}
+}
+
+extension HTMLAttribute where Tag == HTMLTag.time {
+	public static func datetime(_ value: String) -> Self {
+		.init(name: "datetime", value: value)
 	}
 }

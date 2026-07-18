@@ -20,6 +20,9 @@ final class User: Model, @unchecked Sendable {
 	@OptionalField(key: "totp")
 	var totp: TOTPConfig?
 
+	@Children(for: \.$user)
+	var passkeys: [Passkey]
+
 	init() {}
 
 	public static func find(username: String, on database: Database) async throws -> User? {
