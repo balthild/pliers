@@ -30,7 +30,8 @@ struct FileMutationController: RouteCollection {
 		let dir: Path = try req.query["path"].alert("invalid path")
 		let path = dir / input.directory
 
-		let result = PliersShim::create_dir(user.username, path.string)
+		let username = self.impersonate(path, user)
+		let result = PliersShim::create_dir(username, path.string)
 		if result == EEXIST {
 			throw AlertError("path already exists")
 		} else if result != 0 {
@@ -53,7 +54,8 @@ struct FileMutationController: RouteCollection {
 		let dir: Path = try req.query["path"].alert("invalid path")
 		let path = dir / input.filename
 
-		let result = PliersShim::create_file(user.username, path.string)
+		let username = self.impersonate(path, user)
+		let result = PliersShim::create_file(username, path.string)
 		if result == EEXIST {
 			throw AlertError("path already exists")
 		} else if result != 0 {
@@ -79,7 +81,8 @@ struct FileMutationController: RouteCollection {
 
 		let path: Path = try req.query["path"].alert("invalid path")
 
-		guard path.isFile && path.hasAccess(.rw, by: user.username) else {
+		let username = self.impersonate(path, user)
+		guard path.isFile && path.hasAccess(.rw, by: username) else {
 			throw AlertError("invalid path or access denied")
 		}
 
@@ -107,11 +110,12 @@ struct FileMutationController: RouteCollection {
 		let cmd = Constants.coreutils / "rm"
 		let args = ["-rf", path.string]
 
+		let username = self.impersonate(path, user)
 		let result = try await Subprocess.run(
 			.path(.init(cmd.string)),
 			arguments: .init(.init(args)),
 			environment: .custom([]),
-			platformOptions: try .su(user.username),
+			platformOptions: try .su(username),
 			output: .discarded,
 		)
 
@@ -137,7 +141,8 @@ struct FileMutationController: RouteCollection {
 			throw AlertError("invalid mode number")
 		}
 
-		let result = PliersShim::change_mode(user.username, path.string, mode)
+		let username = self.impersonate(path, user)
+		let result = PliersShim::change_mode(username, path.string, mode)
 		if result != 0 {
 			throw AlertError("invalid path or access denied")
 		}
@@ -176,5 +181,13 @@ struct FileMutationController: RouteCollection {
 		}
 
 		return req.redirect(.back)
+	}
+
+	private func impersonate(_ path: Path, _ user: User) -> String {
+		if path.hasPrefix(Constants.www.home) {
+			return Constants.www.user
+		}
+
+		return user.username
 	}
 }

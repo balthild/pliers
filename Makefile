@@ -4,6 +4,9 @@ PLIERS_COREUTILS ?= /usr/bin
 PLIERS_CADDY_EXEC ?= /usr/bin/caddy
 PLIERS_CADDY_CONF ?= /etc/caddy
 PLIERS_CADDY_USER ?= caddy
+PLIERS_WWW_HOME ?= /var/www
+PLIERS_WWW_USER ?= www-data
+PLIERS_WWW_GROUP ?= www-data
 
 override GENERATE_PATH = ./Sources/PliersCommon/Constants+Generated.swift
 override define GENERATE_CODE
@@ -16,6 +19,11 @@ extension Constants {
 		public static let exec = Path("$(PLIERS_CADDY_EXEC)")!
 		public static let conf = Path("$(PLIERS_CADDY_CONF)")!
 		public static let user = "$(PLIERS_CADDY_USER)"
+	}
+	public enum www {
+		public static let home = Path("$(PLIERS_WWW_HOME)")!
+		public static let user = "$(PLIERS_WWW_USER)"
+		public static let group = "$(PLIERS_WWW_GROUP)"
 	}
 }
 endef
