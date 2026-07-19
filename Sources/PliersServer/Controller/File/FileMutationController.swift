@@ -10,11 +10,34 @@ import VaporElementary
 struct FileMutationController: RouteCollection {
 	func boot(routes: any RoutesBuilder) throws {
 		let group = routes.grouped("file").grouped(User.requireLoggedIn())
+		group.post("mkdir", use: self.mkdir)
 		group.post("create", use: self.create)
 		group.post("update", use: self.update)
 		group.post("delete", use: self.delete)
 		group.post("chmod", use: self.chmod)
 		group.post("unarchive", use: self.unarchive)
+	}
+
+	@Sendable
+	func mkdir(req: Request) async throws -> Response {
+		struct Input: Content {
+			let directory: String
+		}
+
+		let user = try req.auth.require(User.self)
+		let input = try req.content.decode(Input.self)
+
+		let dir: Path = try req.query["path"].alert("invalid path")
+		let path = dir / input.directory
+
+		let result = PliersShim::create_dir(user.username, path.string)
+		if result == EEXIST {
+			throw AlertError("path already exists")
+		} else if result != 0 {
+			throw AlertError("invalid path or access denied")
+		}
+
+		return req.redirect(.back)
 	}
 
 	@Sendable
@@ -32,7 +55,7 @@ struct FileMutationController: RouteCollection {
 
 		let result = PliersShim::create_file(user.username, path.string)
 		if result == EEXIST {
-			throw AlertError("file already exists")
+			throw AlertError("path already exists")
 		} else if result != 0 {
 			throw AlertError("invalid path or access denied")
 		}

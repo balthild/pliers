@@ -77,6 +77,7 @@ extension View.Page {
 						p {
 							"Deleting "
 							code(.x.text("path")) {}
+							" and all its contents."
 						}
 						p { "This action cannot be undone. Type the path below to confirm." }
 					}
@@ -239,10 +240,36 @@ extension View.Page {
 		private var actions: some HTML {
 			div(.class("mb-2"), .x.data("{ action: false }")) {
 				div(.class("flex gap-2"), .x.show("!action")) {
-					button(.x.on("click", "action = 'upload'")) { "Upload" }
-					button(.x.on("click", "action = 'create'")) { "Create" }
 					button(.x.on("click", "action = 'mkdir'")) { "Mkdir" }
+					button(.x.on("click", "action = 'create'")) { "Create" }
+					button(.x.on("click", "action = 'upload'")) { "Upload" }
 				}
+
+				// MARK: mkdir
+
+				form(
+					.method(.post),
+					.action(link(to: path, action: "mkdir")),
+					.class("form max-w-100 p-2 border border-gray-400"),
+					.x.cloak,
+					.x.show("action == 'mkdir'"),
+				) {
+					label(.class("field")) {
+						span { "Directory" }
+						input(
+							.name("directory"),
+							.type(.text),
+							.required,
+						)
+					}
+
+					div(.class("actions")) {
+						button(.type(.button), .x.on("click", "action = false")) { "Cancel" }
+						button(.type(.submit), .class("primary")) { "Create" }
+					}
+				}
+
+				// MARK: create
 
 				form(
 					.method(.post),
@@ -265,6 +292,8 @@ extension View.Page {
 						button(.type(.submit), .class("primary")) { "Create" }
 					}
 				}
+
+				// MARK: upload
 
 				form(
 					.method(.post),
@@ -337,21 +366,21 @@ extension View.Page {
 							td { "\(String(entry.mode, radix: 8))" }
 							td {
 								div(.class("flex gap-2")) {
+									let path = entry.path.string
+									let mode = String(entry.mode, radix: 8)
+
+									button(
+										.class("link text-yellow-600"),
+										.on(.click, "$('#chmod_dialog').show(\(path.quoteJSON), '\(mode)');"),
+									) { "Chmod" }
+
+									button(
+										.class("link text-red-700"),
+										.on(.click, "$('#delete_dialog').show(\(path.quoteJSON));"),
+									) { "Delete" }
+
 									if !entry.dir {
 										a(.href(link(to: entry.path, action: "download"))) { "Download" }
-
-										let path = entry.path.string
-										let mode = String(entry.mode, radix: 8)
-
-										button(
-											.class("link text-yellow-600"),
-											.on(.click, "$('#chmod_dialog').show(\(path.quoteJSON), '\(mode)');"),
-										) { "Chmod" }
-
-										button(
-											.class("link text-red-700"),
-											.on(.click, "$('#delete_dialog').show(\(path.quoteJSON));"),
-										) { "Delete" }
 
 										let pattern = /.*\.(tar|tar\.gz|tgz|tar\.bz2|tbz2|tar\.xz|txz)$/
 										if path.wholeMatch(of: pattern) != nil {
