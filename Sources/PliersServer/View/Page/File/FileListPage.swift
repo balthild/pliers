@@ -36,6 +36,8 @@ extension View.Page {
 
 		@HTMLBuilder
 		private var dialogs: some HTML {
+			// MARK: delete_dialog
+
 			Alpine.data(
 				"delete_dialog",
 				"""
@@ -62,7 +64,12 @@ extension View.Page {
 				""",
 			)
 
-			dialog(.closedby(.none), .class("w-100"), .id("delete_dialog"), .x.data("delete_dialog")) {
+			dialog(
+				.closedby(.none),
+				.class("w-100"),
+				.id("delete_dialog"),
+				.x.data("delete_dialog"),
+			) {
 				header { "Delete" }
 
 				main {
@@ -96,6 +103,8 @@ extension View.Page {
 				}
 			}
 
+			// MARK: chmod_dialog
+
 			Alpine.data(
 				"chmod_dialog",
 				"""
@@ -125,7 +134,12 @@ extension View.Page {
 				""",
 			)
 
-			dialog(.closedby(.none), .class("w-100"), .id("chmod_dialog"), .x.data("chmod_dialog")) {
+			dialog(
+				.closedby(.none),
+				.class("w-100"),
+				.id("chmod_dialog"),
+				.x.data("chmod_dialog"),
+			) {
 				header { "Chmod" }
 
 				main {
@@ -157,6 +171,64 @@ extension View.Page {
 						div(.class("actions")) {
 							button(.type(.button), .x.on("click", "cancel")) { "Cancel" }
 							button(.type(.submit), .class("primary")) { "Save" }
+						}
+					}
+				}
+			}
+
+			// MARK: unarchive_dialog
+
+			Alpine.data(
+				"unarchive_dialog",
+				"""
+				() => ({
+					path: '',
+
+					get url() {
+						if (!this.path) return '/404';
+						const url = new URL(`/file/unarchive`, location.origin);
+						url.searchParams.set('path', this.path);
+						return url.toString();
+					},
+
+					show(path) {
+						this.path = path;
+						this.$root.showModal();
+					},
+
+					cancel() {
+						this.path = '';
+						this.$root.close();
+					},
+				})
+				""",
+			)
+
+			dialog(
+				.closedby(.none),
+				.class("w-100"),
+				.id("unarchive_dialog"),
+				.x.data("unarchive_dialog"),
+			) {
+				header { "Unarchive" }
+
+				main {
+					section(.class("mb-3 text-sm space-y-1")) {
+						p {
+							"Unarchiving "
+							code(.x.text("path")) {}
+						}
+						p { "This will extract the contents of the archive into the current directory." }
+					}
+
+					form(
+						.method(.post),
+						.class("form"),
+						.x.bind("action", "url"),
+					) {
+						div(.class("actions")) {
+							button(.type(.button), .x.on("click", "cancel")) { "Cancel" }
+							button(.type(.submit), .class("primary")) { "Unarchive" }
 						}
 					}
 				}
@@ -280,6 +352,14 @@ extension View.Page {
 											.class("link text-red-700"),
 											.on(.click, "$('#delete_dialog').show(\(path.quoteJSON));"),
 										) { "Delete" }
+
+										let pattern = /.*\.(tar|tar\.gz|tgz|tar\.bz2|tbz2|tar\.xz|txz)$/
+										if path.wholeMatch(of: pattern) != nil {
+											button(
+												.class("link"),
+												.on(.click, "$('#unarchive_dialog').show(\(path.quoteJSON));"),
+											) { "Unarchive" }
+										}
 									}
 								}
 							}

@@ -14,6 +14,7 @@ struct FileMutationController: RouteCollection {
 		group.post("update", use: self.update)
 		group.post("delete", use: self.delete)
 		group.post("chmod", use: self.chmod)
+		group.post("unarchive", use: self.unarchive)
 	}
 
 	@Sendable
@@ -116,6 +117,39 @@ struct FileMutationController: RouteCollection {
 		let result = PliersShim::change_mode(user.username, path.string, mode)
 		if result != 0 {
 			throw AlertError("invalid path or access denied")
+		}
+
+		return req.redirect(.back)
+	}
+
+	@Sendable
+	func unarchive(req: Request) async throws -> Response {
+		let user = try req.auth.require(User.self)
+
+		let path: Path = try req.query["path"].alert("invalid path")
+
+		guard path.isFile && path.hasAccess(.r, by: user.username) else {
+			throw AlertError("invalid path or access denied")
+		}
+		guard path.parent.hasAccess(.wx, by: user.username) else {
+			throw AlertError("invalid path or access denied")
+		}
+
+		let cmd = Constants.coreutils / "tar"
+		let args = ["-xf", path.string]
+
+		let result = try await Subprocess.run(
+			.path(.init(cmd.string)),
+			arguments: .init(.init(args)),
+			environment: .custom([]),
+			workingDirectory: .init(path.parent.string),
+			platformOptions: try .su(user.username),
+			output: .discarded,
+			error: .string(limit: 8192, encoding: UTF8.self),
+		)
+
+		guard result.terminationStatus == .exited(0) else {
+			throw AlertError(result.standardError ?? "unknown error")
 		}
 
 		return req.redirect(.back)
