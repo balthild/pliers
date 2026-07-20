@@ -219,7 +219,9 @@ extension View.Page {
 							"Unarchiving "
 							code(.x.text("path")) {}
 						}
-						p { "This will extract the contents of the archive into the current directory." }
+						p {
+							"This will extract the contents of the archive into the current directory. Any existing files with the same name will be overwritten."
+						}
 					}
 
 					form(
