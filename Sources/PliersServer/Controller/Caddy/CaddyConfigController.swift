@@ -84,8 +84,8 @@ struct CaddyConfigController: RouteCollection {
 		let file = dir / "Caddyfile"
 
 		let result = try await Subprocess.run(
-			.path(.init(.init(Constants.caddy.exec.string))),
-			arguments: .init(["validate", "--config", file.string]),
+			.path(Constants.caddy.exec),
+			arguments: ["validate", "--config", file.string],
 			environment: .custom([]),
 			platformOptions: try .su(Constants.caddy.user),
 			input: .none,

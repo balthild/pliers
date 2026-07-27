@@ -107,13 +107,10 @@ struct FileMutationController: RouteCollection {
 			throw AlertError("confirmation does not match the file path")
 		}
 
-		let cmd = Constants.coreutils / "rm"
-		let args = ["-rf", path.string]
-
 		let username = self.impersonate(path, user)
 		let result = try await Subprocess.run(
-			.path(.init(cmd.string)),
-			arguments: .init(.init(args)),
+			.path(Constants.coreutils / "rm"),
+			arguments: ["-rf", path.string],
 			environment: .custom([]),
 			platformOptions: try .su(username),
 			output: .discarded,
@@ -163,12 +160,9 @@ struct FileMutationController: RouteCollection {
 			throw AlertError("invalid path or access denied")
 		}
 
-		let cmd = Constants.coreutils / "tar"
-		let args = ["-xf", path.string]
-
 		let result = try await Subprocess.run(
-			.path(.init(cmd.string)),
-			arguments: .init(.init(args)),
+			.path(Constants.coreutils / "tar"),
+			arguments: ["-xf", path.string],
 			environment: .custom([]),
 			workingDirectory: .init(path.parent.string),
 			platformOptions: try .su(user.username),

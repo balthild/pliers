@@ -1,6 +1,15 @@
 import Glibc
+import Path
 import PliersCommon
 import Subprocess
+import SystemPackage
+
+extension Executable {
+	@inline(always)
+	public static func path(_ path: Path) -> Self {
+		return .path(.init(path.string))
+	}
+}
 
 extension PlatformOptions {
 	public static func su(_ username: String) throws -> Self {
