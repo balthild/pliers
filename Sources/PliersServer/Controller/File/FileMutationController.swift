@@ -160,9 +160,19 @@ struct FileMutationController: RouteCollection {
 			throw AlertError("invalid path or access denied")
 		}
 
+		let cmd: String
+		let args: [String]
+		if path.extension == "zip" {
+			cmd = "unzip"
+			args = ["-o", "-q", "-P", "", path.string]
+		} else {
+			cmd = "tar"
+			args = ["-xf", path.string]
+		}
+
 		let result = try await Subprocess.run(
-			.path(Constants.coreutils / "tar"),
-			arguments: ["-xf", path.string],
+			.path(Constants.coreutils / cmd),
+			arguments: .init(args),
 			environment: .custom([]),
 			workingDirectory: .init(path.parent.string),
 			platformOptions: try .su(user.username),

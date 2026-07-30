@@ -28,6 +28,7 @@ struct CaddyConfigController: RouteCollection {
 
 	private func generate(req: Request) async throws -> Path {
 		let dir = try mkdir()
+		let file = dir / "Caddyfile"
 
 		let sites = try await Caddy.query(on: req.db).all()
 
@@ -73,7 +74,6 @@ struct CaddyConfigController: RouteCollection {
 			}
 		}
 
-		let file = dir / "Caddyfile"
 		let buffer = req.byteBufferAllocator.buffer(string: caddyfile)
 		try await req.fileio.writeFile(buffer, at: file.string)
 
