@@ -384,8 +384,7 @@ extension View.Page {
 									if !entry.dir {
 										a(.href(link(to: entry.path, action: "download"))) { "Download" }
 
-										let pattern = /.*\.(zip|tar|t(ar\.)?(gz|bz2|xz|zst))$/
-										if path.wholeMatch(of: pattern) != nil {
+										if entry.path.isArchive() {
 											button(
 												.class("link"),
 												.on(.click, "$('#unarchive_dialog').show(\(path.quoteJSON));"),

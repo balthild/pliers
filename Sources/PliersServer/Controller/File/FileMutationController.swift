@@ -165,12 +165,15 @@ struct FileMutationController: RouteCollection {
 
 		let cmd: String
 		let args: [String]
-		if path.extension == "zip" {
+		switch true {
+		case path.isArchive(of: .zip):
 			cmd = "unzip"
 			args = ["-o", "-q", "-P", "", path.string]
-		} else {
+		case path.isArchive(of: .tar):
 			cmd = "tar"
 			args = ["-xf", path.string]
+		default:
+			throw AlertError("unsupported archive type")
 		}
 
 		let result = try await Subprocess.run(
