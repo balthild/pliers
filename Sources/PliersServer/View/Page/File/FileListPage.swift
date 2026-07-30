@@ -384,7 +384,7 @@ extension View.Page {
 									if !entry.dir {
 										a(.href(link(to: entry.path, action: "download"))) { "Download" }
 
-										let pattern = /.*\.(\.zip|tar|tar\.gz|tgz|tar\.bz2|tbz2|tar\.xz|txz)$/
+										let pattern = /.*\.(zip|tar|t(ar\.)?(gz|bz2|xz|zst))$/
 										if path.wholeMatch(of: pattern) != nil {
 											button(
 												.class("link"),
