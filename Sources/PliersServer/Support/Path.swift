@@ -2,37 +2,21 @@ import Path
 
 extension Path {
 	struct ArchiveType: Sendable {
-		private enum exts {
-			static let zip = [".zip"]
-			static let tar = [
-				".tar",
-				".tgz",
-				".tbz2",
-				".txz",
-				".tzst",
-				".tar.gz",
-				".tar.bz2",
-				".tar.xz",
-				".tar.zst",
-			]
+		fileprivate let exts: [String]
+		fileprivate init(_ exts: [String]) {
+			self.exts = exts
 		}
 
-		fileprivate let rawValue: [String]
-
-		fileprivate init(rawValue: [String]) {
-			self.rawValue = rawValue
-		}
-
-		public static let any = Self(rawValue: exts.zip + exts.tar)
-		public static let zip = Self(rawValue: exts.zip)
-		public static let tar = Self(rawValue: exts.tar)
+		public static let any = Self(zip.exts + tar.exts)
+		public static let zip = Self([".zip"])
+		public static let tar = Self(
+			[".tar"] + ["gz", "bz2", "xz", "zst"].flatMap({ [".tar.\($0)", ".t\($0)"] })
+		)
 	}
 
 	func isArchive(of type: ArchiveType = .any) -> Bool {
-		let str = self.string
-
-		for ext in type.rawValue {
-			if str.hasSuffix(ext) {
+		for ext in type.exts {
+			if self.string.hasSuffix(ext) {
 				return true
 			}
 		}
