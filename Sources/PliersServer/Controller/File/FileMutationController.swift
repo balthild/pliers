@@ -152,11 +152,14 @@ struct FileMutationController: RouteCollection {
 		let user = try req.auth.require(User.self)
 
 		let path: Path = try req.query["path"].alert("invalid path")
+		let dir = path.parent
 
-		guard path.isFile && path.hasAccess(.r, by: user.username) else {
+		let username = self.impersonate(dir, user)
+
+		guard path.isFile && path.hasAccess(.r, by: username) else {
 			throw AlertError("invalid path or access denied")
 		}
-		guard path.parent.hasAccess(.wx, by: user.username) else {
+		guard dir.hasAccess(.wx, by: username) else {
 			throw AlertError("invalid path or access denied")
 		}
 
@@ -174,8 +177,8 @@ struct FileMutationController: RouteCollection {
 			.path(Constants.coreutils / cmd),
 			arguments: .init(args),
 			environment: .custom([]),
-			workingDirectory: .init(path.parent.string),
-			platformOptions: try .su(user.username),
+			workingDirectory: .init(dir.string),
+			platformOptions: try .su(username),
 			output: .discarded,
 			error: .string(limit: 8192, encoding: UTF8.self),
 		)
