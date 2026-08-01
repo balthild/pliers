@@ -1,27 +1,42 @@
-# pliers
+# Pliers
 
-💧 A project built with the Vapor web framework.
+A web-based dashboard to manage your Linux server.
 
 ## Getting Started
 
-To build the project using the Swift Package Manager, run the following command in the terminal from the root of the project:
+[Documentation](./Docs/index.md)
+
+## Development
+
+The following toolchains are required:
+
+- Swift (dev-snapshot)
+- Node.js (v20 or later)
+
+### Setup
+
+Refer to the `Makefile` for configurable options.
+
 ```bash
-swift build
+make configure
+npm install
 ```
 
-To run the project and start the server, use the following command:
+### Build and Run in Debug Mode
+
 ```bash
-swift run
+make dev.serve # run the dashboard as root
+make dev.auth # generate a login token for root
 ```
 
-To execute tests, use the following command:
+### Build the CSS and Rebuild on Changes
+
 ```bash
-swift test
+make dev.css
 ```
 
-### See more
+### Build in Release Mode
 
-- [Vapor Website](https://vapor.codes)
-- [Vapor Documentation](https://docs.vapor.codes)
-- [Vapor GitHub](https://github.com/vapor)
-- [Vapor Community](https://github.com/vapor-community)
+```bash
+make build
+```
