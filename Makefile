@@ -58,5 +58,8 @@ dbus:
 	swift run dbus-codegen ./Sources/PliersSystemd/Systemd1.xml
 	dprint fmt ./Sources/PliersSystemd
 
+test:
+	swift test
+
 fmt:
 	dprint fmt

@@ -11,6 +11,14 @@
 
 const int UNKNOWN_ERROR = 255;
 
+void switch_user(struct passwd* pw) {
+	if (pw->pw_uid != getuid()) {
+		if (setgroups(0, NULL) != 0) _exit(errno);
+		if (setgid(pw->pw_gid) != 0) _exit(errno);
+		if (setuid(pw->pw_uid) != 0) _exit(errno);
+	}
+}
+
 int check_access(int mode, const char* username, const char* path) {
 	struct passwd* pw = getpwnam(username);
 	if (!pw) return UNKNOWN_ERROR;
@@ -19,9 +27,7 @@ int check_access(int mode, const char* username, const char* path) {
 	if (pid < 0) return errno;
 
 	if (pid == 0) {
-		if (setgroups(0, NULL) != 0) _exit(errno);
-		if (setgid(pw->pw_gid) != 0) _exit(errno);
-		if (setuid(pw->pw_uid) != 0) _exit(errno);
+		switch_user(pw);
 
 		// `access` is async-signal-safe
 		int result = access(path, mode);
@@ -42,9 +48,7 @@ int create_file(const char* username, const char* path) {
 	if (pid < 0) return errno;
 
 	if (pid == 0) {
-		if (setgroups(0, NULL) != 0) _exit(errno);
-		if (setgid(pw->pw_gid) != 0) _exit(errno);
-		if (setuid(pw->pw_uid) != 0) _exit(errno);
+		switch_user(pw);
 
 		// `open` is async-signal-safe, `fopen` is not
 		int result = open(path, O_WRONLY | O_CREAT | O_EXCL, 0644);
@@ -66,9 +70,7 @@ int create_dir(const char* username, const char* path) {
 	if (pid < 0) return errno;
 
 	if (pid == 0) {
-		if (setgroups(0, NULL) != 0) _exit(errno);
-		if (setgid(pw->pw_gid) != 0) _exit(errno);
-		if (setuid(pw->pw_uid) != 0) _exit(errno);
+		switch_user(pw);
 
 		// `mkdir` is async-signal-safe
 		int result = mkdir(path, 0755);
@@ -89,9 +91,7 @@ int change_mode(const char* username, const char* path, __mode_t mode) {
 	if (pid < 0) return errno;
 
 	if (pid == 0) {
-		if (setgroups(0, NULL) != 0) _exit(errno);
-		if (setgid(pw->pw_gid) != 0) _exit(errno);
-		if (setuid(pw->pw_uid) != 0) _exit(errno);
+		switch_user(pw);
 
 		// `chmod` is async-signal-safe
 		int result = chmod(path, mode);
