@@ -4,7 +4,7 @@ import Glibc
 import NIOCore
 import Path
 import PliersCommon
-import PliersServer
+import PliersDashboard
 import Vapor
 
 struct AuthCommand: AsyncCommand, Sendable {

@@ -31,13 +31,13 @@ let package = Package(
 			name: "Pliers",
 			dependencies: [
 				.product(name: "AsyncHTTPClient", package: "async-http-client"),
-				.target(name: "PliersServer"),
+				.target(name: "PliersDashboard"),
 				.target(name: "PliersCommon"),
 			],
 			swiftSettings: swiftSettings,
 		),
 		.target(
-			name: "PliersServer",
+			name: "PliersDashboard",
 			dependencies: [
 				.product(name: "Fluent", package: "fluent"),
 				.product(name: "FluentSQLiteDriver", package: "fluent-sqlite-driver"),
@@ -84,7 +84,7 @@ let package = Package(
 		.testTarget(
 			name: "PliersTests",
 			dependencies: [
-				.target(name: "PliersServer"),
+				.target(name: "PliersDashboard"),
 				.product(name: "VaporTesting", package: "vapor"),
 			],
 			swiftSettings: swiftSettings,

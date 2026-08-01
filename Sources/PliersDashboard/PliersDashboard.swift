@@ -8,7 +8,7 @@ import NIOSSL
 import PliersCommon
 import Vapor
 
-public struct PliersServer {
+public struct PliersDashboard {
 	let config: Config
 	let app: Application
 

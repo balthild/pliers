@@ -2,13 +2,13 @@ import ConsoleKit
 import Glibc
 import Path
 import PliersCommon
-import PliersServer
+import PliersDashboard
 import Vapor
 
 struct ServeCommand: AsyncCommand, Sendable {
 	struct Signature: CommandSignature {}
 
-	let help = "serve pliers over http"
+	let help = "serve pliers dashboard over http"
 
 	func run(using context: CommandContext, signature: Signature) async throws {
 		let euid = geteuid()
@@ -24,7 +24,7 @@ struct ServeCommand: AsyncCommand, Sendable {
 			throw RuntimeError("state dir must not be accessible by non-root users")
 		}
 
-		let server = try await PliersServer.make(context.config)
+		let server = try await PliersDashboard.make(context.config)
 		try await server.run()
 	}
 }

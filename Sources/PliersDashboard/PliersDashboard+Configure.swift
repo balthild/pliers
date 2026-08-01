@@ -5,7 +5,7 @@ import Path
 import PliersCommon
 import Vapor
 
-extension PliersServer {
+extension PliersDashboard {
 	func configure() async throws {
 		try await database()
 		try await console()

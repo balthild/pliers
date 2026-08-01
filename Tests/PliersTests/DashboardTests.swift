@@ -3,10 +3,10 @@ import Testing
 import VaporTesting
 
 @testable import Pliers
-@testable import PliersServer
+@testable import PliersDashboard
 
 @Suite("App Tests with DB", .serialized)
-struct PliersTests {
+struct DashboardTests {
 	/*
 	private func withApp(_ test: (Application) async throws -> Void) async throws {
 		let app = try await Application.make(.testing)
