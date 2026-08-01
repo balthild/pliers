@@ -5,13 +5,9 @@ import Testing
 
 @Test func testRethrowingContextWithChain() {
 	do {
-		_ =
-			try rethrowing(
-				context: "outer",
-				catching: {
-					throw NSError(domain: "d", code: 1)
-				},
-			) as Int
+		try rethrowing(context: "outer") {
+			throw NSError(domain: "inner", code: 1)
+		}
 		Issue.record("expected throw")
 	} catch let error as ChainError {
 		#expect(error.message == "outer")
@@ -23,14 +19,9 @@ import Testing
 
 @Test func testRethrowingContextWithoutChain() {
 	do {
-		_ =
-			try rethrowing(
-				context: "outer",
-				chain: false,
-				catching: {
-					throw NSError(domain: "d", code: 1)
-				},
-			) as Int
+		try rethrowing(context: "outer", chain: false) {
+			throw NSError(domain: "inner", code: 1)
+		}
 		Issue.record("expected throw")
 	} catch let error as RuntimeError {
 		#expect(error.message == "outer")
@@ -41,13 +32,9 @@ import Testing
 
 @Test func testRethrowingAlertWithChain() {
 	do {
-		_ =
-			try rethrowing(
-				alert: "outer",
-				catching: {
-					throw NSError(domain: "d", code: 1)
-				},
-			) as Int
+		try rethrowing(alert: "outer") {
+			throw NSError(domain: "inner", code: 1)
+		}
 		Issue.record("expected throw")
 	} catch let error as AlertError {
 		#expect(error.message == "outer")
@@ -58,14 +45,9 @@ import Testing
 
 @Test func testRethrowingAlertWithoutChain() {
 	do {
-		_ =
-			try rethrowing(
-				alert: "outer",
-				chain: false,
-				catching: {
-					throw NSError(domain: "d", code: 1)
-				},
-			) as Int
+		try rethrowing(alert: "outer", chain: false) {
+			throw NSError(domain: "inner", code: 1)
+		}
 		Issue.record("expected throw")
 	} catch let error as AlertError {
 		#expect(error.message == "outer")

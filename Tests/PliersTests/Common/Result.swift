@@ -21,8 +21,8 @@ import Testing
 	switch result {
 	case .failure(let error as RuntimeError):
 		#expect(error.message == "boom")
-	case .failure:
-		Issue.record("expected RuntimeError")
+	case .failure(let error):
+		Issue.record("unexpected error: \(error)")
 	case .success:
 		Issue.record("expected failure")
 	}

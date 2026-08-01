@@ -27,9 +27,11 @@ private struct FallbackModel: Codable {
 	#expect(model.optional == nil)
 }
 
-@Test func testFallbackDecodesOptionalWhenValid() throws {
-	let data = Data("{\"optional\":\"abc\"}".utf8)
+@Test func testFallbackWithValidValues() throws {
+	let data = Data("{\"flag\":true,\"title\":\"valid\",\"optional\":\"abc\"}".utf8)
 	let model = try JSONDecoder().decode(FallbackModel.self, from: data)
 
+	#expect(model.flag == true)
+	#expect(model.title == "valid")
 	#expect(model.optional == "abc")
 }
