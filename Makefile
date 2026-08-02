@@ -30,7 +30,7 @@ endef
 export GENERATE_CODE
 
 help:
-	@echo "Usage: make [configure|build|fmt]"
+	@echo "Usage: make [configure|build|test|fmt]"
 
 configure:
 	@$(foreach v, $(sort $(filter PLIERS_%, $(.VARIABLES))), echo "$(v)=$($(v))";)
@@ -41,6 +41,10 @@ build:
 	@if [ ! -f $(GENERATE_PATH) ]; then echo 'Please run "make configure" first'; exit 1; fi
 	npx @tailwindcss/cli -i ./Resources/Style/main.css -o ./Public/dist/main.css
 	swift build -c release
+
+test:
+	@if [ ! -f $(GENERATE_PATH) ]; then echo 'Please run "make configure" first'; exit 1; fi
+	swift test
 
 dev.%: SWIFT_BACKTRACE = timeout=none
 dev.%:
@@ -57,9 +61,6 @@ dbus:
 	busctl introspect --xml-interface org.freedesktop.systemd1 /org/freedesktop/systemd1 > ./Sources/PliersSystemd/Systemd1.xml
 	swift run dbus-codegen ./Sources/PliersSystemd/Systemd1.xml
 	dprint fmt ./Sources/PliersSystemd
-
-test:
-	swift test
 
 fmt:
 	dprint fmt

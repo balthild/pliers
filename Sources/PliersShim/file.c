@@ -19,6 +19,13 @@ void switch_user(struct passwd* pw) {
 	}
 }
 
+int wait_process(pid_t pid) {
+	int status = 0;
+	if (waitpid(pid, &status, 0) < 0) return errno;
+
+	return WIFEXITED(status) ? WEXITSTATUS(status) : UNKNOWN_ERROR;
+}
+
 int check_access(int mode, const char* username, const char* path) {
 	struct passwd* pw = getpwnam(username);
 	if (!pw) return UNKNOWN_ERROR;
@@ -34,10 +41,7 @@ int check_access(int mode, const char* username, const char* path) {
 		_exit(result == 0 ? 0 : errno);
 	}
 
-	int status = 0;
-	if (waitpid(pid, &status, 0) < 0) return errno;
-
-	return WIFEXITED(status) ? WEXITSTATUS(status) : UNKNOWN_ERROR;
+	return wait_process(pid);
 }
 
 int create_file(const char* username, const char* path) {
@@ -56,10 +60,7 @@ int create_file(const char* username, const char* path) {
 		_exit(result >= 0 ? 0 : errno);
 	}
 
-	int status = 0;
-	if (waitpid(pid, &status, 0) < 0) return errno;
-
-	return WIFEXITED(status) ? WEXITSTATUS(status) : UNKNOWN_ERROR;
+	return wait_process(pid);
 }
 
 int create_dir(const char* username, const char* path) {
@@ -77,13 +78,10 @@ int create_dir(const char* username, const char* path) {
 		_exit(result == 0 ? 0 : errno);
 	}
 
-	int status = 0;
-	if (waitpid(pid, &status, 0) < 0) return errno;
-
-	return WIFEXITED(status) ? WEXITSTATUS(status) : UNKNOWN_ERROR;
+	return wait_process(pid);
 }
 
-int change_mode(const char* username, const char* path, __mode_t mode) {
+int change_mode(const char* username, const char* path, mode_t mode) {
 	struct passwd* pw = getpwnam(username);
 	if (!pw) return UNKNOWN_ERROR;
 
@@ -98,8 +96,5 @@ int change_mode(const char* username, const char* path, __mode_t mode) {
 		_exit(result == 0 ? 0 : errno);
 	}
 
-	int status = 0;
-	if (waitpid(pid, &status, 0) < 0) return errno;
-
-	return WIFEXITED(status) ? WEXITSTATUS(status) : UNKNOWN_ERROR;
+	return wait_process(pid);
 }
