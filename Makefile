@@ -46,6 +46,15 @@ test:
 	@if [ ! -f $(GENERATE_PATH) ]; then echo 'Please run "make configure" first'; exit 1; fi
 	swift test
 
+pkg:
+	mkdir -p ./.build/pkg
+	npx @goreleaser/nfpm pkg --packager deb --target ./.build/pkg --config ./nfpm.yaml
+
+release: pkg
+	gh release delete dev --yes || true
+	gh release create dev --notes "dev"
+	gh release upload dev ./.build/pkg/*.deb
+
 dev.%: SWIFT_BACKTRACE = timeout=none
 dev.%:
 	@printf "\033]0;dev.$*\007"

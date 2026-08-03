@@ -1,0 +1,15 @@
+[Unit]
+Description=Pliers Dashboard
+After=network.target
+
+[Service]
+Type=simple
+User=root
+Group=root
+ExecStart=/usr/bin/pliers
+Restart=always
+RestartSec=0
+LimitNOFILE=65535
+
+[Install]
+WantedBy=multi-user.target

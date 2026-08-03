@@ -8,6 +8,7 @@
 		"Sources/PliersSystemd/*.xml",
 		"Sources/**/*.swift",
 		"Package.swift",
+		"nfpm.yaml",
 	],
 	"excludes": [
 		".build",
@@ -64,8 +65,9 @@
 	"plugins": [
 		"https://plugins.dprint.dev/oxc-0.28.0.wasm",
 		"https://plugins.dprint.dev/json-0.22.0.wasm",
+		"https://plugins.dprint.dev/exec-0.7.2.json",
 		"https://plugins.dprint.dev/g-plane/markup_fmt-v0.27.3.wasm",
 		"https://plugins.dprint.dev/g-plane/malva-v0.16.0.wasm",
-		"https://plugins.dprint.dev/exec-0.7.2.json",
+		"https://plugins.dprint.dev/g-plane/pretty_yaml-v0.6.0.wasm",
 	],
 }

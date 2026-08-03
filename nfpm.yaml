@@ -1,0 +1,29 @@
+# yaml-language-server: $schema=https://nfpm.goreleaser.com/schema.json
+
+name: pliers
+version: ${PKGVER}
+arch: ${PKGARCH}
+platform: linux
+
+maintainer: "Balthild <ibalthild@gmail.com>"
+description: Pliers
+license: AGPL-3.0
+homepage: "https://github.com/balthild/pliers"
+
+depends:
+  - caddy
+  - unzip
+
+scripts:
+  postinstall: ./Resources/Pkg/post-install.sh
+
+contents:
+  - src: ./.build/release/pliers
+    dst: /usr/bin/pliers
+
+  - src: ./Resources/Pkg/pliers.conf
+    dst: /etc/pliers/pliers.conf
+    type: config|noreplace
+
+  - src: ./Resources/Pkg/pliers.service
+    dst: /lib/systemd/system/pliers.service
