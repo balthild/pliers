@@ -1,5 +1,5 @@
 {
-  "originHash" : "173a68c26bb14cbd9850e3dc9221973e8a233bb0143852ca3e7bf435f91673c1",
+  "originHash" : "9c8d68cc12b6eb1e5063ae6abf736c97c64a09d79bccfff6780f45fce8320329",
   "pins" : [
     {
       "identity" : "async-http-client",
@@ -31,10 +31,9 @@
     {
       "identity" : "dbus",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/wendylabsinc/dbus.git",
+      "location" : "https://github.com/balthild/dbus.git",
       "state" : {
-        "revision" : "a648c770068b3fa843bc06326ec50d97aea3f152",
-        "version" : "0.4.0"
+        "revision" : "c2ea3022ab32e962b78aa096bf7d2232643af972"
       }
     },
     {
@@ -71,24 +70,6 @@
       "state" : {
         "revision" : "e227d94dc3fe7099a096ac2ca28cad1f69bd8d5b",
         "version" : "4.9.0"
-      }
-    },
-    {
-      "identity" : "jwt",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/vapor/jwt.git",
-      "state" : {
-        "revision" : "af1c59762d70d1065ddbc0d7902ea9b3dacd1a26",
-        "version" : "5.1.2"
-      }
-    },
-    {
-      "identity" : "jwt-kit",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/vapor/jwt-kit.git",
-      "state" : {
-        "revision" : "2033b3e661238dda3d30e36a2d40987499d987de",
-        "version" : "5.2.0"
       }
     },
     {

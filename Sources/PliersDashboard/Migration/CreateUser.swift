@@ -5,8 +5,11 @@ struct CreateUser: AsyncMigration {
 		try await database.schema("user")
 			.id()
 			.field("username", .string, .required)
-			.field("password", .string)
-			.field("totp", .string)
+			.field("password_hash", .string)
+			.field("password_totp", .string)
+			.field("token_pubkey", .data, .sql(.unique))
+			.field("token_challenge", .data, .sql(.unique))
+			.field("token_expiration", .datetime)
 			.unique(on: "username")
 			.create()
 	}

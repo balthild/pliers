@@ -11,20 +11,26 @@ let package = Package(
 		.package(url: "https://github.com/vapor/vapor.git", from: "4.115.0"),
 		.package(url: "https://github.com/vapor/fluent.git", from: "4.9.0"),
 		.package(url: "https://github.com/vapor/fluent-sqlite-driver.git", from: "4.6.0"),
-		.package(url: "https://github.com/vapor/jwt.git", from: "5.0.0"),
 		.package(url: "https://github.com/swift-server/async-http-client.git", from: "1.33.0"),
 		.package(url: "https://github.com/swift-server/swift-webauthn.git", from: "1.0.0-beta.1"),
 		.package(url: "https://github.com/elementary-swift/elementary.git", from: "0.6.0"),
 		.package(url: "https://github.com/vapor-community/vapor-elementary.git", from: "0.1.0"),
 		.package(url: "https://github.com/mxcl/Path.swift.git", from: "1.6.0"),
+		.package(url: "https://github.com/pointfreeco/swift-case-paths.git", from: "1.8.0"),
+
 		// https://github.com/swiftlang/swift-subprocess/pull/344
 		// .package(url: "https://github.com/swiftlang/swift-subprocess.git", from: "1.0.0-beta.1"),
 		.package(
 			url: "https://github.com/swiftlang/swift-subprocess.git",
 			revision: "daca5529133c51ad4e10c73852002496d486d660",
 		),
-		.package(url: "https://github.com/pointfreeco/swift-case-paths.git", from: "1.8.0"),
-		.package(url: "https://github.com/wendylabsinc/dbus.git", from: "0.4.0"),
+
+		// https://github.com/wendylabsinc/dbus/pull/30
+		// .package(url: "https://github.com/wendylabsinc/dbus.git", from: "0.4.0"),
+		.package(
+			url: "https://github.com/balthild/dbus.git",
+			revision: "c2ea3022ab32e962b78aa096bf7d2232643af972",
+		),
 	],
 	targets: [
 		.executableTarget(
@@ -41,7 +47,6 @@ let package = Package(
 			dependencies: [
 				.product(name: "Fluent", package: "fluent"),
 				.product(name: "FluentSQLiteDriver", package: "fluent-sqlite-driver"),
-				.product(name: "JWT", package: "jwt"),
 				.product(name: "Vapor", package: "vapor"),
 				.product(name: "NIOCore", package: "swift-nio"),
 				.product(name: "NIOPosix", package: "swift-nio"),
@@ -52,7 +57,7 @@ let package = Package(
 				.product(name: "CasePaths", package: "swift-case-paths"),
 				.product(name: "DBUS", package: "DBUS"),
 				.target(name: "PliersCommon"),
-				.target(name: "PliersSystemd"),
+				.target(name: "PliersDBus"),
 			],
 			swiftSettings: swiftSettings,
 		),
@@ -61,16 +66,17 @@ let package = Package(
 			dependencies: [
 				.product(name: "Path", package: "Path.swift"),
 				.product(name: "Subprocess", package: "swift-subprocess"),
+				.product(name: "DBUS", package: "DBUS"),
 				.target(name: "PliersShim"),
 			],
 			swiftSettings: swiftSettings,
 		),
 		.target(
-			name: "PliersSystemd",
+			name: "PliersDBus",
 			dependencies: [
 				.product(name: "DBUS", package: "DBUS")
 			],
-			exclude: ["Systemd1.xml"],
+			exclude: ["DBus.xml", "Systemd1.xml", "Pliers.xml", "DBus.swift"],
 			swiftSettings: [
 				.unsafeFlags(["-suppress-warnings"])
 			],

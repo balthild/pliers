@@ -27,3 +27,6 @@ contents:
 
   - src: ./Resources/Pkg/pliers.service
     dst: /lib/systemd/system/pliers.service
+
+  - src: ./Resources/Pkg/com.balthild.Pliers.conf
+    dst: /etc/dbus-1/system.d/com.balthild.Pliers.conf

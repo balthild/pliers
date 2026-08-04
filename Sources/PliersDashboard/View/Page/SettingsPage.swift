@@ -285,7 +285,7 @@ extension View.Page {
 
 			let user = try req.auth.require(User.self)
 
-			if user.password != nil && user.totp != nil {
+			if user.password != nil {
 				div(.x.data("{ step: 0 }")) {
 					div(.class("flex gap-2"), .x.show("!step")) {
 						button(.x.on("click", "step = 1")) { "Change" }

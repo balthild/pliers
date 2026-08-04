@@ -1,9 +1,12 @@
 import AsyncHTTPClient
 import ConsoleKit
+import Crypto
+import DBUS
 import Glibc
 import NIOCore
 import Path
 import PliersCommon
+import PliersDBus
 import PliersDashboard
 import Vapor
 
@@ -13,33 +16,24 @@ struct AuthCommand: AsyncCommand, Sendable {
 	let help = "generate a temporary login token"
 
 	func run(using context: CommandContext, signature: Signature) async throws {
-		let username = NSUserName()
-		let url = "http://localhost:\(context.config.port)/login/token?username=\(username)"
-		let deadline = NIODeadline.now() + .seconds(5)
-		let response = try await HTTPClient.shared.get(url: url, deadline: deadline).get()
-		guard let body = response.body else {
-			throw RuntimeError("failed to generate token")
+		let privkey = Curve25519.Signing.PrivateKey()
+		let pubkey = privkey.publicKey.rawRepresentation.base64EncodedString()
+
+		let challenge = try await DBusClient.system { connection in
+			let proxy = ComBalthildPliersProxy(
+				connection: connection,
+				destination: "com.balthild.Pliers",
+				path: "/com/balthild/Pliers",
+			)
+
+			let result = try await proxy.createLoginToken(pubkey: pubkey)
+
+			return try Data(base64Encoded: result).alert("unknown error")
 		}
 
-		let token = String(decoding: body.readableBytesView, as: UTF8.self)
-		let nonce = SymmetricKey(size: .bits256).withUnsafeBytes({ $0.bcryptBase64String() })
-		let full = "\(token);\(nonce)"
-
-		let path = Path.home / Constants.userTokenFile
-		try path.parent.mkdir(.p)
-		try path.parent.chmod(0o700)
-
-		let created = FileManager.default.createFile(
-			atPath: path.string,
-			contents: Data(full.utf8),
-			attributes: [.posixPermissions: 0o600],
-		)
-
-		if !created {
-			throw RuntimeError("failed to write token file")
-		}
+		let signature = try privkey.signature(for: challenge).base64EncodedString()
 
 		context.console.info("Login token generated. Note that it will expire soon.")
-		context.console.print(full)
+		context.console.print("\(pubkey);\(signature)")
 	}
 }

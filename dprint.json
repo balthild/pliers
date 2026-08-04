@@ -5,7 +5,7 @@
 		"dprint.json",
 		"Resources/**/*.{js,css}",
 		"Public/js/*.js",
-		"Sources/PliersSystemd/*.xml",
+		"Sources/PliersDBus/*.xml",
 		"Sources/**/*.swift",
 		"Package.swift",
 		"nfpm.yaml",

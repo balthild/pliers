@@ -34,8 +34,9 @@ struct PasswordSettingsController: RouteCollection {
 
 		let user = try req.auth.require(User.self)
 
-		user.password = try await req.password.async.hash(input.password)
-		user.totp = input.totp_config
+		user.password = User.Password()
+		user.password!.hash = try await req.password.async.hash(input.password)
+		user.password!.totp = input.totp_config
 		try await user.save(on: req.db)
 
 		return req.redirect(.back)
@@ -55,11 +56,11 @@ struct PasswordSettingsController: RouteCollection {
 		}
 
 		let user = try req.auth.require(User.self)
-		guard user.password != nil && user.totp != nil else {
+		guard let password = user.password else {
 			throw AlertError("password auth is not enabled")
 		}
 
-		user.password = try await req.password.async.hash(input.password)
+		password.hash = try await req.password.async.hash(input.password)
 		try await user.save(on: req.db)
 
 		return req.redirect(.back)
@@ -70,7 +71,6 @@ struct PasswordSettingsController: RouteCollection {
 		let user = try req.auth.require(User.self)
 
 		user.password = nil
-		user.totp = nil
 		try await user.save(on: req.db)
 
 		return req.redirect(.back)

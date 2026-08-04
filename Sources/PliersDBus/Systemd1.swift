@@ -348,9 +348,7 @@ public protocol OrgFreedesktopSystemd1Manager: Sendable {
 	func getUnitByControlGroup(cgroup: String) async throws -> String
 	func getUnitByPIDFD(
 		pidfd: UInt32
-	) async throws -> (
-		unit: String, unitId: String, invocationId: [UInt8]
-	)
+	) async throws -> (unit: String, unitId: String, invocationId: [UInt8])
 	func loadUnit(name: String) async throws -> String
 	func startUnit(name: String, mode: String) async throws -> String
 	func startUnitWithFlags(name: String, mode: String, flags: UInt64) async throws -> String
@@ -399,8 +397,7 @@ public protocol OrgFreedesktopSystemd1Manager: Sendable {
 		mode: String,
 		properties: DBusValue,
 		aux: DBusValue,
-	)
-		async throws -> String
+	) async throws -> String
 	func getUnitProcesses(name: String) async throws -> DBusValue
 	func attachProcessesToUnit(unitName: String, subcgroup: String, pids: DBusValue) async throws
 	func removeSubgroupFromUnit(unitName: String, subcgroup: String, flags: UInt64) async throws
@@ -443,45 +440,34 @@ public protocol OrgFreedesktopSystemd1Manager: Sendable {
 		files: [String],
 		runtime: Bool,
 		force: Bool,
-	) async throws -> (
-		carriesInstallInfo: Bool, changes: DBusValue
-	)
+	) async throws -> (carriesInstallInfo: Bool, changes: DBusValue)
 	func disableUnitFiles(files: [String], runtime: Bool) async throws -> DBusValue
 	func enableUnitFilesWithFlags(
 		files: [String],
 		flags: UInt64,
-	) async throws -> (
-		carriesInstallInfo: Bool, changes: DBusValue
-	)
+	) async throws -> (carriesInstallInfo: Bool, changes: DBusValue)
 	func disableUnitFilesWithFlags(files: [String], flags: UInt64) async throws -> DBusValue
 	func disableUnitFilesWithFlagsAndInstallInfo(
 		files: [String],
 		flags: UInt64,
-	) async throws -> (
-		carriesInstallInfo: Bool, changes: DBusValue
-	)
+	) async throws -> (carriesInstallInfo: Bool, changes: DBusValue)
 	func reenableUnitFiles(
 		files: [String],
 		runtime: Bool,
 		force: Bool,
-	) async throws -> (
-		carriesInstallInfo: Bool, changes: DBusValue
-	)
+	) async throws -> (carriesInstallInfo: Bool, changes: DBusValue)
 	func linkUnitFiles(files: [String], runtime: Bool, force: Bool) async throws -> DBusValue
 	func presetUnitFiles(
 		files: [String],
 		runtime: Bool,
 		force: Bool,
-	) async throws -> (
-		carriesInstallInfo: Bool, changes: DBusValue
-	)
+	) async throws -> (carriesInstallInfo: Bool, changes: DBusValue)
 	func presetUnitFilesWithMode(
 		files: [String],
 		mode: String,
 		runtime: Bool,
 		force: Bool,
-	)
-		async throws -> (carriesInstallInfo: Bool, changes: DBusValue)
+	) async throws -> (carriesInstallInfo: Bool, changes: DBusValue)
 	func maskUnitFiles(files: [String], runtime: Bool, force: Bool) async throws -> DBusValue
 	func unmaskUnitFiles(files: [String], runtime: Bool) async throws -> DBusValue
 	func revertUnitFiles(files: [String]) async throws -> DBusValue
@@ -720,9 +706,7 @@ public struct OrgFreedesktopSystemd1ManagerProxy: OrgFreedesktopSystemd1Manager 
 
 	public func getUnitByPIDFD(
 		pidfd: UInt32
-	) async throws -> (
-		unit: String, unitId: String, invocationId: [UInt8]
-	) {
+	) async throws -> (unit: String, unitId: String, invocationId: [UInt8]) {
 		let request = DBusRequest.createMethodCall(
 			destination: destination,
 			path: path,
@@ -792,9 +776,7 @@ public struct OrgFreedesktopSystemd1ManagerProxy: OrgFreedesktopSystemd1Manager 
 		oldUnit: String,
 		newUnit: String,
 		mode: String,
-	) async throws
-		-> String
-	{
+	) async throws -> String {
 		let request = DBusRequest.createMethodCall(
 			destination: destination,
 			path: path,
@@ -947,9 +929,7 @@ public struct OrgFreedesktopSystemd1ManagerProxy: OrgFreedesktopSystemd1Manager 
 		whom: String,
 		subgroup: String,
 		signal: Int32,
-	)
-		async throws
-	{
+	) async throws {
 		let request = DBusRequest.createMethodCall(
 			destination: destination,
 			path: path,
@@ -1094,9 +1074,7 @@ public struct OrgFreedesktopSystemd1ManagerProxy: OrgFreedesktopSystemd1Manager 
 		mode: String,
 		properties: DBusValue,
 		aux: DBusValue,
-	)
-		async throws -> String
-	{
+	) async throws -> String {
 		let request = DBusRequest.createMethodCall(
 			destination: destination,
 			path: path,
@@ -1127,9 +1105,7 @@ public struct OrgFreedesktopSystemd1ManagerProxy: OrgFreedesktopSystemd1Manager 
 		unitName: String,
 		subcgroup: String,
 		pids: DBusValue,
-	)
-		async throws
-	{
+	) async throws {
 		let request = DBusRequest.createMethodCall(
 			destination: destination,
 			path: path,
@@ -1144,9 +1120,7 @@ public struct OrgFreedesktopSystemd1ManagerProxy: OrgFreedesktopSystemd1Manager 
 		unitName: String,
 		subcgroup: String,
 		flags: UInt64,
-	)
-		async throws
-	{
+	) async throws {
 		let request = DBusRequest.createMethodCall(
 			destination: destination,
 			path: path,
@@ -1556,9 +1530,7 @@ public struct OrgFreedesktopSystemd1ManagerProxy: OrgFreedesktopSystemd1Manager 
 	public func listUnitFilesByPatterns(
 		states: [String],
 		patterns: [String],
-	) async throws
-		-> DBusValue
-	{
+	) async throws -> DBusValue {
 		let request = DBusRequest.createMethodCall(
 			destination: destination,
 			path: path,
@@ -1589,9 +1561,7 @@ public struct OrgFreedesktopSystemd1ManagerProxy: OrgFreedesktopSystemd1Manager 
 		files: [String],
 		runtime: Bool,
 		force: Bool,
-	) async throws -> (
-		carriesInstallInfo: Bool, changes: DBusValue
-	) {
+	) async throws -> (carriesInstallInfo: Bool, changes: DBusValue) {
 		let request = DBusRequest.createMethodCall(
 			destination: destination,
 			path: path,
@@ -1624,9 +1594,7 @@ public struct OrgFreedesktopSystemd1ManagerProxy: OrgFreedesktopSystemd1Manager 
 	public func enableUnitFilesWithFlags(
 		files: [String],
 		flags: UInt64,
-	) async throws -> (
-		carriesInstallInfo: Bool, changes: DBusValue
-	) {
+	) async throws -> (carriesInstallInfo: Bool, changes: DBusValue) {
 		let request = DBusRequest.createMethodCall(
 			destination: destination,
 			path: path,
@@ -1659,9 +1627,7 @@ public struct OrgFreedesktopSystemd1ManagerProxy: OrgFreedesktopSystemd1Manager 
 	public func disableUnitFilesWithFlagsAndInstallInfo(
 		files: [String],
 		flags: UInt64,
-	) async throws
-		-> (carriesInstallInfo: Bool, changes: DBusValue)
-	{
+	) async throws -> (carriesInstallInfo: Bool, changes: DBusValue) {
 		let request = DBusRequest.createMethodCall(
 			destination: destination,
 			path: path,
@@ -1682,9 +1648,7 @@ public struct OrgFreedesktopSystemd1ManagerProxy: OrgFreedesktopSystemd1Manager 
 		files: [String],
 		runtime: Bool,
 		force: Bool,
-	) async throws -> (
-		carriesInstallInfo: Bool, changes: DBusValue
-	) {
+	) async throws -> (carriesInstallInfo: Bool, changes: DBusValue) {
 		let request = DBusRequest.createMethodCall(
 			destination: destination,
 			path: path,
@@ -1718,9 +1682,7 @@ public struct OrgFreedesktopSystemd1ManagerProxy: OrgFreedesktopSystemd1Manager 
 		files: [String],
 		runtime: Bool,
 		force: Bool,
-	) async throws -> (
-		carriesInstallInfo: Bool, changes: DBusValue
-	) {
+	) async throws -> (carriesInstallInfo: Bool, changes: DBusValue) {
 		let request = DBusRequest.createMethodCall(
 			destination: destination,
 			path: path,
@@ -1742,9 +1704,7 @@ public struct OrgFreedesktopSystemd1ManagerProxy: OrgFreedesktopSystemd1Manager 
 		mode: String,
 		runtime: Bool,
 		force: Bool,
-	)
-		async throws -> (carriesInstallInfo: Bool, changes: DBusValue)
-	{
+	) async throws -> (carriesInstallInfo: Bool, changes: DBusValue) {
 		let request = DBusRequest.createMethodCall(
 			destination: destination,
 			path: path,
@@ -4723,9 +4683,7 @@ public protocol OrgFreedesktopSystemd1ManagerHandler: Sendable {
 	func getUnitByControlGroup(cgroup: String) async throws -> String
 	func getUnitByPIDFD(
 		pidfd: UInt32
-	) async throws -> (
-		unit: String, unitId: String, invocationId: [UInt8]
-	)
+	) async throws -> (unit: String, unitId: String, invocationId: [UInt8])
 	func loadUnit(name: String) async throws -> String
 	func startUnit(name: String, mode: String) async throws -> String
 	func startUnitWithFlags(name: String, mode: String, flags: UInt64) async throws -> String
@@ -4774,8 +4732,7 @@ public protocol OrgFreedesktopSystemd1ManagerHandler: Sendable {
 		mode: String,
 		properties: DBusValue,
 		aux: DBusValue,
-	)
-		async throws -> String
+	) async throws -> String
 	func getUnitProcesses(name: String) async throws -> DBusValue
 	func attachProcessesToUnit(unitName: String, subcgroup: String, pids: DBusValue) async throws
 	func removeSubgroupFromUnit(unitName: String, subcgroup: String, flags: UInt64) async throws
@@ -4818,45 +4775,34 @@ public protocol OrgFreedesktopSystemd1ManagerHandler: Sendable {
 		files: [String],
 		runtime: Bool,
 		force: Bool,
-	) async throws -> (
-		carriesInstallInfo: Bool, changes: DBusValue
-	)
+	) async throws -> (carriesInstallInfo: Bool, changes: DBusValue)
 	func disableUnitFiles(files: [String], runtime: Bool) async throws -> DBusValue
 	func enableUnitFilesWithFlags(
 		files: [String],
 		flags: UInt64,
-	) async throws -> (
-		carriesInstallInfo: Bool, changes: DBusValue
-	)
+	) async throws -> (carriesInstallInfo: Bool, changes: DBusValue)
 	func disableUnitFilesWithFlags(files: [String], flags: UInt64) async throws -> DBusValue
 	func disableUnitFilesWithFlagsAndInstallInfo(
 		files: [String],
 		flags: UInt64,
-	) async throws -> (
-		carriesInstallInfo: Bool, changes: DBusValue
-	)
+	) async throws -> (carriesInstallInfo: Bool, changes: DBusValue)
 	func reenableUnitFiles(
 		files: [String],
 		runtime: Bool,
 		force: Bool,
-	) async throws -> (
-		carriesInstallInfo: Bool, changes: DBusValue
-	)
+	) async throws -> (carriesInstallInfo: Bool, changes: DBusValue)
 	func linkUnitFiles(files: [String], runtime: Bool, force: Bool) async throws -> DBusValue
 	func presetUnitFiles(
 		files: [String],
 		runtime: Bool,
 		force: Bool,
-	) async throws -> (
-		carriesInstallInfo: Bool, changes: DBusValue
-	)
+	) async throws -> (carriesInstallInfo: Bool, changes: DBusValue)
 	func presetUnitFilesWithMode(
 		files: [String],
 		mode: String,
 		runtime: Bool,
 		force: Bool,
-	)
-		async throws -> (carriesInstallInfo: Bool, changes: DBusValue)
+	) async throws -> (carriesInstallInfo: Bool, changes: DBusValue)
 	func maskUnitFiles(files: [String], runtime: Bool, force: Bool) async throws -> DBusValue
 	func unmaskUnitFiles(files: [String], runtime: Bool) async throws -> DBusValue
 	func revertUnitFiles(files: [String]) async throws -> DBusValue

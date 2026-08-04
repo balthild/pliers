@@ -66,10 +66,44 @@ dev.css:
 	@printf "\033]0;dev.css\007"
 	npx @tailwindcss/cli -i ./Resources/Style/main.css -o ./Public/dist/main.css --watch
 
-dbus:
-	busctl introspect --xml-interface org.freedesktop.systemd1 /org/freedesktop/systemd1 > ./Sources/PliersSystemd/Systemd1.xml
-	swift run dbus-codegen ./Sources/PliersSystemd/Systemd1.xml
-	dprint fmt ./Sources/PliersSystemd
+override define ADMINER_INDEX
+<?php
+function adminer_object() {
+	return new class extends Adminer\Adminer {
+		function loginForm() {
+			echo '<input type="hidden" name="auth[driver]" value="sqlite">';
+			echo '<input type="hidden" name="auth[db]" value="/var/lib/pliers/db.sqlite">';
+			echo '<p>/var/lib/pliers/db.sqlite</p>';
+			return parent::loginForm();
+		}
+		function loginFormField($$name, $$heading, $$value) {}
+		function login($$login, $$password) { return true; }
+	};
+}
+require "./adminer.php";
+endef
+dev.adminer:
+	@printf "\033]0;dev.adminer\007"
+	$(file > ./.build/adminer.php,$(ADMINER_INDEX))
+	sudo podman run \
+		--rm -it \
+		--user=root \
+		-p 8080:8080 \
+		-v /var/lib/pliers/:/var/lib/pliers/ \
+		-v $(PWD)/.build/adminer.php:/var/www/html/index.php \
+		docker.io/adminer
+
+dev.dbus:
+	busctl introspect --xml-interface org.freedesktop.DBus /org/freedesktop/DBus > ./Sources/PliersDBus/DBus.xml
+	busctl introspect --xml-interface org.freedesktop.systemd1 /org/freedesktop/systemd1 > ./Sources/PliersDBus/Systemd1.xml
+
+	swift run dbus-codegen \
+		./Sources/PliersDBus/DBus.xml \
+		./Sources/PliersDBus/Systemd1.xml \
+		./Sources/PliersDBus/Pliers.xml \
+		--output-dir ./Sources/PliersDBus
+
+	dprint fmt ./Sources/PliersDBus/**
 
 fmt:
 	dprint fmt

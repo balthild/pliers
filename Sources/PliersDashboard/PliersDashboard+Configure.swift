@@ -1,6 +1,5 @@
 import Fluent
 import FluentSQLiteDriver
-import JWT
 import Path
 import PliersCommon
 import Vapor
@@ -12,11 +11,7 @@ extension PliersDashboard {
 		try await http()
 
 		app.placeholder = try .init(app: app)
-
-		// jwt is used for short-lived temporary login tokens only,
-		// so the key can be randomly generated on each launch
-		let key = SymmetricKey(size: .bits256)
-		await app.jwt.keys.add(hmac: .init(key: key), digestAlgorithm: .sha256)
+		app.lifecycle.use(DBusServer())
 	}
 
 	private func console() async throws {

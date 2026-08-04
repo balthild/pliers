@@ -14,14 +14,33 @@ final class User: Model, @unchecked Sendable {
 	@Field(key: "username")
 	var username: String
 
-	@OptionalField(key: "password")
-	var password: String?
+	@OptionalGroup(key: "password")
+	var password: Password?
 
-	@OptionalField(key: "totp")
-	var totp: TOTPConfig?
+	@OptionalGroup(key: "token")
+	var token: Token?
 
 	@Children(for: \.$user)
 	var passkeys: [Passkey]
+
+	final class Password: Fields, @unchecked Sendable {
+		@Field(key: "hash")
+		var hash: String
+
+		@Field(key: "totp")
+		var totp: TOTPConfig
+	}
+
+	final class Token: Fields, @unchecked Sendable {
+		@Field(key: "pubkey")
+		var pubkey: Data
+
+		@Field(key: "challenge")
+		var challenge: Data
+
+		@Field(key: "expiration")
+		var expiration: Date
+	}
 
 	init() {}
 

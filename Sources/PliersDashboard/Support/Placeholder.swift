@@ -1,12 +1,12 @@
 import Vapor
 
 struct Placeholder {
-	let password: String
-	let totp: TOTPConfig
+	let password: User.Password
 
 	init(app: Application) throws {
-		self.password = try app.password.hash("")
-		self.totp = TOTPConfig()
+		self.password = .init()
+		self.password.hash = try app.password.hash("")
+		self.password.totp = TOTPConfig()
 	}
 
 	struct Key: StorageKey {

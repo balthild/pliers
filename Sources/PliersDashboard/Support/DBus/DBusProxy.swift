@@ -1,6 +1,6 @@
 import DBUS
 import PliersCommon
-import PliersSystemd
+import PliersDBus
 import Vapor
 
 extension Request {
@@ -24,10 +24,7 @@ struct DBusSystemdProxy {
 		action: @Sendable @escaping (OrgFreedesktopSystemd1Manager) async throws -> T
 	) async -> Result<T, Error> {
 		await Result {
-			try await DBusClient.withSystemBus(
-				auth: .external(userID: String(getuid())),
-				logger: self.logger,
-			) { connection in
+			try await DBusClient.system(logger: self.logger) { connection in
 				let proxy = OrgFreedesktopSystemd1ManagerProxy(
 					connection: connection,
 					destination: "org.freedesktop.systemd1",
@@ -44,10 +41,7 @@ struct DBusSystemdProxy {
 		action: @Sendable @escaping (OrgFreedesktopDBusProperties) async throws -> T,
 	) async -> Result<T, Error> {
 		await Result {
-			try await DBusClient.withSystemBus(
-				auth: .external(userID: String(getuid())),
-				logger: self.logger,
-			) { connection in
+			try await DBusClient.system(logger: self.logger) { connection in
 				let proxy = OrgFreedesktopDBusPropertiesProxy(
 					connection: connection,
 					destination: "org.freedesktop.systemd1",
