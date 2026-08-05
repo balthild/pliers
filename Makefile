@@ -66,32 +66,14 @@ dev.css:
 	@printf "\033]0;dev.css\007"
 	npx @tailwindcss/cli -i ./Resources/Style/main.css -o ./Public/dist/main.css --watch
 
-override define ADMINER_INDEX
-<?php
-function adminer_object() {
-	return new class extends Adminer\Adminer {
-		function loginForm() {
-			echo '<input type="hidden" name="auth[driver]" value="sqlite">';
-			echo '<input type="hidden" name="auth[db]" value="/var/lib/pliers/db.sqlite">';
-			echo '<p>/var/lib/pliers/db.sqlite</p>';
-			return parent::loginForm();
-		}
-		function loginFormField($$name, $$heading, $$value) {}
-		function login($$login, $$password) { return true; }
-	};
-}
-require "./adminer.php";
-endef
-dev.adminer:
-	@printf "\033]0;dev.adminer\007"
-	$(file > ./.build/adminer.php,$(ADMINER_INDEX))
+dev.sqlite:
+	@printf "\033]0;dev.sqlite\007"
 	sudo podman run \
 		--rm -it \
 		--user=root \
 		-p 8080:8080 \
-		-v /var/lib/pliers/:/var/lib/pliers/ \
-		-v $(PWD)/.build/adminer.php:/var/www/html/index.php \
-		docker.io/adminer
+		-v /var/lib/pliers:/data \
+		ghcr.io/coleifer/sqlite-web db.sqlite
 
 dev.dbus:
 	busctl introspect --xml-interface org.freedesktop.DBus /org/freedesktop/DBus > ./Sources/PliersDBus/DBus.xml
