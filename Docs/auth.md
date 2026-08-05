@@ -20,7 +20,9 @@ Token login is designed for local, temporary access. The first login of a user m
 
 ### Note
 
-Once generated, the token will expire in a few minutes. The token will also be invalidated after a restart of the Pliers system service.
+Tokens can only be generated while the dashboard service is running.
+
+Once generated, the token will expire in a few minutes. It will also be invalidated after a successful login or when a new token is generated for the same user.
 
 ## 2) Passkey
 

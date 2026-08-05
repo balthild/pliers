@@ -3,8 +3,8 @@
 <node>
 	<interface name="com.balthild.Pliers">
 		<method name="CreateLoginToken">
-			<arg name="pubkey" type="s" direction="in" />
-			<arg name="challenge" type="s" direction="out" />
+			<arg name="pubkey" type="ay" direction="in" />
+			<arg name="challenge" type="ay" direction="out" />
 		</method>
 	</interface>
 </node>

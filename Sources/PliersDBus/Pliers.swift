@@ -6,7 +6,7 @@ private enum DBusCodegenError: Error { case typeMismatch }
 // MARK: - com.balthild.Pliers
 
 public protocol ComBalthildPliers: Sendable {
-	func createLoginToken(pubkey: String) async throws -> String
+	func createLoginToken(pubkey: [UInt8]) async throws -> [UInt8]
 }
 
 public struct ComBalthildPliersProxy: ComBalthildPliers {
@@ -20,23 +20,26 @@ public struct ComBalthildPliersProxy: ComBalthildPliers {
 		self.path = path
 	}
 
-	public func createLoginToken(pubkey: String) async throws -> String {
+	public func createLoginToken(pubkey: [UInt8]) async throws -> [UInt8] {
 		let request = DBusRequest.createMethodCall(
 			destination: destination,
 			path: path,
 			interface: "com.balthild.Pliers",
 			method: "CreateLoginToken",
-			body: [.string(pubkey)],
+			body: [.array(pubkey.map { .byte($0) })],
 		)
 		guard let reply = try await connection.send(request) else { throw DBusError.missingReply }
 		guard reply.body.indices.contains(0) else { throw DBusCodegenError.typeMismatch }
-		guard case .string(let _v0) = reply.body[0] else { throw DBusCodegenError.typeMismatch }
-		return _v0
+		guard case .array(let _arr0) = reply.body[0] else { throw DBusCodegenError.typeMismatch }
+		return try _arr0.map { elem in
+			guard case .byte(let b) = elem else { throw DBusCodegenError.typeMismatch }
+			return b
+		}
 	}
 }
 
 public protocol ComBalthildPliersHandler: Sendable {
-	func createLoginToken(pubkey: String) async throws -> String
+	func createLoginToken(pubkey: [UInt8]) async throws -> [UInt8]
 }
 
 extension ComBalthildPliersHandler {
@@ -45,15 +48,19 @@ extension ComBalthildPliersHandler {
 		iface.methods = [
 			.init(
 				name: "CreateLoginToken",
-				inputArgs: [.init(name: "pubkey", type: "s")],
-				outputArgs: [.init(name: "challenge", type: "s")],
+				inputArgs: [.init(name: "pubkey", type: "ay")],
+				outputArgs: [.init(name: "challenge", type: "ay")],
 			) { [self] ctx in
 				guard ctx.arguments.count >= 1 else { throw DBusCodegenError.typeMismatch }
-				guard case .string(let pubkey) = ctx.arguments[0] else {
+				guard case .array(let _arr_pubkey) = ctx.arguments[0] else {
 					throw DBusCodegenError.typeMismatch
 				}
+				let pubkey = try _arr_pubkey.map { elem in
+					guard case .byte(let b) = elem else { throw DBusCodegenError.typeMismatch }
+					return b
+				}
 				let result = try await self.createLoginToken(pubkey: pubkey)
-				return [.string(result)]
+				return [.array(result.map { .byte($0) })]
 			}
 		]
 		return iface

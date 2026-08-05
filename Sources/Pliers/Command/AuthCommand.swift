@@ -17,7 +17,7 @@ struct AuthCommand: AsyncCommand, Sendable {
 
 	func run(using context: CommandContext, signature: Signature) async throws {
 		let privkey = Curve25519.Signing.PrivateKey()
-		let pubkey = privkey.publicKey.rawRepresentation.base64EncodedString()
+		let pubkey = [UInt8](privkey.publicKey.rawRepresentation)
 
 		let challenge = try await DBusClient.system { connection in
 			let proxy = ComBalthildPliersProxy(
@@ -26,14 +26,12 @@ struct AuthCommand: AsyncCommand, Sendable {
 				path: "/com/balthild/Pliers",
 			)
 
-			let result = try await proxy.createLoginToken(pubkey: pubkey)
-
-			return try Data(base64Encoded: result).alert("unknown error")
+			return try await proxy.createLoginToken(pubkey: pubkey)
 		}
 
 		let signature = try privkey.signature(for: challenge).base64EncodedString()
 
 		context.console.info("Login token generated. Note that it will expire soon.")
-		context.console.print("\(pubkey);\(signature)")
+		context.console.print("\(pubkey.base64);\(signature)")
 	}
 }
