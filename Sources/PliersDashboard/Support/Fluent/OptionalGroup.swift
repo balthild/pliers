@@ -64,13 +64,19 @@ extension OptionalGroupProperty: AnyDatabaseProperty {
 	}
 
 	public func input(to input: any DatabaseInput) {
-		self.value?.input(to: input.prefixed(by: self.prefix))
+		if let value = self.value {
+			value.input(to: input.prefixed(by: self.prefix))
+		} else {
+			self.keys.forEach { input.set(.null, at: $0) }
+		}
 	}
 
 	public func output(from output: any DatabaseOutput) throws {
-		guard keys.allSatisfy(output.contains) else {
-			self.value = nil
-			return
+		for key in self.keys {
+			guard try output.contains(key) && !output.decodeNil(key) else {
+				self.value = nil
+				return
+			}
 		}
 
 		do {
@@ -197,3 +203,11 @@ where Property: QueryAddressableProperty {
 		self.property.queryableProperty
 	}
 }
+
+// MARK: Optional
+
+private protocol AnyOptionalFieldProperty: AnyDatabaseProperty {
+	associatedtype Value: Codable
+}
+
+extension OptionalFieldProperty: AnyOptionalFieldProperty {}

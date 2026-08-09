@@ -34,7 +34,7 @@ struct PasswordSettingsController: RouteCollection {
 
 		let user = try req.auth.require(User.self)
 
-		user.password = User.Password()
+		user.password = .init()
 		user.password!.hash = try await req.password.async.hash(input.password)
 		user.password!.totp = input.totp_config
 		try await user.save(on: req.db)
