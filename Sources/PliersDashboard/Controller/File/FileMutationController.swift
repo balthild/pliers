@@ -11,8 +11,8 @@ struct FileMutationController: RouteCollection {
 	func boot(routes: any RoutesBuilder) throws {
 		let group = routes.grouped("file").grouped(User.requireLoggedIn())
 		group.post("mkdir", use: self.mkdir)
-		group.post("create", use: self.create)
-		group.post("update", use: self.update)
+		group.on(.POST, "create", body: .collect(maxSize: "200mb"), use: self.create)
+		group.on(.POST, "update", body: .collect(maxSize: "200mb"), use: self.update)
 		group.post("delete", use: self.delete)
 		group.post("chmod", use: self.chmod)
 		group.post("unarchive", use: self.unarchive)
