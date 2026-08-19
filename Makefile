@@ -27,7 +27,6 @@ extension Constants {
 	}
 }
 endef
-export GENERATE_CODE
 
 help:
 	@echo "Usage: make [configure|build|test|fmt]"
@@ -35,7 +34,7 @@ help:
 configure:
 	@$(foreach v, $(sort $(filter PLIERS_%, $(.VARIABLES))), echo "$(v)=$($(v))";)
 	@echo "Generating $(GENERATE_PATH)"
-	@echo "$$GENERATE_CODE" > $(GENERATE_PATH)
+	$(file > $(GENERATE_PATH),$(GENERATE_CODE))
 
 build:
 	@if [ ! -f $(GENERATE_PATH) ]; then echo 'Please run "make configure" first'; exit 1; fi
@@ -46,16 +45,20 @@ test:
 	@if [ ! -f $(GENERATE_PATH) ]; then echo 'Please run "make configure" first'; exit 1; fi
 	swift test
 
-pkg:
+package: export PKGARCH=$(shell uname -m)
+package: build
+	rm -rf ./.build/pkg
 	mkdir -p ./.build/pkg
 	npx @goreleaser/nfpm pkg --packager deb --target ./.build/pkg --config ./nfpm.yaml
 
-release: pkg
+release: package
+	git tag -f dev
+	git push -f origin dev
 	gh release delete dev --yes || true
 	gh release create dev --notes "dev"
 	gh release upload dev ./.build/pkg/*.deb
 
-dev.%: SWIFT_BACKTRACE = timeout=none
+dev.%: export SWIFT_BACKTRACE = timeout=none
 dev.%:
 	@printf "\033]0;dev.$*\007"
 	@if [ ! -f $(GENERATE_PATH) ]; then echo 'Please run "make configure" first'; exit 1; fi
