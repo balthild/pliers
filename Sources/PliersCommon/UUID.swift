@@ -5,3 +5,16 @@ extension UUID {
 		withUnsafeBytes(of: self.uuid) { Array($0) }
 	}
 }
+
+extension UUID {
+	public static func roll(retries: Int = 3, unique: (UUID) -> Bool) throws -> UUID {
+		for _ in 0..<retries {
+			let uuid = UUID()
+			if unique(uuid) {
+				return uuid
+			}
+		}
+
+		throw RuntimeError("failed to create a unique uuid after \(retries) retries")
+	}
+}

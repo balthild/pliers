@@ -40,7 +40,7 @@ extension View.Page {
 							td { passkey.name }
 							td {
 								if let date = passkey.lastUsed {
-									time(.datetime("\(date.ISO8601Format())")) {}
+									time(date)
 								}
 							}
 							td {
@@ -60,18 +60,6 @@ extension View.Page {
 								}
 							}
 						}
-					}
-
-					script {
-						HTMLRaw(
-							"""
-							const parent = document.currentScript.parentElement;
-							parent.querySelectorAll('time').forEach((el) => {
-								const date = new Date(el.dateTime);
-								el.textContent = date.toLocaleString();
-							});
-							"""
-						)
 					}
 
 					tr {

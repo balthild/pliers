@@ -1,0 +1,147 @@
+import AsyncHTTPClient
+import Fluent
+import Foundation
+import NIOCore
+import NIOFileSystem
+import Path
+import PliersCommon
+import Queues
+import Subprocess
+
+struct InstallPHPJob: AsyncJob {
+	struct Payload: Codable {
+		let id: UUID
+		let version: String
+	}
+
+	func dequeue(_ ctx: QueueContext, _ payload: Payload) async throws {
+		let progress = try await ctx.progress.get(payload.id)
+			.alert("progress handle not found")
+
+		let base = Constants.pkgs / "php"
+		try base.mkdir(.p)
+
+		let tmp = try base.mkrand(.dir)
+
+		try await download(
+			version: payload.version,
+			variant: "fpm",
+			directory: tmp,
+			bounds: (0.0, 0.5),
+			progress: progress,
+			logger: ctx.logger,
+		)
+
+		try await download(
+			version: payload.version,
+			variant: "cli",
+			directory: tmp,
+			bounds: (0.5, 1.0),
+			progress: progress,
+			logger: ctx.logger,
+		)
+
+		try await ctx.db.transaction { db in
+			let records = try await Package.query(on: ctx.db)
+				.filter(\.$name == .php)
+				.filter(\.$version == payload.version)
+				.count()
+			if records == 0 {
+				let package = Package()
+				package.name = .php
+				package.version = payload.version
+				try await package.save(on: db)
+			}
+
+			let dest = base / payload.version
+			try dest.mkdir()
+			try dest.replace(with: tmp)
+		}
+
+		await progress.report { data in
+			data.status = .done
+			data.message = "Installation complete."
+		}
+
+		await progress.finish()
+	}
+
+	func error(_ ctx: QueueContext, _ error: Error, _ payload: Payload) async throws {
+		let progress = await ctx.progress.get(payload.id)
+
+		await progress?.report { data in
+			data.status = .error
+			data.message = error.localizedDescription
+		}
+
+		await progress?.finish()
+	}
+
+	private func download(
+		version: String,
+		variant: String,
+		directory: Path,
+		bounds: (Double, Double),
+		progress: ProgressHandle,
+		logger: Logger,
+	) async throws {
+		#if arch(arm64)
+			let filename = "php-\(version)-\(variant)-linux-aarch64.tar.gz"
+		#else
+			let filename = "php-\(version)-\(variant)-linux-x86_64.tar.gz"
+		#endif
+
+		let path = directory / filename
+
+		let url = "https://dl.static-php.dev/v3/php-bin/bulk/\(filename)"
+		let response = try await HTTPClient.shared.execute(
+			HTTPClientRequest(url: url),
+			timeout: .seconds(3600),
+			logger: logger,
+		)
+
+		await progress.report { data in
+			data.progress = bounds.0
+			data.message = "Downloading \(filename)"
+		}
+
+		// an indeterminate progress bar will be shown when the result is negative
+		let total = response.headers.first(name: "content-length").flatMap(Int64.init) ?? -1
+		var count: Int64 = 0
+		let scale = 0.95 * (bounds.1 - bounds.0)
+
+		try await path.handle(.w) { handle in
+			for try await buffer in response.body {
+				count += try await handle.write(contentsOf: buffer, toAbsoluteOffset: count)
+
+				await progress.report { data in
+					data.progress = Double(count) / Double(total) * scale + bounds.0
+				}
+			}
+		}
+
+		await progress.report { data in
+			data.message = "Extracting \(filename)"
+		}
+
+		let result = try await Subprocess.run(
+			.path(Constants.coreutils / "tar"),
+			arguments: ["-xf", path.string],
+			environment: .custom([]),
+			workingDirectory: .init(directory.string),
+			output: .discarded,
+			error: .string(limit: 8192, encoding: UTF8.self),
+		)
+
+		guard result.terminationStatus == .exited(0) else {
+			throw RuntimeError(result.standardError ?? "unknown error")
+		}
+
+		try path.delete()
+
+		await progress.report { data in
+			data.progress = bounds.1
+			data.message = "Extracted \(filename)"
+		}
+	}
+}

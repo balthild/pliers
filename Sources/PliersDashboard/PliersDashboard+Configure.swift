@@ -8,6 +8,7 @@ extension PliersDashboard {
 	func configure() async throws {
 		try await database()
 		try await console()
+		try await queue()
 		try await http()
 
 		app.placeholder = try .init(app: app)
@@ -24,11 +25,23 @@ extension PliersDashboard {
 		let config = DatabaseConfigurationFactory.sqlite(.file(path.string))
 		app.databases.use(config, as: .sqlite)
 
+		if let sqlite = app.db as? SQLDatabase & SQLiteDatabase {
+			try await sqlite.raw("PRAGMA journal_mode = WAL;").run()
+		}
+
 		app.migrations.add(SessionRecord.migration)
 		app.migrations.add(CreateUser())
 		app.migrations.add(CreatePasskey())
 		app.migrations.add(CreateCaddy())
+		app.migrations.add(CreatePackage())
 		try await app.autoMigrate()
+	}
+
+	private func queue() async throws {
+		app.queues.use(.memory)
+		app.queues.configuration.workerCount = 2
+		app.queues.configuration.add(InstallPHPJob())
+		try app.queues.startInProcessJobs()
 	}
 
 	private func http() async throws {
@@ -40,6 +53,7 @@ extension PliersDashboard {
 		app.middleware.use(app.sessions.middleware)
 
 		try app.register(collection: HomeController())
+		try app.register(collection: JobController())
 
 		try app.register(collection: AuthController())
 		try app.register(collection: TokenLoginController())
@@ -56,5 +70,7 @@ extension PliersDashboard {
 		try app.register(collection: CaddyController())
 		try app.register(collection: CaddyServiceController())
 		try app.register(collection: CaddyConfigController())
+
+		try app.register(collection: PHPController())
 	}
 }

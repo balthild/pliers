@@ -18,9 +18,9 @@ extension Request {
 		}
 	}
 
-	var clientAcceptsJson: Bool {
+	var clientAcceptsHTML: Bool {
 		guard let accept = self.headers.first(name: .accept) else { return false }
-		return accept.contains("/json") || accept.contains("+json")
+		return accept.contains("/html") || accept.contains("/xhtml+xml")
 	}
 }
 

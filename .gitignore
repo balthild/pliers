@@ -3,6 +3,8 @@
 .vscode/*.json
 !.vscode/extensions.json
 
+.zed/*.json
+
 Packages
 .build
 .swiftpm

@@ -10,12 +10,15 @@ final class AlertMiddleware: AsyncMiddleware {
 		} catch {
 			let status: HTTPStatus
 			switch error {
-			case let error as AbortError: status = error.status
-			case is AlertError: status = .badRequest
-			default: status = .internalServerError
+			case let error as AbortError:
+				status = error.status
+			case is AlertError:
+				status = .badRequest
+			default:
+				status = .internalServerError
 			}
 
-			if request.clientAcceptsJson {
+			if !request.clientAcceptsHTML {
 				throw Abort(status, reason: error.localizedDescription)
 			} else {
 				request.logger.report(error: error)

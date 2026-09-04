@@ -21,13 +21,17 @@ struct CaddyConfigController: RouteCollection {
 		defer { try? dir.delete() }
 
 		let live = dir.parent / "live"
+		try live.mkdir()
 		try live.replace(with: dir)
 
 		return req.redirect(.back)
 	}
 
 	private func generate(req: Request) async throws -> Path {
-		let dir = try mkdir()
+		let base = Constants.caddy.conf / "pliers"
+		try base.mkdir(.p)
+
+		let dir = try base.mkrand(.dir)
 		let file = dir / "Caddyfile"
 
 		let sites = try await Caddy.query(on: req.db).all()
@@ -107,28 +111,5 @@ struct CaddyConfigController: RouteCollection {
 			try? dir.delete()
 			throw RuntimeError(result.closureResult)
 		}
-	}
-
-	private func mkdir() throws -> Path {
-		let base = Constants.caddy.conf / "pliers"
-		try base.mkdir(.p)
-
-		for _ in 0..<3 {
-			do {
-				let dir = base / UUID().uuidString.lowercased()
-
-				// Path.mkdir does not fail when the directory exists
-				try FileManager.default.createDirectory(
-					at: dir.url,
-					withIntermediateDirectories: false,
-				)
-
-				return dir
-			} catch let error as NSError where error.isFileExistsError {
-				continue
-			}
-		}
-
-		throw RuntimeError("unbelievable")
 	}
 }

@@ -23,6 +23,8 @@ final class User: Model, @unchecked Sendable {
 	@Children(for: \.$user)
 	var passkeys: [Passkey]
 
+	init() {}
+
 	final class Password: Fields, @unchecked Sendable {
 		@Field(key: "hash")
 		var hash: String
@@ -42,15 +44,13 @@ final class User: Model, @unchecked Sendable {
 		var expiration: Date
 	}
 
-	init() {}
-
 	public static func find(username: String, on database: Database) async throws -> User? {
 		return try await User.query(on: database)
 			.filter(\.$username == username)
 			.first()
 	}
 
-	public static func findOrCreate(username: String, on database: Database) async throws -> User {
+	public static func resolve(username: String, on database: Database) async throws -> User {
 		let existing = try await Self.find(username: username, on: database)
 		if let existing {
 			return existing

@@ -58,12 +58,14 @@ release: package
 	gh release create dev --notes "dev"
 	gh release upload dev ./.build/pkg/*.deb
 
-dev.%: export SWIFT_BACKTRACE = timeout=none
 dev.%:
 	@printf "\033]0;dev.$*\007"
 	@if [ ! -f $(GENERATE_PATH) ]; then echo 'Please run "make configure" first'; exit 1; fi
 	swift build -c debug
-	sudo ./.build/debug/pliers $*
+	sudo \
+		SWIFT_BACKTRACE="timeout=none" \
+		LOG_LEVEL="$(LOG_LEVEL)" \
+		./.build/debug/pliers $*
 
 dev.css:
 	@printf "\033]0;dev.css\007"
@@ -71,8 +73,10 @@ dev.css:
 
 dev.sqlite:
 	@printf "\033]0;dev.sqlite\007"
+	sudo podman rm --force --time 1 pliers-sqlite || true
 	sudo podman run \
 		--rm -it \
+		--name=pliers-sqlite \
 		--user=root \
 		-p 8080:8080 \
 		-v /var/lib/pliers:/data \

@@ -19,7 +19,7 @@ struct DBusHandler: ComBalthildPliersHandler {
 		let challenge = SymmetricKey(size: .bits256).withUnsafeBytes { [UInt8]($0) }
 
 		let username = String(cString: pw.pointee.pw_name)
-		let user = try await User.findOrCreate(username: username, on: app.db)
+		let user = try await User.resolve(username: username, on: app.db)
 
 		user.token = .init()
 		user.token!.pubkey = pubkey.rawRepresentation

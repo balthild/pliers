@@ -1,9 +1,11 @@
 import Foundation
+import NIOCore
+import NIOFileSystem
 import Path
 import PliersShim
 
 extension Path {
-	public static func home(for username: String) -> Self? {
+	public static func home(for username: String) -> Path? {
 		guard let url = FileManager.default.homeDirectory(forUser: username) else {
 			return nil
 		}
@@ -11,7 +13,7 @@ extension Path {
 		return .init(url: url)
 	}
 
-	public var canonical: Self? {
+	public var canonical: Path? {
 		let url = self.url.resolvingSymlinksInPath()
 		return .init(url: url)
 	}
@@ -40,6 +42,75 @@ extension Path {
 		}
 
 		return true
+	}
+}
+
+extension Path {
+	public enum RandPathType: String {
+		case file = "file"
+		case dir = "dir"
+	}
+
+	public func mkrand(_ type: RandPathType, retries: Int = 3) throws -> Path {
+		for _ in 0..<retries {
+			do {
+				let path = self / UUID().uuidString.lowercased()
+
+				switch type {
+				case .file:
+					try Data().write(to: path.url, options: .withoutOverwriting)
+
+				case .dir:
+					// Path.mkdir does not fail when the directory exists
+					try FileManager.default.createDirectory(
+						at: path.url,
+						withIntermediateDirectories: false,
+					)
+				}
+
+				return path
+			} catch let error as NSError where error.isFileExistsError {
+				continue
+			}
+		}
+
+		throw RuntimeError("failed to create a unique \(type) after \(retries) retries")
+	}
+}
+
+extension Path {
+	public enum HandleTypeRead { case r }
+	public enum HandleTypeWrite { case w }
+	public enum HandleTypeReadWrite { case rw }
+
+	public func handle<T>(
+		_ type: HandleTypeRead,
+		execute: (_ handle: ReadFileHandle) async throws -> T,
+	) async throws -> T {
+		return try await FileSystem.shared.withFileHandle(
+			forReadingAt: .init(self.string),
+			execute: execute,
+		)
+	}
+
+	public func handle<T>(
+		_ type: HandleTypeWrite,
+		execute: (_ handle: WriteFileHandle) async throws -> T,
+	) async throws -> T {
+		return try await FileSystem.shared.withFileHandle(
+			forWritingAt: .init(self.string),
+			execute: execute,
+		)
+	}
+
+	public func handle<T>(
+		_ type: HandleTypeReadWrite,
+		execute: (_ handle: ReadWriteFileHandle) async throws -> T,
+	) async throws -> T {
+		return try await FileSystem.shared.withFileHandle(
+			forReadingAndWritingAt: .init(self.string),
+			execute: execute,
+		)
 	}
 }
 

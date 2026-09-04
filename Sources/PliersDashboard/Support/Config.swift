@@ -2,7 +2,7 @@ import PliersCommon
 import Vapor
 
 extension Config {
-	fileprivate struct Key: StorageKey {
+	fileprivate enum Key: StorageKey {
 		typealias Value = Config
 	}
 }

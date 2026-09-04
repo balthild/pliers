@@ -68,6 +68,7 @@ extension View.Layout {
 					div { link(text: "Overview", path: "/") }
 					div { link(text: "Filesystem", path: "/file") }
 					div { link(text: "Caddy", path: "/caddy") }
+					div { link(text: "PHP", path: "/php") }
 					div { link(text: "MySQL", path: "/mysql") }
 					div { link(text: "Cron", path: "/cron") }
 				}

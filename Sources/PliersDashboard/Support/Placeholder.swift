@@ -9,7 +9,7 @@ struct Placeholder {
 		self.password.totp = TOTPConfig()
 	}
 
-	struct Key: StorageKey {
+	fileprivate enum Key: StorageKey {
 		typealias Value = Placeholder
 	}
 }

@@ -17,6 +17,10 @@ extension HTMLAttribute {
 		}
 	}
 
+	public static func data(_ name: String, _ value: String? = nil) -> Self {
+		.init(name: "data-\(name)", value: value)
+	}
+
 	public static func custom(_ name: String) -> Self {
 		.init(name: name, value: nil)
 	}
