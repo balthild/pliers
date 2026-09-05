@@ -109,7 +109,7 @@ struct PHPController: RouteCollection {
 		let _ = try /\d+\.\d+\.\d+/.wholeMatch(in: version)
 			.alert("invalid version")
 
-		let target = Constants.pkgs / "php" / version
+		let target = C.pkgs / "php" / version
 		try target.delete()
 
 		try await Package.query(on: req.db)

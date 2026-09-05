@@ -28,7 +28,7 @@ struct CaddyConfigController: RouteCollection {
 	}
 
 	private func generate(req: Request) async throws -> Path {
-		let base = Constants.caddy.conf / "pliers"
+		let base = C.caddy.conf / "pliers"
 		try base.mkdir(.p)
 
 		let dir = try base.mkrand(.dir)
@@ -88,10 +88,10 @@ struct CaddyConfigController: RouteCollection {
 		let file = dir / "Caddyfile"
 
 		let result = try await Subprocess.run(
-			.path(Constants.caddy.exec),
+			.path(C.caddy.exec),
 			arguments: ["validate", "--config", file.string],
 			environment: .custom([]),
-			platformOptions: try .su(Constants.caddy.user),
+			platformOptions: try .su(C.caddy.user),
 			input: .none,
 			output: .discarded,
 			error: .sequence,

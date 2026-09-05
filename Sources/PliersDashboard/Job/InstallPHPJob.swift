@@ -18,7 +18,7 @@ struct InstallPHPJob: AsyncJob {
 		let progress = try await ctx.progress.get(payload.id)
 			.alert("progress handle not found")
 
-		let base = Constants.pkgs / "php"
+		let base = C.pkgs / "php"
 		try base.mkdir(.p)
 
 		let tmp = try base.mkrand(.dir)
@@ -125,7 +125,7 @@ struct InstallPHPJob: AsyncJob {
 		}
 
 		let result = try await Subprocess.run(
-			.path(Constants.coreutils / "tar"),
+			.path(C.coreutils / "tar"),
 			arguments: ["-xf", path.string],
 			environment: .custom([]),
 			workingDirectory: .init(directory.string),
