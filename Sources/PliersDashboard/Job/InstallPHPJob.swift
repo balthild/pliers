@@ -24,21 +24,21 @@ struct InstallPHPJob: AsyncJob {
 		let tmp = try base.mkrand(.dir)
 
 		try await download(
+			ctx: ctx,
 			version: payload.version,
-			variant: "fpm",
+			component: "fpm",
 			directory: tmp,
 			bounds: (0.0, 0.5),
 			progress: progress,
-			logger: ctx.logger,
 		)
 
 		try await download(
+			ctx: ctx,
 			version: payload.version,
-			variant: "cli",
+			component: "cli",
 			directory: tmp,
 			bounds: (0.5, 1.0),
 			progress: progress,
-			logger: ctx.logger,
 		)
 
 		try await ctx.db.transaction { db in
@@ -78,26 +78,25 @@ struct InstallPHPJob: AsyncJob {
 	}
 
 	private func download(
+		ctx: QueueContext,
 		version: String,
-		variant: String,
+		component: String,
 		directory: Path,
 		bounds: (Double, Double),
 		progress: ProgressHandle,
-		logger: Logger,
 	) async throws {
 		#if arch(arm64)
-			let filename = "php-\(version)-\(variant)-linux-aarch64.tar.gz"
+			let filename = "php-\(version)-\(component)-linux-aarch64.tar.gz"
 		#else
-			let filename = "php-\(version)-\(variant)-linux-x86_64.tar.gz"
+			let filename = "php-\(version)-\(component)-linux-x86_64.tar.gz"
 		#endif
 
 		let path = directory / filename
 
 		let url = "https://dl.static-php.dev/v3/php-bin/bulk/\(filename)"
-		let response = try await HTTPClient.shared.execute(
+		let response = try await ctx.http.execute(
 			HTTPClientRequest(url: url),
 			timeout: .seconds(3600),
-			logger: logger,
 		)
 
 		await progress.report { data in
@@ -106,11 +105,11 @@ struct InstallPHPJob: AsyncJob {
 		}
 
 		// an indeterminate progress bar will be shown when the result is negative
-		let total = response.headers.first(name: "content-length").flatMap(Int64.init) ?? -1
+		let total = response.headers.first(name: .contentLength).flatMap(Int64.init) ?? -1
 		var count: Int64 = 0
 		let scale = 0.95 * (bounds.1 - bounds.0)
 
-		try await path.handle(.w) { handle in
+		try await path.handle(.w, with: ctx.fs) { handle in
 			for try await buffer in response.body {
 				count += try await handle.write(contentsOf: buffer, toAbsoluteOffset: count)
 

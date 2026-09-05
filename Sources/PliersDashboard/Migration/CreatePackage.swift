@@ -6,7 +6,7 @@ struct CreatePackage: AsyncMigration {
 			.id()
 			.field("name", .string, .required)
 			.field("version", .string, .required)
-			.field("metadata", .string, .required)
+			.field("metadata", .json, .required)
 			.unique(on: "name", "version")
 			.create()
 	}

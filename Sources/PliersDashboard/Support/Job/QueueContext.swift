@@ -1,5 +1,6 @@
 import AsyncHTTPClient
 import Fluent
+import NIOFileSystem
 import Queues
 
 extension QueueContext {
@@ -7,10 +8,11 @@ extension QueueContext {
 		self.application.db
 	}
 
+	public var fs: FileSystem {
+		.init(threadPool: self.application.threadPool)
+	}
+
 	public var http: HTTPClient {
-		.init(
-			eventLoopGroup: self.application.eventLoopGroup,
-			configuration: .init(),
-		)
+		self.application.http.client.shared
 	}
 }

@@ -85,9 +85,10 @@ extension Path {
 
 	public func handle<T>(
 		_ type: HandleTypeRead,
+		with fs: FileSystem = FileSystem.shared,
 		execute: (_ handle: ReadFileHandle) async throws -> T,
 	) async throws -> T {
-		return try await FileSystem.shared.withFileHandle(
+		return try await fs.withFileHandle(
 			forReadingAt: .init(self.string),
 			execute: execute,
 		)
@@ -95,9 +96,10 @@ extension Path {
 
 	public func handle<T>(
 		_ type: HandleTypeWrite,
+		with fs: FileSystem = FileSystem.shared,
 		execute: (_ handle: WriteFileHandle) async throws -> T,
 	) async throws -> T {
-		return try await FileSystem.shared.withFileHandle(
+		return try await fs.withFileHandle(
 			forWritingAt: .init(self.string),
 			execute: execute,
 		)
@@ -105,9 +107,10 @@ extension Path {
 
 	public func handle<T>(
 		_ type: HandleTypeReadWrite,
+		with fs: FileSystem = FileSystem.shared,
 		execute: (_ handle: ReadWriteFileHandle) async throws -> T,
 	) async throws -> T {
-		return try await FileSystem.shared.withFileHandle(
+		return try await fs.withFileHandle(
 			forReadingAndWritingAt: .init(self.string),
 			execute: execute,
 		)
