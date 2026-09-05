@@ -19,10 +19,10 @@ struct ServeCommand: AsyncCommand, Sendable {
 		try context.config.state.mkdir(.p)
 
 		let attrs = try context.config.state.attrs.expect("read state dir attributes")
-		if attrs[.ownerAccountID] as? UInt32 != 0 {
+		guard let owner = attrs[.ownerAccountID] as? UInt32, owner == 0 else {
 			throw RuntimeError("state dir must be owned by root")
 		}
-		if attrs[.posixPermissions] as? UInt16 != 0o600 {
+		guard let mode = attrs[.posixPermissions] as? UInt16, mode & 0o077 == 0 else {
 			throw RuntimeError("state dir must not be accessible by non-root users")
 		}
 

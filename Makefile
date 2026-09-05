@@ -1,5 +1,6 @@
 PLIERS_CONF ?= /etc/pliers
 PLIERS_PKGS ?= /opt/pliers
+PLIERS_SERVICES ?= /etc/systemd/system
 PLIERS_COREUTILS ?= /usr/bin
 PLIERS_CADDY_EXEC ?= /usr/bin/caddy
 PLIERS_CADDY_CONF ?= /etc/caddy
@@ -14,6 +15,7 @@ import Path
 extension Constants {
 	public static let conf = Path("$(PLIERS_CONF)")!
 	public static let pkgs = Path("$(PLIERS_PKGS)")!
+	public static let services = Path("$(PLIERS_SERVICES)")!
 	public static let coreutils = Path("$(PLIERS_COREUTILS)")!
 	public enum caddy {
 		public static let exec = Path("$(PLIERS_CADDY_EXEC)")!
@@ -79,7 +81,7 @@ dev.sqlite:
 		--name=pliers-sqlite \
 		--user=root \
 		-p 8080:8080 \
-		-v /var/lib/pliers:/data \
+		-v /var/lib/pliers/dashboard:/data \
 		ghcr.io/coleifer/sqlite-web db.sqlite
 
 dev.dbus:
