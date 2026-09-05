@@ -19,7 +19,7 @@ void switch_user(struct passwd* pw) {
 	}
 }
 
-int wait_process(pid_t pid) {
+int wait_child(pid_t pid) {
 	int status = 0;
 	if (waitpid(pid, &status, 0) < 0) return errno;
 
@@ -32,16 +32,13 @@ int check_access(int mode, const char* username, const char* path) {
 
 	pid_t pid = fork();
 	if (pid < 0) return errno;
+	if (pid > 0) return wait_child(pid);
 
-	if (pid == 0) {
-		switch_user(pw);
+	switch_user(pw);
 
-		// `access` is async-signal-safe
-		int result = access(path, mode);
-		_exit(result == 0 ? 0 : errno);
-	}
-
-	return wait_process(pid);
+	// `access` is async-signal-safe
+	int result = access(path, mode);
+	_exit(result == 0 ? 0 : errno);
 }
 
 int create_file(const char* username, const char* path) {
@@ -50,17 +47,14 @@ int create_file(const char* username, const char* path) {
 
 	pid_t pid = fork();
 	if (pid < 0) return errno;
+	if (pid > 0) return wait_child(pid);
 
-	if (pid == 0) {
-		switch_user(pw);
+	switch_user(pw);
 
-		// `open` is async-signal-safe, `fopen` is not
-		int result = open(path, O_WRONLY | O_CREAT | O_EXCL, 0644);
-		if (result >= 0) close(result);
-		_exit(result >= 0 ? 0 : errno);
-	}
-
-	return wait_process(pid);
+	// `open` is async-signal-safe, `fopen` is not
+	int result = open(path, O_WRONLY | O_CREAT | O_EXCL, 0644);
+	if (result >= 0) close(result);
+	_exit(result >= 0 ? 0 : errno);
 }
 
 int create_dir(const char* username, const char* path) {
@@ -69,16 +63,13 @@ int create_dir(const char* username, const char* path) {
 
 	pid_t pid = fork();
 	if (pid < 0) return errno;
+	if (pid > 0) return wait_child(pid);
 
-	if (pid == 0) {
-		switch_user(pw);
+	switch_user(pw);
 
-		// `mkdir` is async-signal-safe
-		int result = mkdir(path, 0755);
-		_exit(result == 0 ? 0 : errno);
-	}
-
-	return wait_process(pid);
+	// `mkdir` is async-signal-safe
+	int result = mkdir(path, 0755);
+	_exit(result == 0 ? 0 : errno);
 }
 
 int change_mode(const char* username, const char* path, mode_t mode) {
@@ -87,14 +78,11 @@ int change_mode(const char* username, const char* path, mode_t mode) {
 
 	pid_t pid = fork();
 	if (pid < 0) return errno;
+	if (pid > 0) return wait_child(pid);
 
-	if (pid == 0) {
-		switch_user(pw);
+	switch_user(pw);
 
-		// `chmod` is async-signal-safe
-		int result = chmod(path, mode);
-		_exit(result == 0 ? 0 : errno);
-	}
-
-	return wait_process(pid);
+	// `chmod` is async-signal-safe
+	int result = chmod(path, mode);
+	_exit(result == 0 ? 0 : errno);
 }

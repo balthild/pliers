@@ -47,8 +47,8 @@ extension Path {
 
 extension Path {
 	public enum RandPathType: String {
-		case file = "file"
-		case dir = "dir"
+		case file
+		case dir
 	}
 
 	public func mkrand(_ type: RandPathType, retries: Int = 3) throws -> Path {
