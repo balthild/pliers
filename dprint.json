@@ -63,11 +63,11 @@
 		],
 	},
 	"plugins": [
-		"https://plugins.dprint.dev/oxc-0.28.0.wasm",
-		"https://plugins.dprint.dev/json-0.22.0.wasm",
-		"https://plugins.dprint.dev/exec-0.7.2.json",
-		"https://plugins.dprint.dev/g-plane/markup_fmt-v0.27.3.wasm",
-		"https://plugins.dprint.dev/g-plane/malva-v0.16.0.wasm",
-		"https://plugins.dprint.dev/g-plane/pretty_yaml-v0.6.0.wasm",
+		"npm:@dprint/oxc@0.38.0",
+		"npm:@dprint/json@0.23.0",
+		"npm:dprint-plugin-markup@0.27.3",
+		"npm:dprint-plugin-malva@0.16.0",
+		"npm:dprint-plugin-yaml@0.6.0",
+		"npm:@dprint/exec@0.7.3/plugin.json@704701df449dd7e942a71144773778ac529d68c2e4657bfc236d393b898b9a67",
 	],
 }

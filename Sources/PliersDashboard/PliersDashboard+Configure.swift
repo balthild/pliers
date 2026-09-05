@@ -25,8 +25,8 @@ extension PliersDashboard {
 		let config = DatabaseConfigurationFactory.sqlite(.file(path.string))
 		app.databases.use(config, as: .sqlite)
 
-		if let sqlite = app.db as? SQLDatabase & SQLiteDatabase {
-			try await sqlite.raw("PRAGMA journal_mode = WAL;").run()
+		if let sqlite = app.db as? SQLiteDatabase {
+			let _ = try await sqlite.query("PRAGMA journal_mode = WAL;")
 		}
 
 		app.migrations.add(SessionRecord.migration)

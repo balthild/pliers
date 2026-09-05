@@ -94,7 +94,7 @@ dev.dbus:
 		./Sources/PliersDBus/Pliers.xml \
 		--output-dir ./Sources/PliersDBus
 
-	dprint fmt ./Sources/PliersDBus/**
+	npx dprint fmt ./Sources/PliersDBus/**
 
 fmt:
-	dprint fmt
+	npx dprint fmt
