@@ -7,8 +7,16 @@ extension HTMLAttribute where Tag: HTMLTrait.Attributes.Global {
 }
 
 extension HTMLAttribute.x {
-	public static func data(_ expr: String? = nil) -> HTMLAttribute {
+	public static var data: HTMLAttribute {
+		.init(name: "x-data", value: nil)
+	}
+
+	public static func data(_ expr: String) -> HTMLAttribute {
 		.init(name: "x-data", value: expr)
+	}
+
+	public static func bind(_ expr: String) -> HTMLAttribute {
+		.init(name: "x-bind:", value: expr)
 	}
 
 	public static func bind(_ name: String, _ expr: String) -> HTMLAttribute {

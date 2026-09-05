@@ -59,10 +59,14 @@ extension View.Page {
 				header { "Install PHP" }
 
 				main {
+					if available.isEmpty {
+						p(.class("mb-3 text-sm")) { "No available PHP versions." }
+					}
+
 					form(.method(.post), .class("form"), .action("/php/install")) {
 						label(.class("field")) {
 							span { "Version" }
-							select(.name("version")) {
+							select(.name("version"), .required) {
 								for version in available {
 									option(.value(version.version)) { version.version }
 								}
@@ -144,8 +148,6 @@ extension View.Page {
 
 		@HTMLBuilder
 		private var packages: some HTML {
-			h3(.class("mb-1")) { "Installed" }
-
 			table {
 				thead {
 					tr {
@@ -159,10 +161,14 @@ extension View.Page {
 						tr {
 							td { package.version }
 							td {
-								button(
-									.class("link text-red-700"),
-									.on(.click, "$('#remove_dialog').show('\(package.version)');"),
-								) { "Remove" }
+								div(.class("flex gap-2")) {
+									a(.href("/php/\(package.version)")) { "Settings" }
+
+									button(
+										.class("link text-red-700"),
+										.on(.click, "$('#remove_dialog').show('\(package.version)');"),
+									) { "Remove" }
+								}
 							}
 						}
 					}
