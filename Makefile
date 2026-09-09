@@ -60,6 +60,10 @@ release: package
 	gh release create dev --notes "dev"
 	gh release upload dev ./.build/pkg/*.deb
 
+dev:
+	@printf "\033]0;dev\007"
+	npx mprocs
+
 dev.%:
 	@printf "\033]0;dev.$*\007"
 	@if [ ! -f $(GENERATE_PATH) ]; then echo 'Please run "make configure" first'; exit 1; fi

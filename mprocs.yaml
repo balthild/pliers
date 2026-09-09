@@ -1,0 +1,17 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/pvolok/mprocs/master/schemas/mprocs.json
+
+procs:
+  serve:
+    cmd: ["make", "dev.serve"]
+
+  css:
+    cmd: ["make", "dev.css"]
+
+  sqlite:
+    cmd: ["make", "dev.sqlite"]
+    stop:
+      send-keys: ["<C-c>"]
+
+proc_log:
+  dir: ".build/mprocs/"
+  mode: "truncate"
