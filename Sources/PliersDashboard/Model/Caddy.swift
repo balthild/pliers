@@ -1,6 +1,7 @@
 import CasePaths
 import Fluent
 import Foundation
+import Path
 import PliersCommon
 import Vapor
 
@@ -78,6 +79,33 @@ final class Caddy: Model, @unchecked Sendable {
 				let root: String
 				let fpm: String
 			}
+		}
+	}
+}
+
+extension Caddy {
+	var candidateWebRoot: String {
+		switch self.config.backend {
+		case .file(let file): return file.root
+		case .php(let php): return php.root
+		default: return self.defaultWebRoot
+		}
+	}
+
+	var defaultWebRoot: String {
+		guard let id = try? self.uuid else { return "" }
+		let path = C.www.home / id / "public"
+		return path.string
+	}
+
+	func assignDefaultWebRoot() throws {
+		switch self.config.backend {
+		case .file(let file) where file.root.isEmpty:
+			self.config.backend = .file(.init(root: self.defaultWebRoot))
+		case .php(let php) where php.root.isEmpty:
+			self.config.backend = .php(.init(root: self.defaultWebRoot, fpm: php.fpm))
+		default:
+			break
 		}
 	}
 }

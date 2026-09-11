@@ -4,6 +4,10 @@ extension UUID {
 	public var bytes: [UInt8] {
 		withUnsafeBytes(of: self.uuid) { Array($0) }
 	}
+
+	public var string: String {
+		self.uuidString.lowercased()
+	}
 }
 
 extension UUID {

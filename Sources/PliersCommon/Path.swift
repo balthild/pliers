@@ -54,7 +54,7 @@ extension Path {
 	public func mkrand(_ type: RandPathType, retries: Int = 3) throws -> Path {
 		for _ in 0..<retries {
 			do {
-				let path = self / UUID().uuidString.lowercased()
+				let path = self / UUID().string
 
 				switch type {
 				case .file:

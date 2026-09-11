@@ -3,6 +3,7 @@ import Elementary
 extension View.Page {
 	struct CaddyNewPage: HTMLPage {
 		let model: Caddy
+		let phps: [PHP]
 
 		let layout = View.Layout.DashboardLayout<Self>()
 
@@ -13,7 +14,7 @@ extension View.Page {
 			h2 { title }
 			hr()
 
-			View.Page.CaddyFormView(model: model)
+			View.Page.CaddyFormView(model: model, phps: phps)
 		}
 	}
 }

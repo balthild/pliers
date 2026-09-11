@@ -45,7 +45,7 @@ extension View.Page {
 							}
 							td {
 								div(.class("flex gap-2")) {
-									let id = try passkey.requireID()
+									let id = try passkey.uuid
 									let name = passkey.name
 
 									button(

@@ -95,7 +95,7 @@ struct CaddyConfigController: RouteCollection {
 			input: .none,
 			output: .discarded,
 			error: .sequence,
-			body: Execution.stderrLastLine,
+			body: { try await $0.standardError.lastLine() },
 		)
 
 		guard case .exited(0) = result.terminationStatus else {

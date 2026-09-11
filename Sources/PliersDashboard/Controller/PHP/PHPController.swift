@@ -119,6 +119,12 @@ struct PHPController: RouteCollection {
 	func remove(req: Request) async throws -> Response {
 		let model = try await req.find(\PHP.$version, "version")
 
+		let sites = try await Self.sites(referencing: model, on: req.db)
+		guard sites.isEmpty else {
+			let domains = sites.flatMap(\.domains).joined(separator: ", ")
+			throw AlertError("PHP \(model.version) is still used by: \(domains)")
+		}
+
 		let target = C.pkgs / "php" / model.version.string
 		try target.delete()
 
@@ -153,6 +159,8 @@ struct PHPController: RouteCollection {
 	func update(req: Request) async throws -> Response {
 		let model = try await req.find(\PHP.$version, "version")
 
+		let sites = try await Self.sites(referencing: model, on: req.db)
+
 		try Self.prepare(req: req, into: model)
 
 		let configurator = model.configurator
@@ -180,6 +188,8 @@ struct PHPController: RouteCollection {
 		try await Self.validate(tmp: tmp, configurator: configurator)
 
 		try await req.db.transaction { db in
+			try await Self.repoint(sites: sites, to: model, on: db)
+
 			try await model.update(on: db)
 			try await Self.writeUnit(req: req, configurator: configurator)
 
@@ -188,6 +198,24 @@ struct PHPController: RouteCollection {
 		}
 
 		return req.redirect(.back)
+	}
+
+	private static func sites(referencing model: PHP, on db: any Database) async throws -> [Caddy] {
+		let address = Caddyfile.address(model.config.listen, version: model.version)
+		return try await Caddy.query(on: db).all().filter { site in
+			site.config.backend?[case: \.php]?.fpm == address
+		}
+	}
+
+	private static func repoint(sites: [Caddy], to model: PHP, on db: any Database) async throws {
+		let address = Caddyfile.address(model.config.listen, version: model.version)
+
+		for site in sites {
+			guard let php = site.config.backend?[case: \.php] else { continue }
+			site.config.backend = .php(.init(root: php.root, fpm: address))
+
+			try await site.update(on: db)
+		}
 	}
 
 	private static func prepare(req: Request, into model: PHP) throws {
@@ -235,7 +263,7 @@ struct PHPController: RouteCollection {
 			input: .none,
 			output: .discarded,
 			error: .sequence,
-			body: Execution.stderrLastLine,
+			body: { try await $0.standardError.lastLine() },
 		)
 
 		guard case .exited(0) = result.terminationStatus else {

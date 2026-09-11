@@ -111,6 +111,15 @@ final class PHP: Model, @unchecked Sendable {
 				case .tcp: return CodingKeys.tcp.stringValue
 				}
 			}
+
+			func rawValue(version: Version) -> String {
+				switch self {
+				case .unix:
+					return version.configurator.socket.string
+				case .tcp(let address):
+					return address
+				}
+			}
 		}
 
 		enum PM: String, Codable, Default {
@@ -125,7 +134,13 @@ final class PHP: Model, @unchecked Sendable {
 
 extension PHP {
 	var configurator: PHPConfigurator {
-		PHPConfigurator(version: self.version)
+		self.version.configurator
+	}
+}
+
+extension PHP.Version {
+	var configurator: PHPConfigurator {
+		PHPConfigurator(version: self)
 	}
 }
 

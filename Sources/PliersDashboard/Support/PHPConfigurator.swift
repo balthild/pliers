@@ -40,14 +40,6 @@ struct PHPConfigurator {
 
 extension PHPConfigurator {
 	func buildFPM(config: PHP.Config) -> String {
-		let listen: String
-		switch config.listen {
-		case .unix:
-			listen = socket.string
-		case .tcp(let address):
-			listen = address
-		}
-
 		var lines: [String] = []
 
 		lines.append("[global]")
@@ -59,7 +51,7 @@ extension PHPConfigurator {
 		lines.append("group = \(C.www.group)")
 		lines.append("")
 
-		lines.append("listen = \(listen)")
+		lines.append("listen = \(config.listen.rawValue(version: version))")
 		if case .unix = config.listen {
 			lines.append("listen.owner = \(C.www.user)")
 			lines.append("listen.group = \(C.www.group)")

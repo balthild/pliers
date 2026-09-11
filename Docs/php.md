@@ -22,6 +22,10 @@ The pool always runs as `www-data`.
 
 A unix socket is used by default, at the fixed path `/run/pliers/php/<version>/php-fpm.sock`. The socket is owned by `www-data` with mode `0660` so that the web server can connect to it. Alternatively you can listen on a TCP address such as `127.0.0.1:9000`.
 
+When a Caddy site uses the `php` backend, the site form offers an installed PHP version whose address is inserted as `unix//<path>` (Caddy's unix socket syntax) for you to use as the `php_fastcgi` gateway.
+
+Because changing the listen address would otherwise leave Caddy sites pointing at a dead socket, saving a new address rewrites every Caddy site whose `php` backend matched the old address. The Caddyfile itself is not regenerated automatically; apply it from the Caddy page afterwards. For the same reason, a PHP version that is still referenced by a Caddy site cannot be removed until those sites are changed.
+
 ### Pool
 
 - `pm`: `dynamic`, `static`, or `ondemand`
@@ -53,4 +57,4 @@ The following files are generated for each version:
 
 Clicking "Save" persists the settings, regenerates the configuration, validates it with `php-fpm --test`, atomically swaps the live configuration, writes the systemd unit, and reloads the systemd manager. You can then start or restart the service to bring the new configuration online.
 
-Removing a PHP version deletes the package, its configuration, and its systemd unit.
+Removing a PHP version deletes the package, its configuration, and its systemd unit. If any Caddy site still points at its listen address, the removal is refused and the referencing domains are shown.

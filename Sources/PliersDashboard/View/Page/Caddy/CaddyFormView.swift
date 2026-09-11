@@ -3,6 +3,7 @@ import Elementary
 extension View.Page {
 	struct CaddyFormView: HTML {
 		let model: Caddy
+		let phps: [PHP]
 
 		var body: some HTML {
 			form(
@@ -14,7 +15,7 @@ extension View.Page {
 					"""
 					{
 						tls: $history('\(model.config.tls?.case ?? "")'),
-						backend: $history('\(model.config.backend?.case ?? "")')
+						backend: $history('\(model.config.backend?.case ?? "")'),
 					}
 					"""
 				),
@@ -133,8 +134,8 @@ extension View.Page {
 						input(
 							.type(.text),
 							.name("config[backend][file][_0][root]"),
-							.value(file?.root ?? ""),
-							.required,
+							.value(file?.root ?? model.candidateWebRoot),
+							.placeholder("Leave blank to use the default path"),
 						)
 					}
 				}
@@ -147,19 +148,41 @@ extension View.Page {
 						input(
 							.type(.text),
 							.name("config[backend][php][_0][root]"),
-							.value(php?.root ?? ""),
-							.required,
+							.value(php?.root ?? model.candidateWebRoot),
+							.placeholder("Leave blank to use the default path"),
 						)
 					}
 
 					label(.class("field")) {
-						span { "FPM" }
-						input(
-							.type(.text),
-							.name("config[backend][php][_0][fpm]"),
-							.value(php?.fpm ?? ""),
-							.required,
-						)
+						span { "Address" }
+						div(.class("flex gap-2")) {
+							input(
+								.type(.text),
+								.name("config[backend][php][_0][fpm]"),
+								.value(php?.fpm ?? ""),
+								.required,
+								.class("grow"),
+								.x.ref("fpm"),
+							)
+
+							select(
+								.class("btn bg-none"),
+								.x.on(
+									"change",
+									"""
+									const value = $event.target.value;
+									if (value) $refs.fpm.value = value;
+									$event.target.selectedIndex = 0;
+									""",
+								),
+							) {
+								option(.value("")) { "Choose" }
+								for php in phps {
+									let address = Caddyfile.address(php.config.listen, version: php.version)
+									option(.value(address)) { php.version.string }
+								}
+							}
+						}
 					}
 				}
 

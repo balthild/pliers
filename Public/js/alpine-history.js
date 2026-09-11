@@ -14,6 +14,7 @@ window.addEventListener('pageshow', (event) => {
 });
 
 document.addEventListener('alpine:init', () => {
+	// TODO: put only a random id in history state. store actual data in sessionStorage
 	const storage = {
 		getItem: (key) => {
 			if (!persisted) return null;

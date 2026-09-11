@@ -32,7 +32,7 @@ extension View.Page {
 					},
 
 					init() {
-						const source = new EventSource("/job/\(id.uuidString)/progress");
+						const source = new EventSource("/job/\(id.string)/progress");
 
 						source.addEventListener("message", (event) => {
 							const data = JSON.parse(event.data);

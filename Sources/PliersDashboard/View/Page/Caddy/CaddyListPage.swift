@@ -71,11 +71,11 @@ extension View.Page {
 							}
 							td {
 								div(.class("flex gap-2")) {
-									a(.href("/caddy/\(try site.requireID())")) { "Edit" }
+									a(.href("/caddy/\(try site.uuid)")) { "Edit" }
 
 									button(
 										.class("link text-red-700"),
-										.on(.click, "$('#delete_dialog').show('\(try site.requireID())');"),
+										.on(.click, "$('#delete_dialog').show('\(try site.uuid)');"),
 									) { "Delete" }
 								}
 							}

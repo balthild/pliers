@@ -40,8 +40,14 @@ struct CaddyController: RouteCollection {
 	func new(req: Request) async throws -> Response {
 		let model = Caddy()
 
+		let phps = try await PHP.query(on: req.db).all()
+			.sorted { $0.version < $1.version }
+
 		return try await req.render {
-			View.Page.CaddyNewPage(model: model)
+			View.Page.CaddyNewPage(
+				model: model,
+				phps: phps,
+			)
 		}
 	}
 
@@ -52,15 +58,25 @@ struct CaddyController: RouteCollection {
 		try await Self.prepare(req: req, into: model)
 		try await model.create(on: req.db)
 
-		return req.redirect(to: "/caddy/\(try model.requireID())")
+		// this requires the model to have an ID
+		try model.assignDefaultWebRoot()
+		try await model.update(on: req.db)
+
+		return req.redirect(to: "/caddy/\(try model.uuid)")
 	}
 
 	@Sendable
 	func edit(req: Request) async throws -> Response {
 		let model = try await req.find(Caddy.self, "id")
 
+		let phps = try await PHP.query(on: req.db).all()
+			.sorted { $0.version < $1.version }
+
 		return try await req.render {
-			View.Page.CaddyEditPage(model: model)
+			View.Page.CaddyEditPage(
+				model: model,
+				phps: phps,
+			)
 		}
 	}
 
@@ -69,6 +85,7 @@ struct CaddyController: RouteCollection {
 		let model = try await req.find(Caddy.self, "id")
 
 		try await Self.prepare(req: req, into: model)
+		try model.assignDefaultWebRoot()
 		try await model.update(on: req.db)
 
 		return req.redirect(.back)
@@ -84,7 +101,7 @@ struct CaddyController: RouteCollection {
 
 		let model = try await req.find(Caddy.self, "id")
 
-		guard input.confirm == model.id?.uuidString else {
+		guard input.confirm.lowercased() == model.id?.string else {
 			throw AlertError("confirmation does not match the id")
 		}
 

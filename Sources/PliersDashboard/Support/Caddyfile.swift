@@ -104,3 +104,31 @@ extension Caddyfile {
 		.item(.init(tokens: tokens, children: children()))
 	}
 }
+
+extension Caddyfile {
+	enum AddressType {
+		case unix
+		case tcp
+	}
+
+	static func address(_ type: AddressType, _ listen: String) -> String {
+		switch type {
+		case .unix:
+			return "unix/" + listen
+		case .tcp:
+			return listen
+		}
+	}
+}
+
+extension Caddyfile {
+	static func address(_ listen: PHP.Config.Listen, version: PHP.Version) -> String {
+		let type: AddressType
+		switch listen {
+		case .unix: type = .unix
+		case .tcp: type = .tcp
+		}
+
+		return Self.address(type, listen.rawValue(version: version))
+	}
+}

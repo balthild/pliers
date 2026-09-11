@@ -30,9 +30,9 @@ extension PlatformOptions {
 	}
 }
 
-extension Execution where Error == SequenceOutput {
-	public static func stderrLastLine(execution: Self) async throws -> String {
-		try await execution.standardError.strings().reduce("") { last, line in
+extension SubprocessOutputSequence {
+	public consuming func lastLine() async throws -> String {
+		return try await self.strings().reduce("") { last, line in
 			line.isEmpty ? last : line
 		}
 	}
