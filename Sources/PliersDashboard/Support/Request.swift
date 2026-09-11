@@ -57,6 +57,26 @@ extension Request {
 
 		return model
 	}
+
+	func find<T: Model, U: QueryableProperty>(
+		_ key: KeyPath<T, U>,
+		_ parameter: String,
+	) async throws -> T
+	where U.Value: LosslessStringConvertible {
+		guard let value: U.Value = self.parameters.get(parameter) else {
+			throw Abort(.notFound)
+		}
+
+		let model = try await T.query(on: self.db)
+			.filter(key == value)
+			.first()
+
+		guard let model else {
+			throw Abort(.notFound)
+		}
+
+		return model
+	}
 }
 
 extension Request {

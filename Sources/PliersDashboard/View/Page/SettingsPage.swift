@@ -40,7 +40,7 @@ extension View.Page {
 							td { passkey.name }
 							td {
 								if let date = passkey.lastUsed {
-									time(date)
+									time.render(date)
 								}
 							}
 							td {

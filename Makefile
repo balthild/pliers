@@ -1,5 +1,6 @@
 PLIERS_CONF ?= /etc/pliers
 PLIERS_PKGS ?= /opt/pliers
+PLIERS_RUN ?= /run/pliers
 PLIERS_SERVICES ?= /etc/systemd/system
 PLIERS_COREUTILS ?= /usr/bin
 PLIERS_CADDY_EXEC ?= /usr/bin/caddy
@@ -15,6 +16,7 @@ import Path
 extension Constants {
 	public static let conf = Path("$(PLIERS_CONF)")!
 	public static let pkgs = Path("$(PLIERS_PKGS)")!
+	public static let run = Path("$(PLIERS_RUN)")!
 	public static let services = Path("$(PLIERS_SERVICES)")!
 	public static let coreutils = Path("$(PLIERS_COREUTILS)")!
 	public enum caddy {

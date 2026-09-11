@@ -11,7 +11,7 @@ import Subprocess
 struct InstallPHPJob: AsyncJob {
 	struct Payload: Codable {
 		let id: UUID
-		let version: String
+		let version: PHP.Version
 	}
 
 	func dequeue(_ ctx: QueueContext, _ payload: Payload) async throws {
@@ -42,18 +42,16 @@ struct InstallPHPJob: AsyncJob {
 		)
 
 		try await ctx.db.transaction { db in
-			let records = try await Package.query(on: ctx.db)
-				.filter(\.$name == .php)
+			let records = try await PHP.query(on: ctx.db)
 				.filter(\.$version == payload.version)
 				.count()
 			if records == 0 {
-				let package = Package()
-				package.name = .php
-				package.version = payload.version
-				try await package.save(on: db)
+				let php = PHP()
+				php.version = payload.version
+				try await php.save(on: db)
 			}
 
-			let dest = base / payload.version
+			let dest = base / payload.version.string
 			try dest.mkdir()
 			try dest.replace(with: tmp)
 		}
@@ -79,7 +77,7 @@ struct InstallPHPJob: AsyncJob {
 
 	private func download(
 		ctx: QueueContext,
-		version: String,
+		version: PHP.Version,
 		component: String,
 		directory: Path,
 		bounds: (Double, Double),

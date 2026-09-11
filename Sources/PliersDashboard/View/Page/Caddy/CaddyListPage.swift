@@ -17,37 +17,10 @@ extension View.Page {
 			h2 { title }
 			hr()
 
-			div(.class("text-sm mb-2 flex gap-1.5 items-center")) {
-				span(
-					.class("size-1.75 rounded-full"),
-					.class("bg-green-600").when(status == "active"),
-					.class("bg-red-600").when(status == "inactive"),
-					.class("bg-yellow-600").when(status != "active" && status != "inactive"),
-				) {}
-
-				span { status.capitalized }
-
-				// a dummy button to prevent layout shift
-				span(.class("btn text-xs px-0 w-0 invisible")) { "#" }
-
-				if status == "active" {
-					form(.method(.post), .action("/caddy/service/stop")) {
-						button(.type(.submit), .class("danger text-xs")) { "Stop" }
-					}
-					form(.method(.post), .action("/caddy/service/restart")) {
-						button(.type(.submit), .class("text-xs")) { "Restart" }
-					}
-					form(.method(.post), .action("/caddy/service/reload")) {
-						button(.type(.submit), .class("text-xs")) { "Reload" }
-					}
-				}
-
-				if status == "inactive" {
-					form(.method(.post), .action("/caddy/service/start")) {
-						button(.type(.submit), .class("success text-xs")) { "Start" }
-					}
-				}
-			}
+			View.Component.ServiceControl(
+				status: status,
+				prefix: "/caddy/service",
+			)
 
 			hr()
 

@@ -33,7 +33,7 @@ extension PliersDashboard {
 		app.migrations.add(CreateUser())
 		app.migrations.add(CreatePasskey())
 		app.migrations.add(CreateCaddy())
-		app.migrations.add(CreatePackage())
+		app.migrations.add(CreatePHP())
 		try await app.autoMigrate()
 	}
 
@@ -72,5 +72,6 @@ extension PliersDashboard {
 		try app.register(collection: CaddyConfigController())
 
 		try app.register(collection: PHPController())
+		try app.register(collection: PHPServiceController())
 	}
 }

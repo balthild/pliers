@@ -50,7 +50,7 @@ extension View.Page {
 					}
 				}
 
-				fieldset(.x.show("tls == 'acme'"), .x.bind("disabled", "tls != 'acme'")) {
+				fieldset.when("tls === 'acme'") {
 					input(
 						.type(.hidden),
 						.name("config[tls][acme]"),
@@ -58,7 +58,7 @@ extension View.Page {
 					)
 				}
 
-				fieldset(.x.show("tls == 'file'"), .x.bind("disabled", "tls != 'file'")) {
+				fieldset.when("tls === 'file'") {
 					let file = model.config.tls?[case: \.file]
 
 					label(.class("field")) {
@@ -111,7 +111,7 @@ extension View.Page {
 					}
 				}
 
-				fieldset(.x.show("backend == 'proxy'"), .x.bind("disabled", "backend != 'proxy'")) {
+				fieldset.when("backend === 'proxy'") {
 					let proxy = model.config.backend?[case: \.proxy]
 
 					label(.class("field")) {
@@ -125,7 +125,7 @@ extension View.Page {
 					}
 				}
 
-				fieldset(.x.show("backend == 'file'"), .x.bind("disabled", "backend != 'file'")) {
+				fieldset.when("backend === 'file'") {
 					let file = model.config.backend?[case: \.file]
 
 					label(.class("field")) {
@@ -139,7 +139,7 @@ extension View.Page {
 					}
 				}
 
-				fieldset(.x.show("backend == 'php'"), .x.bind("disabled", "backend != 'php'")) {
+				fieldset.when("backend === 'php'") {
 					let php = model.config.backend?[case: \.php]
 
 					label(.class("field")) {

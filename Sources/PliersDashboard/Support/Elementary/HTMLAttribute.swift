@@ -52,6 +52,18 @@ extension HTMLAttribute where Tag == HTMLTag.input {
 	public static func pattern(_ value: String) -> HTMLAttribute {
 		.init(name: "pattern", value: value)
 	}
+
+	public static func min(_ value: Int) -> Self {
+		.init(name: "min", value: String(value))
+	}
+
+	public static func max(_ value: Int) -> Self {
+		.init(name: "max", value: String(value))
+	}
+
+	public static func step(_ value: Int) -> Self {
+		.init(name: "step", value: String(value))
+	}
 }
 
 // MARK: textarea

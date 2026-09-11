@@ -13,9 +13,9 @@ struct CaddyConfigController: RouteCollection {
 	}
 
 	func apply(req: Request) async throws -> Response {
-		let dir = try await generate(req: req)
+		let dir = try await Self.generate(req: req)
 
-		try await Result { try await validate(dir: dir) }
+		try await Result { try await Self.validate(dir: dir) }
 			.alert("invalid caddy config generated")
 
 		defer { try? dir.delete() }
@@ -27,7 +27,7 @@ struct CaddyConfigController: RouteCollection {
 		return req.redirect(.back)
 	}
 
-	private func generate(req: Request) async throws -> Path {
+	private static func generate(req: Request) async throws -> Path {
 		let base = C.caddy.conf / "pliers"
 		try base.mkdir(.p)
 
@@ -84,7 +84,7 @@ struct CaddyConfigController: RouteCollection {
 		return dir
 	}
 
-	private func validate(dir: Path) async throws {
+	private static func validate(dir: Path) async throws {
 		let file = dir / "Caddyfile"
 
 		let result = try await Subprocess.run(
@@ -95,17 +95,8 @@ struct CaddyConfigController: RouteCollection {
 			input: .none,
 			output: .discarded,
 			error: .sequence,
-		) { execution in
-			var last: String = ""
-
-			for try await line in execution.standardError.strings() {
-				if !line.isEmpty {
-					last = line
-				}
-			}
-
-			return last
-		}
+			body: Execution.stderrLastLine,
+		)
 
 		guard case .exited(0) = result.terminationStatus else {
 			try? dir.delete()

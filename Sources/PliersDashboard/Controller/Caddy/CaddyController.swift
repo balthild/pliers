@@ -49,7 +49,7 @@ struct CaddyController: RouteCollection {
 	func create(req: Request) async throws -> Response {
 		let model = Caddy()
 
-		try await prepare(req: req, model: model)
+		try await Self.prepare(req: req, into: model)
 		try await model.create(on: req.db)
 
 		return req.redirect(to: "/caddy/\(try model.requireID())")
@@ -68,7 +68,7 @@ struct CaddyController: RouteCollection {
 	func update(req: Request) async throws -> Response {
 		let model = try await req.find(Caddy.self, "id")
 
-		try await prepare(req: req, model: model)
+		try await Self.prepare(req: req, into: model)
 		try await model.update(on: req.db)
 
 		return req.redirect(.back)
@@ -93,7 +93,7 @@ struct CaddyController: RouteCollection {
 		return req.redirect(to: "/caddy")
 	}
 
-	private func prepare(req: Request, model: Caddy) async throws {
+	private static func prepare(req: Request, into model: Caddy) async throws {
 		struct Input: Content {
 			@Lines var domains: [String]
 			let config: Caddy.Config

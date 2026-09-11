@@ -29,3 +29,11 @@ extension PlatformOptions {
 		return options
 	}
 }
+
+extension Execution where Error == SequenceOutput {
+	public static func stderrLastLine(execution: Self) async throws -> String {
+		try await execution.standardError.strings().reduce("") { last, line in
+			line.isEmpty ? last : line
+		}
+	}
+}

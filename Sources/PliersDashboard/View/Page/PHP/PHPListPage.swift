@@ -6,13 +6,14 @@ import Vapor
 extension View.Page {
 	struct PHPListPage: HTMLPage {
 		typealias Available = (
-			version: String,
+			version: PHP.Version,
 			size: String,
 			date: String,
 		)
 
 		let available: [Available]
-		let installed: [Package]
+		let installed: [PHP]
+		let statuses: [String: String]
 
 		let layout = View.Layout.DashboardLayout<Self>()
 
@@ -24,7 +25,7 @@ extension View.Page {
 			hr()
 			dialogs
 			actions
-			packages
+			versions
 		}
 
 		@HTMLBuilder
@@ -68,7 +69,7 @@ extension View.Page {
 							span { "Version" }
 							select(.name("version"), .required) {
 								for version in available {
-									option(.value(version.version)) { version.version }
+									option(.value(version.version.string)) { version.version.string }
 								}
 							}
 						}
@@ -147,26 +148,31 @@ extension View.Page {
 		}
 
 		@HTMLBuilder
-		private var packages: some HTML {
+		private var versions: some HTML {
 			table {
 				thead {
 					tr {
 						th { "Version" }
+						th { "Service" }
 						th { "Actions" }
 					}
 				}
 
 				tbody {
-					for package in installed {
+					for php in installed {
 						tr {
-							td { package.version }
+							td { php.version.string }
+							td {
+								let status = statuses[php.configurator.service] ?? "unknown"
+								View.Component.ServiceStatus(status: status)
+							}
 							td {
 								div(.class("flex gap-2")) {
-									a(.href("/php/\(package.version)")) { "Settings" }
+									a(.href("/php/\(php.version)")) { "Settings" }
 
 									button(
 										.class("link text-red-700"),
-										.on(.click, "$('#remove_dialog').show('\(package.version)');"),
+										.on(.click, "$('#remove_dialog').show('\(php.version)');"),
 									) { "Remove" }
 								}
 							}

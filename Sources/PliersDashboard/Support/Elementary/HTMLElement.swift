@@ -11,11 +11,22 @@ extension HTMLElement where Tag == HTMLTag.time, Content == HTMLText {
 		public static var time: Self { .init(value: "time") }
 	}
 
-	public init(_ date: Date, render: TimeRenderType = .full) {
-		self.init(date.ISO8601Format(), render: render)
+	public static func render(_ date: Date, type: TimeRenderType = .full) -> Self {
+		.render(date.ISO8601Format(), type: type)
 	}
 
-	public init(_ string: String, render: TimeRenderType = .full) {
-		self.init(.datetime(string), .data("render", render.value)) { string }
+	public static func render(_ string: String, type: TimeRenderType = .full) -> Self {
+		.init(.datetime(string), .data("render", type.value)) { string }
+	}
+}
+
+extension HTMLElement where Tag == HTMLTag.fieldset {
+	public static func when(_ expr: String, @HTMLBuilder content: () -> Content) -> Self {
+		.init(
+			.x.cloak,
+			.x.show(expr),
+			.x.bind("disabled", "!(\(expr))"),
+			content: content,
+		)
 	}
 }
