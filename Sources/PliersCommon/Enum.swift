@@ -1,3 +1,3 @@
 public protocol CaseNamable {
-	var `case`: String { get }
+	var caseName: String { get }
 }

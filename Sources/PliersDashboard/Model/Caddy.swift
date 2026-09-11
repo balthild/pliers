@@ -40,7 +40,7 @@ final class Caddy: Model, @unchecked Sendable {
 			case acme
 			case file(File)
 
-			var `case`: String {
+			var caseName: String {
 				switch self {
 				case .acme: return CodingKeys.acme.stringValue
 				case .file: return CodingKeys.file.stringValue
@@ -59,7 +59,7 @@ final class Caddy: Model, @unchecked Sendable {
 			case file(File)
 			case php(PHP)
 
-			var `case`: String {
+			var caseName: String {
 				switch self {
 				case .proxy: return CodingKeys.proxy.stringValue
 				case .file: return CodingKeys.file.stringValue

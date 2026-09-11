@@ -105,7 +105,7 @@ final class PHP: Model, @unchecked Sendable {
 
 			static var defaultValue: Self { .unix }
 
-			var `case`: String {
+			var caseName: String {
 				switch self {
 				case .unix: return CodingKeys.unix.stringValue
 				case .tcp: return CodingKeys.tcp.stringValue

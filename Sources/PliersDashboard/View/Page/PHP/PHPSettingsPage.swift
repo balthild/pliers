@@ -31,7 +31,7 @@ extension View.Page {
 				.x.data(
 					"""
 					{
-						listen: $history('\(model.config.listen.case)')
+						listen: $history('\(model.config.listen.caseName)')
 					}
 					"""
 				),
