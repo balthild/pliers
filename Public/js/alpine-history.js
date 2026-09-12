@@ -1,23 +1,11 @@
-let persisted = false;
-
-window.addEventListener('pageshow', (event) => {
-	if (event.persisted) {
-		persisted = true;
-		return;
-	}
-
-	const state = history.state ?? {};
-	if (state.pliers) {
-		delete state.pliers;
-		history.replaceState(state, '');
-	}
-});
+const timings = performance.getEntriesByType('navigation');
+const restoring = timings[0]?.type === 'back_forward';
 
 document.addEventListener('alpine:init', () => {
 	// TODO: put only a random id in history state. store actual data in sessionStorage
 	const storage = {
 		getItem: (key) => {
-			if (!persisted) return null;
+			if (!restoring) return null;
 			return history.state?.pliers?.[key] ?? null;
 		},
 		setItem: (key, value) => {
