@@ -60,8 +60,6 @@ extension View.Page {
 					}
 				}
 
-				p(.x.text("listen")) {}
-
 				fieldset.when("listen == 'unix'") {
 					label(.class("field")) {
 						span { "Path" }

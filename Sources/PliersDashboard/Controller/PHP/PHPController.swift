@@ -211,7 +211,7 @@ struct PHPController: RouteCollection {
 		let address = model.config.caddyListenAddress(version: model.version)
 
 		for site in sites {
-			guard let php = site.config.backend?[case: \.php] else { continue }
+			guard case .php(let php) = site.config.backend else { continue }
 			site.config.backend = .php(.init(root: php.root, fpm: address))
 
 			try await site.update(on: db)
