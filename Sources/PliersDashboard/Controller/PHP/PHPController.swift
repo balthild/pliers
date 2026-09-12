@@ -201,14 +201,14 @@ struct PHPController: RouteCollection {
 	}
 
 	private static func sites(referencing model: PHP, on db: any Database) async throws -> [Caddy] {
-		let address = Caddyfile.address(model.config.listen, version: model.version)
+		let address = model.config.caddyListenAddress(version: model.version)
 		return try await Caddy.query(on: db).all().filter { site in
 			site.config.backend?[case: \.php]?.fpm == address
 		}
 	}
 
 	private static func repoint(sites: [Caddy], to model: PHP, on db: any Database) async throws {
-		let address = Caddyfile.address(model.config.listen, version: model.version)
+		let address = model.config.caddyListenAddress(version: model.version)
 
 		for site in sites {
 			guard let php = site.config.backend?[case: \.php] else { continue }

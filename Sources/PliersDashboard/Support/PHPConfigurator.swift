@@ -51,7 +51,7 @@ extension PHPConfigurator {
 		lines.append("group = \(C.www.group)")
 		lines.append("")
 
-		lines.append("listen = \(config.listen.rawValue(version: version))")
+		lines.append("listen = \(config.rawListenAddress(version: version))")
 		if case .unix = config.listen {
 			lines.append("listen.owner = \(C.www.user)")
 			lines.append("listen.group = \(C.www.group)")

@@ -178,7 +178,7 @@ extension View.Page {
 							) {
 								option(.value("")) { "Choose" }
 								for php in phps {
-									let address = Caddyfile.address(php.config.listen, version: php.version)
+									let address = php.config.caddyListenAddress(version: php.version)
 									option(.value(address)) { php.version.string }
 								}
 							}

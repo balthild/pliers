@@ -111,24 +111,12 @@ extension Caddyfile {
 		case tcp
 	}
 
-	static func address(_ type: AddressType, _ listen: String) -> String {
+	static func address(_ type: AddressType, _ value: String) -> String {
 		switch type {
 		case .unix:
-			return "unix/" + listen
+			return "unix/\(value)"
 		case .tcp:
-			return listen
+			return "tcp/\(value)"
 		}
-	}
-}
-
-extension Caddyfile {
-	static func address(_ listen: PHP.Config.Listen, version: PHP.Version) -> String {
-		let type: AddressType
-		switch listen {
-		case .unix: type = .unix
-		case .tcp: type = .tcp
-		}
-
-		return Self.address(type, listen.rawValue(version: version))
 	}
 }

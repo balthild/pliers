@@ -111,15 +111,6 @@ final class PHP: Model, @unchecked Sendable {
 				case .tcp: return CodingKeys.tcp.stringValue
 				}
 			}
-
-			func rawValue(version: Version) -> String {
-				switch self {
-				case .unix:
-					return version.configurator.socket.string
-				case .tcp(let address):
-					return address
-				}
-			}
 		}
 
 		enum PM: String, Codable, Default {
@@ -176,5 +167,26 @@ extension PHP.Version: CustomStringConvertible {
 extension PHP.Version: LosslessStringConvertible {
 	init?(_ description: String) {
 		try? self.init(parse: description)
+	}
+}
+
+extension PHP.Config {
+	func rawListenAddress(version: PHP.Version) -> String {
+		switch self.listen {
+		case .unix:
+			return version.configurator.socket.string
+		case .tcp(let address):
+			return address
+		}
+	}
+
+	func caddyListenAddress(version: PHP.Version) -> String {
+		let type: Caddyfile.AddressType
+		switch self.listen {
+		case .unix: type = .unix
+		case .tcp: type = .tcp
+		}
+
+		return Caddyfile.address(type, self.rawListenAddress(version: version))
 	}
 }

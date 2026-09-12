@@ -31,7 +31,7 @@ extension View.Page {
 				.x.data(
 					"""
 					{
-						listen: $history('\(model.config.listen.caseName)')
+						listen: $history('\(model.config.listen.caseName)'),
 					}
 					"""
 				),
@@ -59,6 +59,8 @@ extension View.Page {
 						}
 					}
 				}
+
+				p(.x.text("listen")) {}
 
 				fieldset.when("listen == 'unix'") {
 					label(.class("field")) {
