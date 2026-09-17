@@ -1,6 +1,5 @@
+import PliersCommon
 import Testing
-
-@testable import PliersCommon
 
 @Test func testAsyncResultCatchingSuccess() async {
 	let result = await Result { () async throws in 42 }

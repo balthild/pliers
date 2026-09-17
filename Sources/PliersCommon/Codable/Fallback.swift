@@ -41,7 +41,7 @@ extension Fallback: Sendable
 where T: Sendable {}
 
 extension KeyedDecodingContainer {
-	func decode<T>(_ type: Fallback<T>.Type, forKey key: Key) throws -> Fallback<T>
+	public func decode<T>(_ type: Fallback<T>.Type, forKey key: Key) throws -> Fallback<T>
 	where T: Codable & Default {
 		return try decodeIfPresent(type, forKey: key) ?? Fallback()
 	}

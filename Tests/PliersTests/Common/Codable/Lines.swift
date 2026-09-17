@@ -1,7 +1,6 @@
 import Foundation
+import PliersCommon
 import Testing
-
-@testable import PliersCommon
 
 @Test func testLinesInitializerTreatsNilAsEmpty() {
 	let lines = Lines(nil)

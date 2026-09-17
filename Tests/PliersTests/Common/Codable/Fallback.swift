@@ -1,7 +1,6 @@
 import Foundation
+import PliersCommon
 import Testing
-
-@testable import PliersCommon
 
 private struct FallbackModel: Codable {
 	@Fallback var flag: Bool

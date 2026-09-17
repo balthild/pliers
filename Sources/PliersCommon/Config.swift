@@ -5,6 +5,15 @@ public struct Config: Sendable {
 	public let port: UInt16
 	public let state: Path
 
+	public init(port: UInt16, state: Path) throws {
+		self.port = port
+		self.state = state
+
+		guard port >= 1024 else {
+			throw RuntimeError("invalid port")
+		}
+	}
+
 	public static func load() throws -> Self {
 		let path = C.conf / "pliers.conf"
 		let text = try Result { try String(contentsOf: path, encoding: .utf8) }
@@ -16,16 +25,10 @@ public struct Config: Sendable {
 		let port: String = try entries["port"].expect("missing option 'port'")
 		let state: String = try entries["state"].expect("missing option 'state'")
 
-		let config = try Self(
+		return try Self(
 			port: UInt16(port).expect("invalid port"),
 			state: Path(state).expect("invalid state path"),
 		)
-
-		guard config.port >= 1024 else {
-			throw RuntimeError("invalid port")
-		}
-
-		return config
 	}
 
 	private static func parse(_ text: String) throws -> [String: String] {

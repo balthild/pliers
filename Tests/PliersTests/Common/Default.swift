@@ -1,6 +1,5 @@
+import PliersCommon
 import Testing
-
-@testable import PliersCommon
 
 @Test func testDefaultValues() {
 	#expect(Never?.defaultValue == nil)

@@ -1,6 +1,5 @@
+import PliersCommon
 import Testing
-
-@testable import PliersCommon
 
 @Test func testRuntimeErrorDescription() {
 	let error = RuntimeError("boom", file: "file.swift", line: 11, function: "fn()")

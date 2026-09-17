@@ -1,7 +1,6 @@
 import Foundation
+import PliersCommon
 import Testing
-
-@testable import PliersCommon
 
 @Test func testContextCreatesChainWithRuntimeHead() {
 	let base = NSError(domain: "d", code: 1)

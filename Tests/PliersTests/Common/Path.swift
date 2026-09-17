@@ -1,8 +1,7 @@
 import Foundation
 import Path
+import PliersCommon
 import Testing
-
-@testable import PliersCommon
 
 @Test func testHasPrefix() {
 	let path = Path("/tmp/pliers/a")!

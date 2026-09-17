@@ -1,7 +1,6 @@
 import Foundation
+import PliersCommon
 import Testing
-
-@testable import PliersCommon
 
 @Test func testAlertErrorFromMessage() {
 	let error = AlertError("bad", file: "a.swift", line: 3, function: "fn()")

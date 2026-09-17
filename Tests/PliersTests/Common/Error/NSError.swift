@@ -1,7 +1,6 @@
 import Foundation
+import PliersCommon
 import Testing
-
-@testable import PliersCommon
 
 @Test func testIsFileExistsErrorForPOSIX() {
 	let error = NSError(domain: NSPOSIXErrorDomain, code: Int(EEXIST))

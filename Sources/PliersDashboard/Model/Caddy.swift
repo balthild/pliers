@@ -33,6 +33,9 @@ final class Caddy: Model, @unchecked Sendable {
 		var backend: Backend?
 
 		@Fallback
+		var compression: [Compression]?
+
+		@Fallback
 		var custom: String = ""
 
 		@CasePathable
@@ -79,6 +82,11 @@ final class Caddy: Model, @unchecked Sendable {
 				let root: String
 				let fpm: String
 			}
+		}
+
+		enum Compression: String, Codable {
+			case gzip
+			case zstd
 		}
 	}
 }
