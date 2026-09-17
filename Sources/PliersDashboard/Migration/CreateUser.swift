@@ -10,6 +10,7 @@ struct CreateUser: AsyncMigration {
 			.field("token_pubkey", .data, .sql(.unique))
 			.field("token_challenge", .data, .sql(.unique))
 			.field("token_expiration", .datetime)
+			.field("privileges", .json, .required, .sql(.default("[]")))
 			.create()
 	}
 

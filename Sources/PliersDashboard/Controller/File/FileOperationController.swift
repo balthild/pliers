@@ -7,7 +7,7 @@ import Subprocess
 import Vapor
 import VaporElementary
 
-struct FileMutationController: RouteCollection {
+struct FileOperationController: RouteCollection {
 	func boot(routes: any RoutesBuilder) throws {
 		let group = routes.grouped("file").grouped(User.requireLoggedIn())
 		group.post("mkdir", use: self.mkdir)

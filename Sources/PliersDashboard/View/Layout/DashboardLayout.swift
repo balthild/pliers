@@ -26,6 +26,7 @@ extension View.Layout {
 		@HTMLBuilder
 		func body(_ page: borrowing Page) throws -> sending some HTML {
 			let body = try page.body()
+			let sidebar = try self.sidebar()
 
 			div(.class("flex items-stretch grow")) {
 				sidebar
@@ -37,7 +38,9 @@ extension View.Layout {
 		}
 
 		@HTMLBuilder
-		private var sidebar: some HTML {
+		private func sidebar() throws -> some HTML {
+			let user = try req.auth.require(User.self)
+
 			let cls = (
 				panel: "py-2 px-3 border-b border-gray-300",
 				logo: "text-lg font-bold bg-gray-100 text-gray-500",
@@ -47,8 +50,6 @@ extension View.Layout {
 				h1(.class("\(cls.panel) \(cls.logo)")) { "Pliers" }
 
 				section(.class("\(cls.panel)")) {
-					let user = try req.auth.require(User.self)
-
 					p(.class("my-0")) {
 						user.username
 						span(.class("mx-1 text-gray-500")) { "@" }
@@ -71,6 +72,12 @@ extension View.Layout {
 					div { link(text: "PHP", path: "/php") }
 					div { link(text: "MySQL", path: "/mysql") }
 					div { link(text: "Cron", path: "/cron") }
+				}
+
+				if user.isAdmin {
+					nav(.class("\(cls.panel)")) {
+						div { link(text: "User", path: "/user") }
+					}
 				}
 			}
 		}

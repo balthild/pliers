@@ -64,8 +64,10 @@ extension PliersDashboard {
 		try app.register(collection: PasskeySettingsController())
 		try app.register(collection: PasswordSettingsController())
 
+		try app.register(collection: UserController())
+
 		try app.register(collection: FileController())
-		try app.register(collection: FileMutationController())
+		try app.register(collection: FileOperationController())
 
 		try app.register(collection: CaddyController())
 		try app.register(collection: CaddyServiceController())

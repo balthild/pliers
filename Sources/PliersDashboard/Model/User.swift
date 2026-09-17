@@ -20,6 +20,9 @@ final class User: Model, @unchecked Sendable {
 	@OptionalGroup(key: "token")
 	var token: Token?
 
+	@Field(key: "privileges")
+	var privileges: Set<Privilege>
+
 	@Children(for: \.$user)
 	var passkeys: [Passkey]
 
@@ -44,6 +47,13 @@ final class User: Model, @unchecked Sendable {
 		var expiration: Date
 	}
 
+	enum Privilege: String, Codable, CaseIterable, Sendable {
+		case admin
+		case caddy
+		case php
+		case mysql
+	}
+
 	public static func find(username: String, on database: Database) async throws -> User? {
 		return try await User.query(on: database)
 			.filter(\.$username == username)
@@ -61,6 +71,16 @@ final class User: Model, @unchecked Sendable {
 
 		try await creating.create(on: database)
 		return creating
+	}
+}
+
+extension User {
+	var isAdmin: Bool {
+		self.username == "root" || self.privileges.contains(.admin)
+	}
+
+	func hasPrivilege(_ privilege: Privilege) -> Bool {
+		self.isAdmin || self.privileges.contains(privilege)
 	}
 }
 
