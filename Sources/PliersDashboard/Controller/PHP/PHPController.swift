@@ -7,18 +7,19 @@ import Vapor
 
 struct PHPController: RouteCollection {
 	func boot(routes: any RoutesBuilder) throws {
-		let group = routes.grouped(User.requireLoggedIn())
+		routes
+			.grouped(User.requireLoggedIn())
+			.grouped(RequirePrivilegeMiddleware(.php))
+			.group("php") { group in
+				group.get(use: self.index)
+				group.post("install", use: self.install)
 
-		group.group("php") { group in
-			group.get(use: self.index)
-			group.post("install", use: self.install)
-
-			group.group(":version") { group in
-				group.get(use: self.settings)
-				group.post("update", use: self.update)
-				group.post("remove", use: self.remove)
+				group.group(":version") { group in
+					group.get(use: self.settings)
+					group.post("update", use: self.update)
+					group.post("remove", use: self.remove)
+				}
 			}
-		}
 	}
 
 	@Sendable

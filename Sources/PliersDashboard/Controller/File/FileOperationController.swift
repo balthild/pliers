@@ -194,7 +194,7 @@ struct FileOperationController: RouteCollection {
 	}
 
 	private func impersonate(_ path: Path, _ user: User) -> String {
-		if path.hasPrefix(C.www.home) {
+		if path.hasPrefix(C.www.home) && user.hasPrivilege(.caddy) {
 			return C.www.user
 		}
 

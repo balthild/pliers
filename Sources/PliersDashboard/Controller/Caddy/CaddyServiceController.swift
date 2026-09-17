@@ -6,14 +6,15 @@ import Vapor
 
 struct CaddyServiceController: RouteCollection {
 	func boot(routes: any RoutesBuilder) throws {
-		let group = routes.grouped(User.requireLoggedIn())
-
-		group.group("caddy", "service") { group in
-			group.post("start", use: self.start)
-			group.post("stop", use: self.stop)
-			group.post("restart", use: self.restart)
-			group.post("reload", use: self.reload)
-		}
+		routes
+			.grouped(User.requireLoggedIn())
+			.grouped(RequirePrivilegeMiddleware(.caddy))
+			.group("caddy", "service") { group in
+				group.post("start", use: self.start)
+				group.post("stop", use: self.stop)
+				group.post("restart", use: self.restart)
+				group.post("reload", use: self.reload)
+			}
 	}
 
 	@Sendable

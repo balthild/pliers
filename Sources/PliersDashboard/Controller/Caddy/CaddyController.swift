@@ -6,19 +6,20 @@ import VaporElementary
 
 struct CaddyController: RouteCollection {
 	func boot(routes: any RoutesBuilder) throws {
-		let group = routes.grouped(User.requireLoggedIn())
+		routes
+			.grouped(User.requireLoggedIn())
+			.grouped(RequirePrivilegeMiddleware(.caddy))
+			.group("caddy") { group in
+				group.get(use: self.index)
+				group.get("new", use: self.new)
+				group.post("create", use: self.create)
 
-		group.group("caddy") { group in
-			group.get(use: self.index)
-			group.get("new", use: self.new)
-			group.post("create", use: self.create)
-
-			group.group(":id") { group in
-				group.get(use: self.edit)
-				group.post("update", use: self.update)
-				group.post("delete", use: self.delete)
+				group.group(":id") { group in
+					group.get(use: self.edit)
+					group.post("update", use: self.update)
+					group.post("delete", use: self.delete)
+				}
 			}
-		}
 	}
 
 	@Sendable

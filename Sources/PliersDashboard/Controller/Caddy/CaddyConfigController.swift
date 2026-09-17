@@ -5,11 +5,12 @@ import Vapor
 
 struct CaddyConfigController: RouteCollection {
 	func boot(routes: any RoutesBuilder) throws {
-		let group = routes.grouped(User.requireLoggedIn())
-
-		group.group("caddy", "config") { group in
-			group.post("apply", use: self.apply)
-		}
+		routes
+			.grouped(User.requireLoggedIn())
+			.grouped(RequirePrivilegeMiddleware(.caddy))
+			.group("caddy", "config") { group in
+				group.post("apply", use: self.apply)
+			}
 	}
 
 	func apply(req: Request) async throws -> Response {
