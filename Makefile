@@ -104,3 +104,6 @@ dev.dbus:
 
 fmt:
 	npx dprint fmt
+
+clean:
+	swift package reset

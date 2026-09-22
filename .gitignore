@@ -1,7 +1,9 @@
 .DS_Store
+_ignored_*
 
 .vscode/*.json
 !.vscode/extensions.json
+*.code-workspace
 
 .zed/*.json
 

@@ -1,4 +1,5 @@
 import Fluent
+import Foundation
 
 extension Model where IDValue == UUID {
 	public var uuid: String {
