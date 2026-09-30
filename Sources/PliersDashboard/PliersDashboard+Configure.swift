@@ -13,6 +13,7 @@ extension PliersDashboard {
 
 		app.placeholder = try .init(app: app)
 		app.lifecycle.use(DBusServer())
+		app.lifecycle.use(CloudflareNetworks())
 	}
 
 	private func console() async throws {

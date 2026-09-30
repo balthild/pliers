@@ -13,6 +13,17 @@ enum Caddyfile {
 		case group(Group)
 		case item(Item)
 
+		var isEmpty: Bool {
+			switch self {
+			case .empty:
+				return true
+			case .group(let group):
+				return group.isEmpty
+			case .item(let item):
+				return item.isEmpty
+			}
+		}
+
 		func build(level: Int) -> String {
 			switch self {
 			case .empty:
@@ -26,25 +37,34 @@ enum Caddyfile {
 	}
 
 	struct Group {
-		let children: [Node]
+		fileprivate let children: [Node]
+
+		var isEmpty: Bool {
+			children.allSatisfy(\.isEmpty)
+		}
 
 		func build(level: Int) -> String {
-			children
+			children.lazy
 				.map { $0.build(level: level) }
-				.filter { $0.contains(where: \.isWhitespace.not) }
+				.map { $0.trimmed }
+				.filter { !$0.isEmpty }
 				.joined(separator: "\n")
 		}
 	}
 
 	struct Item {
-		let tokens: [String]
-		let children: Node?
+		fileprivate let tokens: [String]
+		fileprivate let children: Node
+
+		var isEmpty: Bool {
+			tokens.allSatisfy { $0.trimmed.isEmpty } && children.isEmpty
+		}
 
 		func build(level: Int) -> String {
 			let indent = String(repeating: "\t", count: level)
 			let line = tokens.joined(separator: " ")
 
-			guard let children else {
+			guard !children.isEmpty else {
 				return indent + line
 			}
 
@@ -96,12 +116,20 @@ extension Caddyfile {
 		.empty
 	}
 
+	static func group(@Builder _ children: () -> Node) -> Node {
+		children()
+	}
+
 	static func item(_ tokens: String...) -> Node {
-		.item(.init(tokens: tokens, children: nil))
+		.item(.init(tokens: tokens, children: .empty))
 	}
 
 	static func item(_ tokens: String..., @Builder children: () -> Node) -> Node {
 		.item(.init(tokens: tokens, children: children()))
+	}
+
+	static func item(tokens: [String]) -> Node {
+		.item(.init(tokens: tokens, children: .empty))
 	}
 }
 

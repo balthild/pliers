@@ -1,5 +1,5 @@
 {
-  "originHash" : "02d3873b43aa016af8e1813a7b14326b5f5f00403314e6d08f6c9b869042056c",
+  "originHash" : "fec7e479ebf92b75752d6b0c371963b39f8b496f97d37c6cb759918a9485b626",
   "pins" : [
     {
       "identity" : "async-http-client",
@@ -33,7 +33,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/balthild/dbus.git",
       "state" : {
-        "revision" : "c2ea3022ab32e962b78aa096bf7d2232643af972"
+        "revision" : "612b601cb9e774dacdbd1defbeffb28209c9abd8"
       }
     },
     {

@@ -33,7 +33,19 @@ final class Caddy: Model, @unchecked Sendable {
 		var backend: Backend?
 
 		@Fallback
-		var compression: [Compression]?
+		var compression: Compression
+
+		@Fallback
+		var cache: Cache
+
+		@Fallback
+		var cors: CORS
+
+		@Fallback
+		var logging: Logging
+
+		@Fallback
+		var trustedProxies: TrustedProxies
 
 		@Fallback
 		var custom: String = ""
@@ -84,9 +96,99 @@ final class Caddy: Model, @unchecked Sendable {
 			}
 		}
 
-		enum Compression: String, Codable {
-			case gzip
-			case zstd
+		struct Compression: Codable, Default {
+			let enable: Bool
+			let customize: Bool
+			let gzipEnable: Bool
+			@AllowEmpty var gzipLevel: BoundedInt<1, 9>?
+			let zstdEnable: Bool
+			@AllowEmpty var zstdLevel: ZstdLevel?
+			@AllowEmpty var minimumLength: UInt?
+
+			enum ZstdLevel: String, Codable, CaseIterable {
+				case `default`
+				case fastest
+				case better
+				case best
+			}
+
+			static var defaultValue: Self {
+				.init(
+					enable: true,
+					customize: false,
+					gzipEnable: false,
+					gzipLevel: nil,
+					zstdEnable: false,
+					zstdLevel: nil,
+					minimumLength: nil,
+				)
+			}
+		}
+
+		struct Cache: Codable, Default {
+			let enable: Bool
+			@AllowEmpty var maxAge: UInt?
+			let visibility: Visibility
+			let immutable: Bool
+
+			enum Visibility: String, Codable, CaseIterable {
+				case `public`
+				case `private`
+			}
+
+			static var defaultValue: Self {
+				.init(
+					enable: false,
+					maxAge: nil,
+					visibility: .public,
+					immutable: false,
+				)
+			}
+		}
+
+		struct CORS: Codable, Default {
+			let enable: Bool
+			let origins: [String]
+			let methods: [String]
+			let headers: [String]
+			let credentials: Bool
+			@AllowEmpty var maxAge: UInt?
+
+			static var defaultValue: Self {
+				.init(
+					enable: false,
+					origins: [],
+					methods: [],
+					headers: [],
+					credentials: false,
+					maxAge: nil,
+				)
+			}
+		}
+
+		struct Logging: Codable, Default {
+			let enable: Bool
+			let output: String
+			let format: Format
+
+			enum Format: String, Codable, CaseIterable {
+				case console
+				case json
+			}
+
+			static var defaultValue: Self {
+				.init(enable: false, output: "", format: .console)
+			}
+		}
+
+		struct TrustedProxies: Codable, Default {
+			let docker: Bool
+			let cloudflare: Bool
+			let custom: [String]
+
+			static var defaultValue: Self {
+				.init(docker: false, cloudflare: false, custom: [])
+			}
 		}
 	}
 }
@@ -115,5 +217,22 @@ extension Caddy {
 		default:
 			break
 		}
+	}
+
+	var defaultLogPath: String {
+		guard let id = try? self.uuid else { return "" }
+		let path = C.caddy.log / "\(id).log"
+		return path.string
+	}
+
+	func assignDefaultLogPath() throws {
+		guard self.config.logging.enable else { return }
+		guard self.config.logging.output.trimmed.isEmpty else { return }
+
+		self.config.logging = .init(
+			enable: true,
+			output: self.defaultLogPath,
+			format: self.config.logging.format,
+		)
 	}
 }

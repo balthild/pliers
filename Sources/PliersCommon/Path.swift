@@ -28,6 +28,16 @@ extension Path {
 		let _ = try FileManager.default.replaceItemAt(self.url, withItemAt: other.url)
 	}
 
+	public func chown(owner: String, group: String) throws {
+		try FileManager.default.setAttributes(
+			[
+				.ownerAccountName: owner,
+				.groupOwnerAccountName: group,
+			],
+			ofItemAtPath: self.string,
+		)
+	}
+
 	public func hasPrefix(_ prefix: Path) -> Bool {
 		let longer = self.components
 		let shorter = prefix.components

@@ -61,6 +61,7 @@ struct CaddyController: RouteCollection {
 
 		// this requires the model to have an ID
 		try model.assignDefaultWebRoot()
+		try model.assignDefaultLogPath()
 		try await model.update(on: req.db)
 
 		return req.redirect(to: "/caddy/\(try model.uuid)")
@@ -87,6 +88,7 @@ struct CaddyController: RouteCollection {
 
 		try await Self.prepare(req: req, into: model)
 		try model.assignDefaultWebRoot()
+		try model.assignDefaultLogPath()
 		try await model.update(on: req.db)
 
 		return req.redirect(.back)
@@ -114,7 +116,7 @@ struct CaddyController: RouteCollection {
 	private static func prepare(req: Request, into model: Caddy) async throws {
 		struct Input: Content {
 			@Lines var domains: [String]
-			let config: Caddy.Config
+			let config: Caddy.Config.Form
 		}
 
 		let input = try req.content.decode(Input.self)
@@ -143,8 +145,33 @@ struct CaddyController: RouteCollection {
 		}
 
 		model.domains = input.domains
-		model.config = input.config
-		model.config.custom = input.config.custom
-			.trimmingCharacters(in: .whitespacesAndNewlines)
+		model.config = input.config.config
+		model.config.custom = model.config.custom.trimmed
+
+		try Self.validate(config: input.config)
+	}
+
+	private static func validate(config: Caddy.Config.Form) throws {
+		let cors = config.cors
+		if cors.enable {
+			if cors.credentials, cors.origins.contains("*") {
+				throw AlertError("Access-Control-Allow-Origin cannot be * when credentials are allowed")
+			}
+		}
+
+		let logging = config.logging
+		if logging.enable {
+			let output = logging.output.trimmed
+			if !output.isEmpty, !output.hasPrefix("/") {
+				throw AlertError("log output path must be absolute")
+			}
+		}
+
+		let trusted = config.trustedProxies
+		for range in trusted.custom {
+			guard range.isCIDR else {
+				throw AlertError("trusted proxy \(range) is not a valid IP address or CIDR range")
+			}
+		}
 	}
 }

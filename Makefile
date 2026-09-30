@@ -5,6 +5,7 @@ PLIERS_SERVICES ?= /etc/systemd/system
 PLIERS_COREUTILS ?= /usr/bin
 PLIERS_CADDY_EXEC ?= /usr/bin/caddy
 PLIERS_CADDY_CONF ?= /etc/caddy
+PLIERS_CADDY_LOG ?= /var/log/caddy
 PLIERS_CADDY_USER ?= caddy
 PLIERS_WWW_HOME ?= /var/www
 PLIERS_WWW_USER ?= www-data
@@ -22,6 +23,7 @@ extension Constants {
 	public enum caddy {
 		public static let exec = Path("$(PLIERS_CADDY_EXEC)")!
 		public static let conf = Path("$(PLIERS_CADDY_CONF)")!
+		public static let log = Path("$(PLIERS_CADDY_LOG)")!
 		public static let user = "$(PLIERS_CADDY_USER)"
 	}
 	public enum www {

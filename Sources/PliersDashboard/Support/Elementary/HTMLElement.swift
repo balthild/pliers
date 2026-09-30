@@ -30,3 +30,19 @@ extension HTMLElement where Tag == HTMLTag.fieldset {
 		)
 	}
 }
+
+extension HTMLVoidElement where Tag == HTMLTag.input {
+	public enum InputCheckboxTypeBoolean { case boolean }
+
+	@HTMLBuilder
+	public static func checkbox(
+		type: InputCheckboxTypeBoolean,
+		name: String,
+		_ attributes: HTMLAttribute<HTMLTag.input>...,
+	) -> some HTML {
+		// unchecked checkboxes are completely excluded from the form data,
+		// so a hidden input is required to submit `false` as fallback.
+		input(.type(.hidden), .name(name), .value("false"))
+		input(attributes: attributes + [.type(.checkbox), .name(name), .value("true")])
+	}
+}

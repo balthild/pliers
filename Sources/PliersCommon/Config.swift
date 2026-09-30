@@ -35,15 +35,15 @@ public struct Config: Sendable {
 		var entries = [String: String]()
 
 		for line in text.split(separator: "\n") {
-			let line = line.trimmingCharacters(in: .whitespaces)
+			let line = line.trimmed
 			guard !line.isEmpty, !line.hasPrefix("#") else { continue }
 
 			guard let index = line.firstIndex(of: "=") else {
 				throw RuntimeError("invalid syntax at line \(line)")
 			}
 
-			let key = line[..<index].trimmingCharacters(in: .whitespaces)
-			let value = line[line.index(after: index)...].trimmingCharacters(in: .whitespaces)
+			let key = line[..<index].trimmed
+			let value = line[line.index(after: index)...].trimmed
 
 			if entries[key] != nil {
 				throw RuntimeError("duplicate option '\(key)'")

@@ -37,45 +37,15 @@ struct CaddyConfigController: RouteCollection {
 
 		let sites = try await Caddy.query(on: req.db).all()
 
+		try await Self.mkdir(sites: sites)
+
 		let caddyfile = Caddyfile.build {
 			Caddyfile.item {
 				Caddyfile.item("admin", "off")
 			}
 
 			for site in sites {
-				let scheme = site.config.tls == nil ? "http://" : "https://"
-				let listeners = site.domains.map { "\(scheme)\($0)" }.joined(separator: ", ")
-
-				Caddyfile.item(listeners) {
-					switch site.config.tls {
-					case .acme:
-						Caddyfile.empty()
-					case .file(let file):
-						Caddyfile.item("tls", file.cert.quoteCaddy, file.key.quoteCaddy)
-					case .none:
-						Caddyfile.empty()
-					}
-
-					switch site.config.backend {
-					case .proxy(let proxy):
-						Caddyfile.item("reverse_proxy", proxy.upstream.quoteCaddy)
-
-					case .file(let file):
-						Caddyfile.item("file_server") {
-							Caddyfile.item("root", file.root.quoteCaddy)
-						}
-
-					case .php(let php):
-						Caddyfile.item("php_fastcgi", php.fpm.quoteCaddy) {
-							Caddyfile.item("root", php.root.quoteCaddy)
-						}
-
-					case .none:
-						Caddyfile.item("respond", "It works!".quoteCaddy)
-					}
-
-					Caddyfile.item(site.config.custom)
-				}
+				Caddyfile.site(site, app: req.application)
 			}
 		}
 
@@ -102,6 +72,24 @@ struct CaddyConfigController: RouteCollection {
 		guard case .exited(0) = result.terminationStatus else {
 			try? dir.delete()
 			throw RuntimeError(result.closureResult)
+		}
+	}
+
+	private static func mkdir(sites: [Caddy]) async throws {
+		for site in sites where site.config.logging.enable {
+			let output = site.config.logging.output.trimmed
+			guard !output.isEmpty, let file = Path(output) else {
+				continue
+			}
+
+			// only manage standard web log locations
+			let dir = file.parent
+			guard dir.hasPrefix(C.caddy.log) else {
+				continue
+			}
+
+			try dir.mkdir(.p)
+			try dir.chown(owner: C.caddy.user, group: C.caddy.user)
 		}
 	}
 }

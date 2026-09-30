@@ -30,7 +30,7 @@ let package = Package(
 		// .package(url: "https://github.com/wendylabsinc/dbus.git", from: "0.4.0"),
 		.package(
 			url: "https://github.com/balthild/dbus.git",
-			revision: "c2ea3022ab32e962b78aa096bf7d2232643af972",
+			revision: "612b601cb9e774dacdbd1defbeffb28209c9abd8",
 		),
 	],
 	targets: [

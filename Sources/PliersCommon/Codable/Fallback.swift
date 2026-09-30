@@ -3,11 +3,7 @@ public struct Fallback<T>: Codable
 where T: Codable & Default {
 	public var wrappedValue: T
 
-	public init() {
-		self.wrappedValue = T.defaultValue
-	}
-
-	public init(wrappedValue: T) {
+	public init(wrappedValue: T = T.defaultValue) {
 		self.wrappedValue = wrappedValue
 	}
 
@@ -18,7 +14,7 @@ where T: Codable & Default {
 		// Swift's `Codable` is so fucking annoying unlike Rust's `serde`
 		if let type = T.self as? any CodableOptional.Type {
 			if let value = try? container.decode(type.wrappedType) {
-				self.wrappedValue = value as? T ?? T.defaultValue
+				self.wrappedValue = value as! T
 			} else {
 				self.wrappedValue = T.defaultValue
 			}
