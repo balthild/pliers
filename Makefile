@@ -1,8 +1,9 @@
 PLIERS_CONF ?= /etc/pliers
 PLIERS_PKGS ?= /opt/pliers
 PLIERS_RUN ?= /run/pliers
-PLIERS_SERVICES ?= /etc/systemd/system
-PLIERS_COREUTILS ?= /usr/bin
+PLIERS_ASSETS ?= /usr/share/pliers
+PLIERS_SYSTEM_BIN ?= /usr/bin
+PLIERS_SYSTEM_SERVICES ?= /etc/systemd/system
 PLIERS_CADDY_EXEC ?= /usr/bin/caddy
 PLIERS_CADDY_CONF ?= /etc/caddy
 PLIERS_CADDY_LOG ?= /var/log/caddy
@@ -19,10 +20,10 @@ extension Constants {
 	public static let conf = Path("$(PLIERS_CONF)")!
 	public static let pkgs = Path("$(PLIERS_PKGS)")!
 	public static let run = Path("$(PLIERS_RUN)")!
-	public static let services = Path("$(PLIERS_SERVICES)")!
+	public static let assets = Path("$(PLIERS_ASSETS)")!
 	public enum system {
-		public static let bin = Path("$(PLIERS_COREUTILS)")!
-		public static let services = Path("$(PLIERS_SERVICES)")!
+		public static let bin = Path("$(PLIERS_SYSTEM_BIN)")!
+		public static let services = Path("$(PLIERS_SYSTEM_SERVICES)")!
 	}
 	public enum caddy {
 		public static let exec = Path("$(PLIERS_CADDY_EXEC)")!
@@ -48,7 +49,7 @@ configure:
 
 build:
 	@if [ ! -f $(GENERATE_PATH) ]; then echo 'Please run "make configure" first'; exit 1; fi
-	npx @tailwindcss/cli -i ./Resources/Style/main.css -o ./Public/dist/main.css
+	npx vite build
 	swift build -c release
 
 test:
@@ -81,9 +82,9 @@ dev.%:
 		LOG_LEVEL="$(LOG_LEVEL)" \
 		./.build/debug/pliers $*
 
-dev.css:
-	@printf "\033]0;dev.css\007"
-	npx @tailwindcss/cli -i ./Resources/Style/main.css -o ./Public/dist/main.css --watch
+dev.vite:
+	@printf "\033]0;dev.vite\007"
+	npx vite
 
 dev.sqlite:
 	@printf "\033]0;dev.sqlite\007"

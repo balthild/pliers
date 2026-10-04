@@ -1,8 +1,8 @@
 @import 'tailwindcss' source(none);
 @plugin '@tailwindcss/forms';
 
-@source '../../Sources';
-@source '../../Resources';
+@source '../../../Sources';
+@source '../../../Resources';
 
 @import './component/common.css' layer(components);
 @import './component/form.css' layer(components);

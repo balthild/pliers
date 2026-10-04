@@ -4,8 +4,8 @@ procs:
   serve:
     cmd: ["make", "dev.serve"]
 
-  css:
-    cmd: ["make", "dev.css"]
+  vite:
+    cmd: ["make", "dev.vite"]
 
   sqlite:
     cmd: ["make", "dev.sqlite"]

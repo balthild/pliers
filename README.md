@@ -29,10 +29,10 @@ make dev.serve # run the dashboard as root
 make dev.auth # generate a login token for root
 ```
 
-### Build the CSS and Rebuild on Changes
+### Build the Frontend and Rebuild on Changes
 
 ```bash
-make dev.css
+make dev.vite
 ```
 
 ### Build in Release Mode

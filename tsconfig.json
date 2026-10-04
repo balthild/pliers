@@ -1,0 +1,17 @@
+{
+	"include": ["./Resources/Vite"],
+	"compilerOptions": {
+		"paths": {
+			"#/*": ["./Resources/Vite/*"],
+		},
+		"strict": true,
+		"module": "esnext",
+		"moduleResolution": "bundler",
+		"moduleDetection": "force",
+		"verbatimModuleSyntax": true,
+		"isolatedModules": true,
+		"forceConsistentCasingInFileNames": true,
+		"rewriteRelativeImportExtensions": true,
+		"noEmit": true,
+	},
+}
