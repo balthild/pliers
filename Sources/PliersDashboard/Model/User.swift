@@ -26,6 +26,9 @@ final class User: Model, @unchecked Sendable {
 	@Children(for: \.$user)
 	var passkeys: [Passkey]
 
+	@Children(for: \.$user)
+	var crons: [Cron]
+
 	init() {}
 
 	final class Password: Fields, @unchecked Sendable {

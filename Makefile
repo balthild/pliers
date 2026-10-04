@@ -7,6 +7,7 @@ PLIERS_CADDY_EXEC ?= /usr/bin/caddy
 PLIERS_CADDY_CONF ?= /etc/caddy
 PLIERS_CADDY_LOG ?= /var/log/caddy
 PLIERS_CADDY_USER ?= caddy
+PLIERS_CRON_EXEC ?= /usr/bin/crontab
 PLIERS_WWW_HOME ?= /var/www
 PLIERS_WWW_USER ?= www-data
 PLIERS_WWW_GROUP ?= www-data
@@ -19,7 +20,10 @@ extension Constants {
 	public static let pkgs = Path("$(PLIERS_PKGS)")!
 	public static let run = Path("$(PLIERS_RUN)")!
 	public static let services = Path("$(PLIERS_SERVICES)")!
-	public static let coreutils = Path("$(PLIERS_COREUTILS)")!
+	public enum system {
+		public static let bin = Path("$(PLIERS_COREUTILS)")!
+		public static let services = Path("$(PLIERS_SERVICES)")!
+	}
 	public enum caddy {
 		public static let exec = Path("$(PLIERS_CADDY_EXEC)")!
 		public static let conf = Path("$(PLIERS_CADDY_CONF)")!

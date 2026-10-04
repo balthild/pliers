@@ -109,7 +109,7 @@ struct FileOperationController: RouteCollection {
 
 		let username = self.impersonate(path, user)
 		let result = try await Subprocess.run(
-			.path(C.coreutils / "rm"),
+			.path(C.system.bin / "rm"),
 			arguments: ["-rf", path.string],
 			environment: .custom([]),
 			platformOptions: try .su(username),
@@ -177,7 +177,7 @@ struct FileOperationController: RouteCollection {
 		}
 
 		let result = try await Subprocess.run(
-			.path(C.coreutils / cmd),
+			.path(C.system.bin / cmd),
 			arguments: .init(args),
 			environment: .custom([]),
 			workingDirectory: .init(dir.string),

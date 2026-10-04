@@ -122,7 +122,7 @@ struct InstallPHPJob: AsyncJob {
 		}
 
 		let result = try await Subprocess.run(
-			.path(C.coreutils / "tar"),
+			.path(C.system.bin / "tar"),
 			arguments: ["-xf", path.string],
 			environment: .custom([]),
 			workingDirectory: .init(directory.string),
