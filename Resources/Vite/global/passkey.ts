@@ -1,11 +1,13 @@
-import { fetchJson } from '#/utils';
+import { fetchJson } from '#/lib/utils';
 
 declare global {
-	var passkeyCreate: (name: string) => Promise<void>;
-	var passkeyLogin: () => Promise<void>;
+	interface Window {
+		passkeyCreate: (name: string) => Promise<void>;
+		passkeyLogin: () => Promise<void>;
+	}
 }
 
-globalThis.passkeyCreate = async (name: string) => {
+window.passkeyCreate = async (name: string) => {
 	const options = await fetchJson('/settings/passkey');
 	const publicKey = PublicKeyCredential.parseCreationOptionsFromJSON(options.publicKey);
 
@@ -20,7 +22,7 @@ globalThis.passkeyCreate = async (name: string) => {
 	location.reload();
 };
 
-globalThis.passkeyLogin = async () => {
+window.passkeyLogin = async () => {
 	const options = await fetchJson('/login/passkey');
 	const publicKey = PublicKeyCredential.parseRequestOptionsFromJSON(options.publicKey);
 

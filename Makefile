@@ -49,7 +49,7 @@ configure:
 
 build:
 	@if [ ! -f $(GENERATE_PATH) ]; then echo 'Please run "make configure" first'; exit 1; fi
-	npx vite build
+	npm exec vite build
 	swift build -c release
 
 test:
@@ -60,7 +60,7 @@ package: export PKGARCH=$(shell uname -m)
 package: build
 	rm -rf ./.build/pkg
 	mkdir -p ./.build/pkg
-	npx @goreleaser/nfpm pkg --packager deb --target ./.build/pkg --config ./nfpm.yaml
+	npm exec nfpm pkg --packager deb --target ./.build/pkg --config ./nfpm.yaml
 
 release: package
 	git tag -f dev
@@ -71,7 +71,7 @@ release: package
 
 dev:
 	@printf "\033]0;dev\007"
-	npx mprocs
+	npm exec mprocs
 
 dev.%:
 	@printf "\033]0;dev.$*\007"
@@ -84,7 +84,10 @@ dev.%:
 
 dev.vite:
 	@printf "\033]0;dev.vite\007"
-	npx vite
+	npm exec vite
+
+dev.check:
+	npm exec tsc
 
 dev.sqlite:
 	@printf "\033]0;dev.sqlite\007"
@@ -107,10 +110,10 @@ dev.dbus:
 		./Sources/PliersDBus/Pliers.xml \
 		--output-dir ./Sources/PliersDBus
 
-	npx dprint fmt ./Sources/PliersDBus/**
+	npm exec dprint fmt ./Sources/PliersDBus/**
 
 fmt:
-	npx dprint fmt
+	npm exec dprint fmt
 
 clean:
 	swift package reset

@@ -5,7 +5,7 @@
 		"dprint.json",
 		"vite.config.ts",
 		"tsconfig.json",
-		"Resources/Vite/*.{js,ts,css}",
+		"Resources/Vite/**/*.{js,ts,css}",
 		"Sources/PliersDBus/*.xml",
 		"Sources/**/*.swift",
 		"Package.swift",
@@ -13,6 +13,9 @@
 	],
 	"excludes": [
 		".build",
+		".index-build",
+		"node_modules",
+		"Public/dist",
 	],
 	"useTabs": true,
 	"indentWidth": 2,

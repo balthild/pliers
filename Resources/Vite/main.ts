@@ -2,6 +2,7 @@
 
 import './css/main.css';
 
-import './global/alpine';
-import './global/time';
 import './global/passkey';
+import './global/time';
+import './global/cron';
+import './global/alpine';

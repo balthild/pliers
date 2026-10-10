@@ -8,7 +8,7 @@
 
 	.field {
 		@apply col-span-full;
-		@apply grid grid-cols-subgrid grid-rows-subgrid align-baseline;
+		@apply grid grid-cols-subgrid grid-rows-subgrid items-baseline;
 
 		> :first-child {
 			@apply text-sm text-right;
