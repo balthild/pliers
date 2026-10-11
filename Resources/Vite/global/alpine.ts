@@ -2,7 +2,8 @@ import AlpineFocus from '@alpinejs/focus';
 import AlpinePersist from '@alpinejs/persist';
 import Alpine from 'alpinejs';
 
-import { AlpineHistory } from '#/lib/alpine';
+import { AlpineComputed } from '#/lib/alpine/computed';
+import { AlpineHistory } from '#/lib/alpine/history';
 
 declare global {
 	interface Window {
@@ -24,5 +25,6 @@ window.Alpine = Alpine;
 
 Alpine.plugin(AlpineFocus);
 Alpine.plugin(AlpinePersist);
+Alpine.plugin(AlpineComputed);
 Alpine.plugin(AlpineHistory);
 Alpine.start();

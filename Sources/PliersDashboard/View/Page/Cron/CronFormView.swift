@@ -11,7 +11,7 @@ extension View.Page {
 				.when(model.id != nil) { .action("/cron/\(model.id!)/update") },
 				.class("form max-w-200 p-2 border border-gray-400"),
 				.x.data("{ expr: \(model.expr.quoteJSON), explanation: null }"),
-				.x.effect("explanation = explainCronExpr(expr)"),
+				.x.computed("explanation", "explainCronExpr(expr)"),
 			) {
 				label(.class("field")) {
 					span { "Expression" }
@@ -28,24 +28,24 @@ extension View.Page {
 				label(.class("field")) {
 					span { "Explanation" }
 					section(.class("text-sm")) {
-						template(.x.if("explanation === null")) {
+						template(.x.if("$computed.explanation === null")) {
 							p(.class("text-red-700")) { "Invalid crontab expression" }
 						}
-						template(.x.if("explanation !== null")) {
+						template(.x.if("$computed.explanation !== null")) {
 							ul(.class("list-disc pl-3.5 space-y-1.5")) {
-								template(.x.if("explanation.macro !== null")) {
+								template(.x.if("$computed.explanation.macro !== null")) {
 									li {
 										p {
 											span(.class("font-medium")) { "Macro: " }
-											code(.x.text("explanation.macro.value")) {}
+											code(.x.text("$computed.explanation.macro.value")) {}
 											span { " → " }
-											code(.x.text("explanation.macro.expanded")) {}
+											code(.x.text("$computed.explanation.macro.expanded")) {}
 										}
-										p(.x.text("explanation.macro.description")) {}
+										p(.x.text("$computed.explanation.macro.description")) {}
 									}
 								}
 
-								template(.x.for("field in explanation.fields")) {
+								template(.x.for("field in $computed.explanation.fields")) {
 									li {
 										p {
 											span(.class("font-medium")) {

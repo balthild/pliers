@@ -80,6 +80,10 @@ extension HTMLAttribute.x {
 	public static func trap(_ expr: String) -> HTMLAttribute {
 		.init(name: "x-trap", value: expr)
 	}
+
+	public static func computed(_ name: String, _ expr: String) -> HTMLAttribute {
+		.init(name: "x-computed:\(name)", value: expr)
+	}
 }
 
 extension HTMLAttribute.x where Tag == HTMLTag.template {
