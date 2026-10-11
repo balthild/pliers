@@ -131,7 +131,8 @@ struct InstallPHPJob: AsyncJob {
 		)
 
 		guard result.terminationStatus == .exited(0) else {
-			throw RuntimeError(result.standardError ?? "unknown error")
+			let message = result.standardError.trimmed
+			throw RuntimeError(message.isEmpty ? "unknown error" : message)
 		}
 
 		try path.delete()

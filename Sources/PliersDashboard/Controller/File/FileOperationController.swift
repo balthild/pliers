@@ -187,7 +187,8 @@ struct FileOperationController: RouteCollection {
 		)
 
 		guard result.terminationStatus == .exited(0) else {
-			throw AlertError(result.standardError ?? "unknown error")
+			let message = result.standardError.trimmed
+			throw AlertError(message.isEmpty ? "unknown error" : message)
 		}
 
 		return req.redirect(.back)

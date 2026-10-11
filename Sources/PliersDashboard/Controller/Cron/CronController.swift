@@ -168,7 +168,7 @@ struct CronController: RouteCollection {
 			return ""
 		}
 
-		return result.standardOutput ?? ""
+		return result.standardOutput
 	}
 
 	private static func install(_ content: String, for username: String) async throws {
@@ -183,7 +183,7 @@ struct CronController: RouteCollection {
 		)
 
 		guard result.terminationStatus.isSuccess else {
-			let message = result.standardError?.trimmed ?? ""
+			let message = result.standardError.trimmed
 			throw AlertError(message.isEmpty ? "failed to apply crontab" : message)
 		}
 	}
