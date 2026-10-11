@@ -17,7 +17,7 @@ extension View.Component {
 				link(.rel(.stylesheet), .href(uri))
 			}
 			for uri in assets.scripts {
-				script(.src(uri), .type(.module)) {}
+				script(.src(uri), .type(.module), .defer) {}
 			}
 		}
 
