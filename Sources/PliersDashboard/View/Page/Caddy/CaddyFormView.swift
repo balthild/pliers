@@ -37,9 +37,10 @@ extension View.Page {
 			) {
 				label(.class("field")) {
 					span { "Domains" }
-					textarea(.name("domains"), .required) {
-						model.domains.joined(separator: "\n")
-					}
+					View.Component.ArrayInput(
+						name: "domains",
+						values: model.domains,
+					)
 				}
 
 				hr()
@@ -165,12 +166,10 @@ extension View.Page {
 
 					label(.class("field")) {
 						span { "Custom" }
-						textarea(
-							.name("config[trustedProxies][custom]"),
-							.placeholder("One IP address or CIDR range per line"),
-						) {
-							model.config.trustedProxies.custom.joined(separator: "\n")
-						}
+						View.Component.ArrayInput(
+							name: "config[trustedProxies][custom]",
+							values: model.config.trustedProxies.custom,
+						)
 					}
 				}
 
@@ -417,32 +416,26 @@ extension View.Page {
 				fieldset.when("cors.enable") {
 					label(.class("field")) {
 						span { "Origins" }
-						textarea(
-							.name("config[cors][origins]"),
-							.placeholder("* or one origin per line"),
-						) {
-							model.config.cors.origins.joined(separator: "\n")
-						}
+						View.Component.ArrayInput(
+							name: "config[cors][origins]",
+							values: model.config.cors.origins,
+						)
 					}
 
 					label(.class("field")) {
 						span { "Methods" }
-						textarea(
-							.name("config[cors][methods]"),
-							.placeholder("One method per line"),
-						) {
-							model.config.cors.methods.joined(separator: "\n")
-						}
+						View.Component.ArrayInput(
+							name: "config[cors][methods]",
+							values: model.config.cors.methods,
+						)
 					}
 
 					label(.class("field")) {
 						span { "Headers" }
-						textarea(
-							.name("config[cors][headers]"),
-							.placeholder("One header per line"),
-						) {
-							model.config.cors.headers.joined(separator: "\n")
-						}
+						View.Component.ArrayInput(
+							name: "config[cors][headers]",
+							values: model.config.cors.headers,
+						)
 					}
 
 					div(.class("field")) {

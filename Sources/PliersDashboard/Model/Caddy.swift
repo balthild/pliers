@@ -147,11 +147,11 @@ final class Caddy: Model, @unchecked Sendable {
 		}
 
 		struct CORS: Codable, Default {
-			let enable: Bool
-			let origins: [String]
-			let methods: [String]
-			let headers: [String]
-			let credentials: Bool
+			var enable: Bool
+			@TrimCompact var origins: [String]
+			@TrimCompact var methods: [String]
+			@TrimCompact var headers: [String]
+			var credentials: Bool
 			@AllowEmpty var maxAge: UInt?
 
 			static var defaultValue: Self {
@@ -167,9 +167,9 @@ final class Caddy: Model, @unchecked Sendable {
 		}
 
 		struct Logging: Codable, Default {
-			let enable: Bool
-			let output: String
-			let format: Format
+			var enable: Bool
+			var output: String
+			var format: Format
 
 			enum Format: String, Codable, CaseIterable {
 				case console
@@ -182,9 +182,9 @@ final class Caddy: Model, @unchecked Sendable {
 		}
 
 		struct TrustedProxies: Codable, Default {
-			let docker: Bool
-			let cloudflare: Bool
-			let custom: [String]
+			var docker: Bool
+			var cloudflare: Bool
+			@TrimCompact var custom: [String]
 
 			static var defaultValue: Self {
 				.init(docker: false, cloudflare: false, custom: [])

@@ -45,7 +45,7 @@ struct UserController: RouteCollection {
 		let model = try await req.find(User.self, "id")
 
 		let user = try req.auth.require(User.self)
-		if model.id == user.id, !input.privileges.contains(.admin) {
+		if model.id == user.id && !input.privileges.contains(.admin) {
 			throw AlertError("you cannot remove your own admin privilege")
 		}
 

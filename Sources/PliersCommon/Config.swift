@@ -36,7 +36,7 @@ public struct Config: Sendable {
 
 		for line in text.split(separator: "\n") {
 			let line = line.trimmed
-			guard !line.isEmpty, !line.hasPrefix("#") else { continue }
+			guard !line.isEmpty && !line.hasPrefix("#") else { continue }
 
 			guard let index = line.firstIndex(of: "=") else {
 				throw RuntimeError("invalid syntax at line \(line)")

@@ -12,3 +12,10 @@ extension StringProtocol {
 		self.trimmingCharacters(in: .whitespacesAndNewlines)
 	}
 }
+
+extension Array where Element == String {
+	public var quoteJSON: String {
+		let encoded = try! JSONEncoder().encode(self)
+		return .init(data: encoded, encoding: .utf8)!
+	}
+}

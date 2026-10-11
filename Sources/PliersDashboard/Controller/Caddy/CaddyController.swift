@@ -115,8 +115,8 @@ struct CaddyController: RouteCollection {
 
 	private static func prepare(req: Request, into model: Caddy) async throws {
 		struct Input: Content {
-			@Lines var domains: [String]
-			let config: Caddy.Config.Form
+			var domains: [String]
+			let config: Caddy.Config
 		}
 
 		let input = try req.content.decode(Input.self)
@@ -145,16 +145,16 @@ struct CaddyController: RouteCollection {
 		}
 
 		model.domains = input.domains
-		model.config = input.config.config
+		model.config = input.config
 		model.config.custom = model.config.custom.trimmed
 
-		try Self.validate(config: input.config)
+		try Self.validate(config: model.config)
 	}
 
-	private static func validate(config: Caddy.Config.Form) throws {
+	private static func validate(config: Caddy.Config) throws {
 		let cors = config.cors
 		if cors.enable {
-			if cors.credentials, cors.origins.contains("*") {
+			if cors.credentials && cors.origins.contains("*") {
 				throw AlertError("Access-Control-Allow-Origin cannot be * when credentials are allowed")
 			}
 		}
@@ -162,7 +162,7 @@ struct CaddyController: RouteCollection {
 		let logging = config.logging
 		if logging.enable {
 			let output = logging.output.trimmed
-			if !output.isEmpty, !output.hasPrefix("/") {
+			if !output.isEmpty && !output.hasPrefix("/") {
 				throw AlertError("log output path must be absolute")
 			}
 		}
