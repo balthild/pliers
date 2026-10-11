@@ -8,6 +8,7 @@ let package = Package(
 	],
 	dependencies: [
 		.package(url: "https://github.com/apple/swift-nio.git", from: "2.65.0"),
+		.package(url: "https://github.com/swiftlang/swift-subprocess.git", from: "1.0.0"),
 		.package(url: "https://github.com/vapor/vapor.git", from: "4.115.0"),
 		.package(url: "https://github.com/vapor/fluent.git", from: "4.9.0"),
 		.package(url: "https://github.com/vapor/fluent-sqlite-driver.git", from: "4.6.0"),
@@ -18,13 +19,6 @@ let package = Package(
 		.package(url: "https://github.com/vapor-community/vapor-elementary.git", from: "0.1.0"),
 		.package(url: "https://github.com/mxcl/Path.swift.git", from: "1.6.0"),
 		.package(url: "https://github.com/pointfreeco/swift-case-paths.git", from: "1.8.0"),
-
-		// https://github.com/swiftlang/swift-subprocess/pull/344
-		// .package(url: "https://github.com/swiftlang/swift-subprocess.git", from: "1.0.0-beta.1"),
-		.package(
-			url: "https://github.com/swiftlang/swift-subprocess.git",
-			revision: "daca5529133c51ad4e10c73852002496d486d660",
-		),
 
 		// https://github.com/wendylabsinc/dbus/pull/30
 		// .package(url: "https://github.com/wendylabsinc/dbus.git", from: "0.4.0"),
