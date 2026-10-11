@@ -21,6 +21,9 @@ contents:
   - src: ./.build/release/pliers
     dst: /usr/bin/pliers
 
+  - src: ./Public
+    dst: /usr/share/pliers/Public
+
   - src: ./Resources/Pkg/pliers.conf
     dst: /etc/pliers/pliers.conf
     type: config|noreplace

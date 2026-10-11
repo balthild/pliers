@@ -6,6 +6,10 @@ import Vapor
 
 extension PliersDashboard {
 	func configure() async throws {
+		#if !DEBUG
+			app.directory = .init(workingDirectory: C.assets.string)
+		#endif
+
 		try await database()
 		try await console()
 		try await queue()

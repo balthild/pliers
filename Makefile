@@ -39,6 +39,8 @@ extension Constants {
 }
 endef
 
+NPM_BIN = ./node_modules/.bin
+
 help:
 	@echo "Usage: make [configure|build|test|fmt]"
 
@@ -49,7 +51,7 @@ configure:
 
 build:
 	@if [ ! -f $(GENERATE_PATH) ]; then echo 'Please run "make configure" first'; exit 1; fi
-	npm exec vite build
+	$(NPM_BIN)/vite build
 	swift build -c release
 
 test:
@@ -60,7 +62,7 @@ package: export PKGARCH=$(shell uname -m)
 package: build
 	rm -rf ./.build/pkg
 	mkdir -p ./.build/pkg
-	npm exec nfpm pkg --packager deb --target ./.build/pkg --config ./nfpm.yaml
+	$(NPM_BIN)/nfpm pkg --packager deb --target ./.build/pkg --config ./nfpm.yaml
 
 release: package
 	git tag -f dev
@@ -71,7 +73,7 @@ release: package
 
 dev:
 	@printf "\033]0;dev\007"
-	npm exec mprocs
+	$(NPM_BIN)/mprocs
 
 dev.%:
 	@printf "\033]0;dev.$*\007"
@@ -84,10 +86,10 @@ dev.%:
 
 dev.vite:
 	@printf "\033]0;dev.vite\007"
-	npm exec vite
+	$(NPM_BIN)/vite
 
 dev.check:
-	npm exec tsc
+	$(NPM_BIN)/tsc
 
 dev.sqlite:
 	@printf "\033]0;dev.sqlite\007"
@@ -110,10 +112,10 @@ dev.dbus:
 		./Sources/PliersDBus/Pliers.xml \
 		--output-dir ./Sources/PliersDBus
 
-	npm exec dprint fmt ./Sources/PliersDBus/**
+	$(NPM_BIN)/dprint fmt ./Sources/PliersDBus/**
 
 fmt:
-	npm exec dprint fmt
+	$(NPM_BIN)/dprint fmt
 
 clean:
 	swift package reset
