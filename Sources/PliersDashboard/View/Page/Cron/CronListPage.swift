@@ -45,7 +45,7 @@ extension View.Page {
 				tbody {
 					for job in jobs {
 						tr {
-							td { code { job.expr } }
+							td { job.expr }
 							td { job.command }
 							td {
 								div(.class("flex gap-2")) {

@@ -43,7 +43,11 @@ struct CronController: RouteCollection {
 		let jobs = try await owner?.$crons.get(on: req.db) ?? []
 
 		return try await req.render {
-			View.Page.CronListPage(users: users, owner: owner, jobs: jobs)
+			View.Page.CronListPage(
+				users: users,
+				owner: owner,
+				jobs: jobs,
+			)
 		}
 	}
 
