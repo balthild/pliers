@@ -24,10 +24,26 @@ struct CronController: RouteCollection {
 	@Sendable
 	func index(req: Request) async throws -> Response {
 		let user = try req.auth.require(User.self)
-		let jobs = try await user.$crons.get(on: req.db)
+
+		let users: [UUID: User]
+		if user.isAdmin {
+			users = try await User.query(on: req.db).all()
+				.keyed { try $0.requireID() }
+		} else {
+			users = [:]
+		}
+
+		let owner: User?
+		if user.isAdmin, let other: UUID = req.query["user"] {
+			owner = users[other]
+		} else {
+			owner = user
+		}
+
+		let jobs = try await owner?.$crons.get(on: req.db) ?? []
 
 		return try await req.render {
-			View.Page.CronListPage(jobs: jobs)
+			View.Page.CronListPage(users: users, owner: owner, jobs: jobs)
 		}
 	}
 

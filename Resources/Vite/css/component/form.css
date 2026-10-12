@@ -35,7 +35,7 @@
 	}
 }
 
-input, textarea, select {
+input, textarea {
 	@apply text-sm;
 	@apply py-0.5 px-1.5;
 }
@@ -52,4 +52,10 @@ input[type='file'] {
 		@apply border-blue-600;
 		@apply ring ring-blue-600;
 	}
+}
+
+select {
+	@apply text-sm;
+	@apply py-0.5 pl-2 pr-6;
+	background-position-x: right --spacing(0.5);
 }

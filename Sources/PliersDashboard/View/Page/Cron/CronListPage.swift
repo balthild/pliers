@@ -1,7 +1,10 @@
 import Elementary
+import Foundation
 
 extension View.Page {
 	struct CronListPage: HTMLPage {
+		let users: [UUID: User]
+		let owner: User?
 		let jobs: [Cron]
 
 		let layout = View.Layout.DashboardLayout<Self>()
@@ -15,6 +18,17 @@ extension View.Page {
 
 			div(.class("mb-2 flex gap-2")) {
 				a(.class("btn"), .href("/cron/new")) { "New" }
+
+				if !users.isEmpty {
+					select(.on(.change, "location.search = `?user=${this.value}`")) {
+						for (id, user) in users {
+							option(
+								.value("\(id)"),
+								.selected.when(owner?.id == id),
+							) { user.username }
+						}
+					}
+				}
 			}
 
 			// MARK: table
