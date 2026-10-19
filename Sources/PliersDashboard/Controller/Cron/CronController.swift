@@ -129,7 +129,7 @@ struct CronController: RouteCollection {
 		let model = try await req.find(Cron.self, "id")
 		let owner = try await model.$user.get(on: req.db)
 
-		guard try owner.isAdmin || owner.requireID() == user.requireID() else {
+		guard try user.isAdmin || owner.requireID() == user.requireID() else {
 			throw Abort(.notFound)
 		}
 
