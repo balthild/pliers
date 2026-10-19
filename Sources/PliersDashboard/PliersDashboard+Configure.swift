@@ -82,6 +82,9 @@ extension PliersDashboard {
 		try app.register(collection: PHPController())
 		try app.register(collection: PHPServiceController())
 
+		try app.register(collection: MySQLController())
+		try app.register(collection: MySQLServiceController())
+
 		try app.register(collection: CronController())
 	}
 }
