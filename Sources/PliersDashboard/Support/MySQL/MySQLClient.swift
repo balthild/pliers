@@ -43,6 +43,13 @@ struct MySQLClient: Sendable {
 		).get()
 
 		do {
+			// `quoteMySQL` doubles backslashes, which is only correct while `NO_BACKSLASH_ESCAPES`
+			// is off. Clearing it here makes that assumption hold whatever the server's global
+			// mode is. MySQL normalizes the commas the REPLACE leaves behind.
+			_ = try await connection.simpleQuery(
+				"SET SESSION sql_mode = REPLACE(@@SESSION.sql_mode, 'NO_BACKSLASH_ESCAPES', '')"
+			).get()
+
 			let value = try await body(connection)
 			try await connection.close().get()
 			return value
