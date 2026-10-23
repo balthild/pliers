@@ -40,6 +40,7 @@ extension PliersDashboard {
 		app.migrations.add(CreateCaddy())
 		app.migrations.add(CreatePHP())
 		app.migrations.add(CreateCron())
+		app.migrations.add(CreateMySQLAccount())
 		try await app.autoMigrate()
 	}
 
@@ -84,6 +85,7 @@ extension PliersDashboard {
 
 		try app.register(collection: MySQLController())
 		try app.register(collection: MySQLServiceController())
+		try app.register(collection: MySQLAccountController())
 
 		try app.register(collection: CronController())
 	}

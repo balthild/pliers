@@ -1,3 +1,4 @@
+import Fluent
 import PliersCommon
 import Vapor
 import VaporElementary
@@ -14,12 +15,34 @@ struct MySQLController: RouteCollection {
 
 	@Sendable
 	func index(req: Request) async throws -> Response {
-		let status = try await req.dbus.systemd.status("mysql.service")
+		let user = try req.auth.require(User.self)
+
+		let users: [UUID: User]
+		if user.isAdmin {
+			users = try await User.query(on: req.db).all()
+				.keyed { try $0.requireID() }
+		} else {
+			users = [:]
+		}
+
+		let owner: User?
+		if user.isAdmin, let id: UUID = req.query["user"] {
+			owner = users[id]
+		} else {
+			owner = user
+		}
+
+		let accounts = try await owner?.$mysqlAccounts.get(on: req.db) ?? []
+
+		let status = try await req.dbus.systemd.status(C.mysql.service)
 			.alert("failed to get mysql service status")
 
 		return try await req.render {
 			View.Page.MySQLPage(
-				status: status
+				status: status,
+				users: users,
+				owner: owner,
+				accounts: accounts,
 			)
 		}
 	}

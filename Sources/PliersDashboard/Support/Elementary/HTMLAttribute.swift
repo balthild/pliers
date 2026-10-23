@@ -49,6 +49,10 @@ extension HTMLAttribute where Tag == HTMLTag.input {
 		.init(name: "readonly", value: nil)
 	}
 
+	public static func list(_ value: String) -> Self {
+		.init(name: "list", value: value)
+	}
+
 	public static func pattern(_ value: String) -> HTMLAttribute {
 		.init(name: "pattern", value: value)
 	}

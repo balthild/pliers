@@ -17,7 +17,7 @@ struct MySQLServiceController: RouteCollection {
 	@Sendable
 	func start(req: Request) async throws -> Response {
 		let _ = try await req.dbus.systemd
-			.manager { try await $0.startUnit(name: "mysql.service", mode: "replace") }
+			.manager { try await $0.startUnit(name: C.mysql.service, mode: "replace") }
 			.alert("failed to start mysql service")
 
 		return req.redirect(.back)
@@ -26,7 +26,7 @@ struct MySQLServiceController: RouteCollection {
 	@Sendable
 	func stop(req: Request) async throws -> Response {
 		let _ = try await req.dbus.systemd
-			.manager { try await $0.stopUnit(name: "mysql.service", mode: "replace") }
+			.manager { try await $0.stopUnit(name: C.mysql.service, mode: "replace") }
 			.alert("failed to stop mysql service")
 
 		return req.redirect(.back)
@@ -35,7 +35,7 @@ struct MySQLServiceController: RouteCollection {
 	@Sendable
 	func restart(req: Request) async throws -> Response {
 		let _ = try await req.dbus.systemd
-			.manager { try await $0.restartUnit(name: "mysql.service", mode: "replace") }
+			.manager { try await $0.restartUnit(name: C.mysql.service, mode: "replace") }
 			.alert("failed to restart mysql service")
 
 		return req.redirect(.back)
@@ -44,7 +44,7 @@ struct MySQLServiceController: RouteCollection {
 	@Sendable
 	func reload(req: Request) async throws -> Response {
 		let _ = try await req.dbus.systemd
-			.manager { try await $0.reloadUnit(name: "mysql.service", mode: "replace") }
+			.manager { try await $0.reloadUnit(name: C.mysql.service, mode: "replace") }
 			.alert("failed to reload mysql service")
 
 		return req.redirect(.back)

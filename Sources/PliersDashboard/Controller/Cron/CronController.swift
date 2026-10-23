@@ -65,11 +65,10 @@ struct CronController: RouteCollection {
 		let user = try req.auth.require(User.self)
 
 		let model = Cron()
-		model.$user.id = try user.requireID()
 		try Self.prepare(req: req, into: model)
 
 		try await req.db.transaction { db in
-			try await model.create(on: db)
+			try await user.$crons.create(model, on: db)
 			try await Self.apply(on: db, user: user)
 		}
 

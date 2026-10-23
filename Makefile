@@ -9,6 +9,8 @@ PLIERS_CADDY_CONF ?= /etc/caddy
 PLIERS_CADDY_LOG ?= /var/log/caddy
 PLIERS_CADDY_USER ?= caddy
 PLIERS_CRON_EXEC ?= /usr/bin/crontab
+PLIERS_MYSQL_SOCKET ?= /run/mysqld/mysqld.sock
+PLIERS_MYSQL_SERVICE ?= mysql.service
 PLIERS_WWW_HOME ?= /var/www
 PLIERS_WWW_USER ?= www-data
 PLIERS_WWW_GROUP ?= www-data
@@ -30,6 +32,10 @@ extension Constants {
 		public static let conf = Path("$(PLIERS_CADDY_CONF)")!
 		public static let log = Path("$(PLIERS_CADDY_LOG)")!
 		public static let user = "$(PLIERS_CADDY_USER)"
+	}
+	public enum mysql {
+		public static let socket = Path("$(PLIERS_MYSQL_SOCKET)")!
+		public static let service = "$(PLIERS_MYSQL_SERVICE)"
 	}
 	public enum www {
 		public static let home = Path("$(PLIERS_WWW_HOME)")!

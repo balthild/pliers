@@ -29,6 +29,9 @@ final class User: Model, @unchecked Sendable {
 	@Children(for: \.$user)
 	var crons: [Cron]
 
+	@Children(for: \.$user)
+	var mysqlAccounts: [MySQLAccount]
+
 	init() {}
 
 	final class Password: Fields, @unchecked Sendable {
