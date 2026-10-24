@@ -1,26 +1,16 @@
 {
-	"includes": [
-		".vscode/*.json",
-		".swift-format",
-		"dprint.json",
-		"vite.config.ts",
-		"tsconfig.json",
-		"Resources/Vite/**/*.{js,ts,css}",
-		"Sources/PliersDBus/*.xml",
-		"Sources/**/*.swift",
-		"Package.swift",
-		"nfpm.yaml",
-	],
 	"excludes": [
 		".build",
 		".index-build",
 		"node_modules",
 		"Public/dist",
+		"package-lock.json",
 	],
 	"useTabs": true,
 	"indentWidth": 2,
 	"lineWidth": 100,
 	"oxc": {
+		"associations": ["!**/*.{css,json,jsonc,yml,yaml}"],
 		"quoteStyle": "single",
 		"quoteProperties": "consistent",
 		"experimentalSortImports": {
@@ -44,16 +34,16 @@
 	},
 	"malva": {
 		"quotes": "preferSingle",
+		"blockSelectorLinebreak": "consistent",
+		"selectors.preferSingleLine": true,
 	},
 	"json": {
-		"associations": ["*.{json,jsonc}", ".swift-format"],
+		"associations": [".swift-format"],
 		"trailingCommas": "jsonc",
 		"jsonTrailingCommaFiles": [
 			"dprint.json",
 			"tsconfig.json",
-			".vscode/extensions.json",
-			".vscode/launch.json",
-			".vscode/settings.json",
+			".vscode/*.json",
 		],
 	},
 	"exec": {
@@ -68,11 +58,11 @@
 		],
 	},
 	"plugins": [
-		"npm:@dprint/oxc@0.38.0",
-		"npm:@dprint/json@0.23.0",
-		"npm:dprint-plugin-markup@0.27.3",
+		"npm:@dprint/oxc@0.49.1",
+		"npm:@dprint/json@0.26.0",
+		"npm:dprint-plugin-markup@0.27.6",
 		"npm:dprint-plugin-malva@0.16.0",
 		"npm:dprint-plugin-yaml@0.6.0",
-		"npm:@dprint/exec@0.7.3/plugin.json@704701df449dd7e942a71144773778ac529d68c2e4657bfc236d393b898b9a67",
+		"npm:@dprint/exec@0.9.0/plugin.json@d4f708dc00798b51013ca4e7c26a86656bfb31e7255cdcde28a487f86813e34d",
 	],
 }

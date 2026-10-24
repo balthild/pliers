@@ -63,9 +63,9 @@ This authentication method is not recommended. Prefer Passkey whenever available
 
 1. Sign in first using token or passkey.
 2. Go to the settings page (`/settings`).
-4. Input your password and confirmation.
-5. Scan the generated TOTP QR code with your authenticator app.
-6. Enter the current TOTP code and save.
+3. Input your password and confirmation.
+4. Scan the generated TOTP QR code with your authenticator app.
+5. Enter the current TOTP code and save.
 
 ### Usage
 

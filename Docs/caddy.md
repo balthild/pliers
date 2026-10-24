@@ -89,7 +89,6 @@ Only available for the proxy backend, because Caddy only honours `trusted_proxie
   configuration is generated
 - Custom: one IP address or CIDR range per line
 
-
 ## Workflow
 
 The caddy configuration is untouched when you change the site settings. You need to trigger a configuration generation and validation by clicking the "Apply" button. If succeeded, you can then reload the Caddy service to bring the new configuration online.

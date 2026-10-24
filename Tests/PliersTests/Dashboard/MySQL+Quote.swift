@@ -50,7 +50,12 @@ import Testing
 
 	for charset in ["", "utf8; DROP DATABASE x", "utf8mb5"] {
 		#expect(throws: (any Error).self) {
-			try model.prepare(database: "app", username: "app", host: "localhost", charset: charset)
+			try model.prepare(
+				database: "app",
+				username: "app",
+				host: "localhost",
+				charset: charset,
+			)
 		}
 	}
 }
@@ -74,7 +79,12 @@ import Testing
 
 	for database in ["app'--", "", "-app", ".app"] {
 		#expect(throws: (any Error).self) {
-			try model.prepare(database: database, username: "app", host: "localhost", charset: "utf8mb4")
+			try model.prepare(
+				database: database,
+				username: "app",
+				host: "localhost",
+				charset: "utf8mb4",
+			)
 		}
 	}
 }
@@ -84,7 +94,12 @@ import Testing
 
 	for username in ["app'--", "", "-app", ".app"] {
 		#expect(throws: (any Error).self) {
-			try model.prepare(database: "app", username: username, host: "localhost", charset: "utf8mb4")
+			try model.prepare(
+				database: "app",
+				username: username,
+				host: "localhost",
+				charset: "utf8mb4",
+			)
 		}
 	}
 }
@@ -93,9 +108,19 @@ import Testing
 	let model = MySQL()
 
 	#expect(throws: (any Error).self) {
-		try model.prepare(database: "app", username: "app", host: "local host", charset: "utf8mb4")
+		try model.prepare(
+			database: "app",
+			username: "app",
+			host: "local host",
+			charset: "utf8mb4",
+		)
 	}
 	#expect(throws: (any Error).self) {
-		try model.prepare(database: "app", username: "app", host: "", charset: "utf8mb4")
+		try model.prepare(
+			database: "app",
+			username: "app",
+			host: "",
+			charset: "utf8mb4",
+		)
 	}
 }
