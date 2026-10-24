@@ -6,7 +6,7 @@ extension View.Page {
 		let status: String
 		let users: [UUID: User]
 		let owner: User?
-		let accounts: [MySQLAccount]
+		let databases: [MySQL]
 
 		let layout = View.Layout.DashboardLayout<Self>()
 
@@ -24,17 +24,10 @@ extension View.Page {
 
 			hr()
 
-			h3(.class("mb-2")) { "Accounts" }
+			h3(.class("mb-2")) { "Databases" }
 
-			actions
-			accountsTable
-			deleteDialog
-		}
-
-		@HTMLBuilder
-		private var actions: some HTML {
 			div(.class("mb-2 flex gap-2")) {
-				a(.class("btn"), .href("/mysql/account/new")) { "New" }
+				a(.class("btn"), .href("/mysql/new")) { "New" }
 
 				if !users.isEmpty {
 					select(.on(.change, "location.search = `?user=${this.value}`")) {
@@ -47,15 +40,13 @@ extension View.Page {
 					}
 				}
 			}
-		}
 
-		// MARK: table
+			// MARK: table
 
-		@HTMLBuilder
-		private var accountsTable: some HTML {
 			table {
 				thead {
 					tr {
+						th { "Database" }
 						th { "User" }
 						th { "Host" }
 						th {}
@@ -63,47 +54,45 @@ extension View.Page {
 				}
 
 				tbody {
-					for account in accounts {
+					for db in databases {
 						tr {
-							td { account.username }
-							td { account.host }
+							td { db.database }
+							td { db.username }
+							td { db.host }
 							td {
 								div(.class("flex gap-2")) {
-									a(.href("/mysql/account/\(try account.uuid)")) { "Edit" }
+									a(.href("/mysql/\(try db.uuid)")) { "Edit" }
 
 									button(
 										.class("link text-red-700"),
-										.on(.click, "$('#delete_account_dialog').show('\(try account.uuid)');"),
+										.on(.click, "$('#delete_dialog').show('\(try db.uuid)');"),
 									) { "Delete" }
 								}
 							}
 						}
 					}
 
-					if accounts.isEmpty {
+					if databases.isEmpty {
 						tr {
-							td(.colspan(3), .class("text-center text-gray-500")) {
+							td(.colspan(4), .class("text-center text-gray-500")) {
 								"No data."
 							}
 						}
 					}
 				}
 			}
-		}
 
-		// MARK: delete_account_dialog
+			// MARK: delete_dialog
 
-		@HTMLBuilder
-		private var deleteDialog: some HTML {
 			Alpine.data(
-				"delete_account_dialog",
+				"delete_dialog",
 				"""
 				() => ({
 					id: '',
 
 					get url() {
 						if (!this.id) return '/404';
-						return `/mysql/account/${this.id}/delete`;
+						return `/mysql/${this.id}/delete`;
 					},
 
 					show(id) {
@@ -119,12 +108,7 @@ extension View.Page {
 				""",
 			)
 
-			dialog(
-				.closedby(.none),
-				.class("w-100"),
-				.id("delete_account_dialog"),
-				.x.data("delete_account_dialog"),
-			) {
+			dialog(.closedby(.none), .class("w-100"), .id("delete_dialog"), .x.data("delete_dialog")) {
 				header { "Delete" }
 
 				main {
@@ -134,7 +118,7 @@ extension View.Page {
 							code(.x.text("id")) {}
 						}
 						p {
-							"This drops the MySQL account on the server and cannot be undone. Type the id below to confirm."
+							"This drops the database and its user on the server, and cannot be undone. Type the id below to confirm."
 						}
 					}
 

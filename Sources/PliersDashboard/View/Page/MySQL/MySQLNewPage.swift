@@ -1,8 +1,8 @@
 import Elementary
 
 extension View.Page {
-	struct MySQLAccountEditPage: HTMLPage {
-		let model: MySQLAccount
+	struct MySQLNewPage: HTMLPage {
+		let model: MySQL
 
 		let layout = View.Layout.DashboardLayout<Self>()
 
@@ -13,7 +13,7 @@ extension View.Page {
 			h2 { title }
 			hr()
 
-			View.Page.MySQLAccountFormView(model: model)
+			View.Page.MySQLFormView(model: model)
 		}
 	}
 }

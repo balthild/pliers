@@ -1,20 +1,32 @@
 import Elementary
 
 extension View.Page {
-	struct MySQLAccountFormView: HTML {
-		let model: MySQLAccount
+	struct MySQLFormView: HTML {
+		let model: MySQL
 
 		private var editing: Bool { model.id != nil }
 
 		var body: some HTML {
 			form(
 				.method(.post),
-				.when(model.id == nil) { .action("/mysql/account/create") },
-				.when(model.id != nil) { .action("/mysql/account/\(model.id!)/update") },
+				.when(model.id == nil) { .action("/mysql/create") },
+				.when(model.id != nil) { .action("/mysql/\(model.id!)/update") },
 				.class("form max-w-200 p-2 border border-gray-400"),
 			) {
 				label(.class("field")) {
-					span { "Username" }
+					span { "Database" }
+					input(
+						.type(.text),
+						.name("database"),
+						.value(model.database),
+						.required,
+						.disabled.when(editing),
+						.placeholder("app"),
+					)
+				}
+
+				label(.class("field")) {
+					span { "User" }
 					input(
 						.type(.text),
 						.name("username"),

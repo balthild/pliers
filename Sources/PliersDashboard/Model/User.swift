@@ -30,7 +30,7 @@ final class User: Model, @unchecked Sendable {
 	var crons: [Cron]
 
 	@Children(for: \.$user)
-	var mysqlAccounts: [MySQLAccount]
+	var mysqlDatabases: [MySQL]
 
 	init() {}
 
