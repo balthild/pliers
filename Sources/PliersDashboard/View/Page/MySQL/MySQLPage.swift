@@ -47,6 +47,7 @@ extension View.Page {
 				thead {
 					tr {
 						th { "Database" }
+						th { "Charset" }
 						th { "User" }
 						th { "Host" }
 						th {}
@@ -57,6 +58,7 @@ extension View.Page {
 					for db in databases {
 						tr {
 							td { db.database }
+							td { db.charset.rawValue }
 							td { db.username }
 							td { db.host }
 							td {
@@ -74,7 +76,7 @@ extension View.Page {
 
 					if databases.isEmpty {
 						tr {
-							td(.colspan(4), .class("text-center text-gray-500")) {
+							td(.colspan(5), .class("text-center text-gray-500")) {
 								"No data."
 							}
 						}

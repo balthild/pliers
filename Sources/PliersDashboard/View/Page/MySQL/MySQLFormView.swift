@@ -54,6 +54,18 @@ extension View.Page {
 				}
 
 				label(.class("field")) {
+					span { "Charset" }
+					select(.name("charset"), .required, .disabled.when(editing)) {
+						for charset in MySQL.Charset.allCases {
+							option(
+								.value(charset.rawValue),
+								.selected.when(model.charset == charset),
+							) { charset.rawValue }
+						}
+					}
+				}
+
+				label(.class("field")) {
 					span { "Password" }
 					input(
 						.type(.password),

@@ -70,6 +70,7 @@ struct MySQLController: RouteCollection {
 			let database: String
 			let username: String
 			let host: String
+			let charset: String
 			let password: String
 		}
 
@@ -81,27 +82,44 @@ struct MySQLController: RouteCollection {
 		}
 
 		let model = MySQL()
-		try model.prepare(database: input.database, username: input.username, host: input.host)
+		try model.prepare(
+			database: input.database,
+			username: input.username,
+			host: input.host,
+			charset: input.charset,
+		)
 
 		try await req.db.transaction { db in
 			try await user.$mysqlDatabases.create(model, on: db)
 
 			// Every statement either succeeds or throws, rolling the local row back with it.
 			try await rethrowing(alert: "failed to create mysql database") {
-				_ = try await req.mysql.simpleQuery("CREATE DATABASE \(model.quoteDatabase)")
+				_ = try await req.mysql.simpleQuery(
+					"""
+					CREATE DATABASE \(model.quoteDatabase)
+					CHARACTER SET \(model.charset.rawValue)
+					"""
+				)
 			}
 
 			// MySQL rejects `IDENTIFIED BY ?` as invalid syntax, so the password is embedded as
 			// an escaped literal rather than bound.
 			try await rethrowing(alert: "failed to create mysql user") {
 				_ = try await req.mysql.simpleQuery(
-					"CREATE USER \(model.quoteAccount) IDENTIFIED BY \(input.password.quoteMySQL)"
+					"""
+					CREATE USER \(model.quoteAccount)
+					IDENTIFIED BY \(input.password.quoteMySQL)
+					"""
 				)
 			}
 
 			try await rethrowing(alert: "failed to grant mysql privileges") {
 				_ = try await req.mysql.simpleQuery(
-					"GRANT ALL PRIVILEGES ON \(model.quoteDatabase).* TO \(model.quoteAccount)"
+					"""
+					GRANT ALL PRIVILEGES
+					ON \(model.quoteDatabase).*
+					TO \(model.quoteAccount)
+					"""
 				)
 			}
 		}
@@ -131,7 +149,10 @@ struct MySQLController: RouteCollection {
 		if !input.password.isEmpty {
 			try await rethrowing(alert: "failed to reset mysql password") {
 				_ = try await req.mysql.simpleQuery(
-					"ALTER USER \(model.quoteAccount) IDENTIFIED BY \(input.password.quoteMySQL)"
+					"""
+					ALTER USER \(model.quoteAccount)
+					IDENTIFIED BY \(input.password.quoteMySQL)
+					"""
 				)
 			}
 		}

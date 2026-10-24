@@ -17,6 +17,11 @@ drops the user with it. Standalone users cannot be created.
 Each panel user sees only the databases they created. Administrators can pick a
 different owner from the dropdown to view and manage that user's databases.
 
+### Charset
+
+The character set is chosen when the database is created and cannot be changed
+afterwards. `utf8mb4` is the default and is the right choice for almost everything.
+
 ### Host
 
 Every user is created for a specific host: `localhost` allows connections from this

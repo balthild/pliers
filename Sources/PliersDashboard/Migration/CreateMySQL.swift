@@ -8,6 +8,7 @@ struct CreateMySQL: AsyncMigration {
 			.field("database", .string, .required)
 			.field("username", .string, .required)
 			.field("host", .string, .required)
+			.field("charset", .string, .required)
 			.unique(on: "database")
 			.unique(on: "username", "host")
 			.create()

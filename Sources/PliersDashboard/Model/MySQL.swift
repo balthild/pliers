@@ -25,14 +25,27 @@ final class MySQL: Model, @unchecked Sendable {
 	@Field(key: "host")
 	var host: String
 
+	@Field(key: "charset")
+	var charset: Charset
+
 	init() {
 		self.database = ""
 		self.username = ""
 		self.host = "localhost"
+		self.charset = .utf8mb4
 	}
 }
 
 extension MySQL {
+	/// The database character set. A curated allowlist keeps the value safe to embed in SQL.
+	enum Charset: String, Codable, CaseIterable, Sendable {
+		case utf8mb4
+		case utf8mb3
+		case latin1
+		case ascii
+		case binary
+	}
+
 	/// The database name as MySQL expects it in SQL, e.g. `` `app` ``.
 	var quoteDatabase: String {
 		return self.database.quoteMySQLIdentifier
@@ -47,10 +60,11 @@ extension MySQL {
 	///
 	/// MySQL accepts database and account names only as SQL syntax, never as bound parameters,
 	/// so they are restricted to a safe ASCII charset before being embedded into a statement.
-	func prepare(database: String, username: String, host: String) throws {
+	func prepare(database: String, username: String, host: String, charset: String) throws {
 		let database = database.trimmed
 		let username = username.trimmed
 		let host = host.trimmed
+		let charset = charset.trimmed
 
 		guard database.wholeMatch(of: Self.databasePattern) != nil else {
 			throw AlertError("invalid mysql database")
@@ -64,9 +78,14 @@ extension MySQL {
 			throw AlertError("invalid mysql host")
 		}
 
+		guard let charset = Charset(rawValue: charset) else {
+			throw AlertError("invalid mysql charset")
+		}
+
 		self.database = database
 		self.username = username
 		self.host = host
+		self.charset = charset
 	}
 
 	// A deliberate ASCII allowlist rather than `\w`, which is Unicode-aware and omits `-` and
