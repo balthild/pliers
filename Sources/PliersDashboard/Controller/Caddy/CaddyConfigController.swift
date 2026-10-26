@@ -39,13 +39,13 @@ struct CaddyConfigController: RouteCollection {
 
 		try await Self.mkdir(sites: sites)
 
-		let caddyfile = Caddyfile.build {
+		let caddyfile = try Caddyfile.build {
 			Caddyfile.item {
 				Caddyfile.item("admin", "off")
 			}
 
 			for site in sites {
-				Caddyfile.site(site, app: req.application)
+				try Caddyfile.site(site, app: req.application)
 			}
 		}
 

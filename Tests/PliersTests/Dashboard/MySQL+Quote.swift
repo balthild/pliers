@@ -1,3 +1,4 @@
+import PliersCommon
 import Testing
 
 @testable import PliersDashboard
@@ -49,7 +50,7 @@ import Testing
 	let model = MySQL()
 
 	for charset in ["", "utf8; DROP DATABASE x", "utf8mb5"] {
-		#expect(throws: (any Error).self) {
+		#expect(throws: AlertError.self) {
 			try model.prepare(
 				database: "app",
 				username: "app",
@@ -78,7 +79,7 @@ import Testing
 	let model = MySQL()
 
 	for database in ["app'--", "", "-app", ".app"] {
-		#expect(throws: (any Error).self) {
+		#expect(throws: AlertError.self) {
 			try model.prepare(
 				database: database,
 				username: "app",
@@ -93,7 +94,7 @@ import Testing
 	let model = MySQL()
 
 	for username in ["app'--", "", "-app", ".app"] {
-		#expect(throws: (any Error).self) {
+		#expect(throws: AlertError.self) {
 			try model.prepare(
 				database: "app",
 				username: username,
@@ -107,7 +108,7 @@ import Testing
 @Test func testPrepareRejectsInvalidHost() {
 	let model = MySQL()
 
-	#expect(throws: (any Error).self) {
+	#expect(throws: AlertError.self) {
 		try model.prepare(
 			database: "app",
 			username: "app",
@@ -115,7 +116,7 @@ import Testing
 			charset: "utf8mb4",
 		)
 	}
-	#expect(throws: (any Error).self) {
+	#expect(throws: AlertError.self) {
 		try model.prepare(
 			database: "app",
 			username: "app",

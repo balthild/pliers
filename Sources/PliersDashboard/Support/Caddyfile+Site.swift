@@ -4,46 +4,46 @@ import Vapor
 extension Caddyfile {
 	private static let dockerNetwork = "172.16.0.0/12"
 
-	static func site(_ site: Caddy, app: Application) -> Node {
+	static func site(_ site: Caddy, app: Application) throws -> Node {
 		let scheme = site.config.tls == nil ? "http://" : "https://"
 		let listeners = site.domains.map { "\(scheme)\($0)" }.joined(separator: ", ")
 
-		return Caddyfile.item(listeners) {
+		return try Caddyfile.item(listeners) {
 			switch site.config.tls {
 			case .acme:
 				Caddyfile.empty()
 			case .file(let file):
-				Caddyfile.item("tls", file.cert.quoteCaddy, file.key.quoteCaddy)
+				Caddyfile.item("tls", try file.cert.quoteCaddy, try file.key.quoteCaddy)
 			case .none:
 				Caddyfile.empty()
 			}
 
 			compression(site.config.compression)
 
-			caching(site.config.cache)
+			try caching(site.config.cache)
 
-			cors(site.config.cors)
+			try cors(site.config.cors)
 
-			logging(site.config.logging)
+			try logging(site.config.logging)
 
 			switch site.config.backend {
 			case .proxy(let proxy):
-				Caddyfile.item("reverse_proxy", proxy.upstream.quoteCaddy) {
+				try Caddyfile.item("reverse_proxy", proxy.upstream.quoteCaddy) {
 					trustedProxies(site.config.trustedProxies, app: app)
 				}
 
 			case .file(let file):
-				Caddyfile.item("file_server") {
-					Caddyfile.item("root", file.root.quoteCaddy)
+				try Caddyfile.item("file_server") {
+					Caddyfile.item("root", try file.root.quoteCaddy)
 				}
 
 			case .php(let php):
-				Caddyfile.item("php_fastcgi", php.fpm.quoteCaddy) {
-					Caddyfile.item("root", php.root.quoteCaddy)
+				try Caddyfile.item("php_fastcgi", php.fpm.quoteCaddy) {
+					Caddyfile.item("root", try php.root.quoteCaddy)
 				}
 
 			case .none:
-				Caddyfile.item("respond", "It works!".quoteCaddy)
+				Caddyfile.item("respond", try "It works!".quoteCaddy)
 			}
 
 			Caddyfile.item(site.config.custom)
@@ -86,7 +86,7 @@ extension Caddyfile {
 
 	// MARK: Caching
 
-	private static func caching(_ config: Caddy.Config.Cache) -> Node {
+	private static func caching(_ config: Caddy.Config.Cache) throws -> Node {
 		guard config.enable else {
 			return .empty
 		}
@@ -96,36 +96,36 @@ extension Caddyfile {
 			value += ", immutable"
 		}
 
-		return Caddyfile.item("header", "Cache-Control", value.quoteCaddy)
+		return Caddyfile.item("header", "Cache-Control", try value.quoteCaddy)
 	}
 
 	// MARK: CORS
 
-	private static func cors(_ config: Caddy.Config.CORS) -> Node {
+	private static func cors(_ config: Caddy.Config.CORS) throws -> Node {
 		guard config.enable else {
 			return .empty
 		}
 
 		let origins = config.origins.map(\.trimmed).filter { !$0.isEmpty }
 
-		return Caddyfile.group {
+		return try Caddyfile.group {
 			if origins.contains("*") {
-				Caddyfile.item("header") {
+				try Caddyfile.item("header") {
 					Caddyfile.item("Access-Control-Allow-Origin", "*")
-					corsCommon(config)
+					try corsCommon(config)
 				}
 			} else {
 				// Each allowed origin gets its own matcher, and the matching origin is echoed
 				// back. A comma-separated list is not valid for `Access-Control-Allow-Origin`.
 				for (index, origin) in origins.enumerated() {
 					let matcher = "@cors-origin-\(index)"
-					Caddyfile.item(matcher, "header", "Origin", origin.quoteCaddy)
-					Caddyfile.item("header", matcher, "Access-Control-Allow-Origin", origin.quoteCaddy)
+					Caddyfile.item(matcher, "header", "Origin", try origin.quoteCaddy)
+					Caddyfile.item("header", matcher, "Access-Control-Allow-Origin", try origin.quoteCaddy)
 				}
 
-				Caddyfile.item("header") {
-					Caddyfile.item("Vary", "Origin".quoteCaddy)
-					corsCommon(config)
+				try Caddyfile.item("header") {
+					Caddyfile.item("Vary", try "Origin".quoteCaddy)
+					try corsCommon(config)
 				}
 			}
 
@@ -136,19 +136,19 @@ extension Caddyfile {
 	}
 
 	/// Headers that apply regardless of the request origin.
-	private static func corsCommon(_ config: Caddy.Config.CORS) -> Node {
-		return Caddyfile.group {
+	private static func corsCommon(_ config: Caddy.Config.CORS) throws -> Node {
+		return try Caddyfile.group {
 			if !config.methods.isEmpty {
 				Caddyfile.item(
 					"Access-Control-Allow-Methods",
-					config.methods.joined(separator: ", ").quoteCaddy,
+					try config.methods.joined(separator: ", ").quoteCaddy,
 				)
 			}
 
 			if !config.headers.isEmpty {
 				Caddyfile.item(
 					"Access-Control-Allow-Headers",
-					config.headers.joined(separator: ", ").quoteCaddy,
+					try config.headers.joined(separator: ", ").quoteCaddy,
 				)
 			}
 
@@ -164,16 +164,16 @@ extension Caddyfile {
 
 	// MARK: Logging
 
-	private static func logging(_ config: Caddy.Config.Logging) -> Node {
+	private static func logging(_ config: Caddy.Config.Logging) throws -> Node {
 		guard config.enable else {
 			return .empty
 		}
 
 		let output = config.output.trimmed
 
-		return Caddyfile.item("log") {
+		return try Caddyfile.item("log") {
 			if !output.isEmpty {
-				Caddyfile.item("output", "file", output.quoteCaddy)
+				Caddyfile.item("output", "file", try output.quoteCaddy)
 			}
 
 			Caddyfile.item("format", config.format.rawValue)

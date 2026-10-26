@@ -1,9 +1,21 @@
+import PliersCommon
+
 extension String {
+	/// Wraps the value as a Caddyfile backtick-quoted string.
+	///
+	/// A backtick-quoted Caddyfile token is raw, so a backtick inside the value would end the
+	/// token early and a control character is never valid in one. Rejecting such values instead
+	/// of silently altering them keeps a value from changing the directive structure around it.
 	var quoteCaddy: String {
-		// caddyfile handles strings in a weird way
-		// there's no truly safe way to escape caddyfile strings
-		let clean = self.replacingOccurrences(of: "`", with: "")
-		return "`\(clean)`"
+		get throws {
+			for scalar in self.unicodeScalars {
+				if scalar.value == 0x60 || scalar.value < 0x20 || scalar.value == 0x7f {
+					throw AlertError("value contains an unsupported character for the caddy config")
+				}
+			}
+
+			return "`\(self)`"
+		}
 	}
 }
 
@@ -108,24 +120,24 @@ enum Caddyfile {
 }
 
 extension Caddyfile {
-	static func build(@Builder _ root: () -> Node) -> String {
-		root().build(level: 0)
+	static func build(@Builder _ root: () throws -> Node) rethrows -> String {
+		try root().build(level: 0)
 	}
 
 	static func empty() -> Node {
 		.empty
 	}
 
-	static func group(@Builder _ children: () -> Node) -> Node {
-		children()
+	static func group(@Builder _ children: () throws -> Node) rethrows -> Node {
+		try children()
 	}
 
 	static func item(_ tokens: String...) -> Node {
 		.item(.init(tokens: tokens, children: .empty))
 	}
 
-	static func item(_ tokens: String..., @Builder children: () -> Node) -> Node {
-		.item(.init(tokens: tokens, children: children()))
+	static func item(_ tokens: String..., @Builder children: () throws -> Node) rethrows -> Node {
+		.item(.init(tokens: tokens, children: try children()))
 	}
 
 	static func item(tokens: [String]) -> Node {
