@@ -5,9 +5,14 @@ public struct Config: Sendable {
 	public let port: UInt16
 	public let state: Path
 
-	public init(port: UInt16, state: Path) throws {
+	/// Extra origins the CSRF origin check accepts besides the request's own host, for panels
+	/// behind a proxy that rewrites the `Host` header. Each entry is a `scheme://host[:port]` origin.
+	public let httpOrigins: [String]
+
+	public init(port: UInt16, state: Path, httpOrigins: [String] = []) throws {
 		self.port = port
 		self.state = state
+		self.httpOrigins = httpOrigins
 
 		guard port >= 1024 else {
 			throw RuntimeError("invalid port")
@@ -28,7 +33,17 @@ public struct Config: Sendable {
 		return try Self(
 			port: UInt16(port).expect("invalid port"),
 			state: Path(state).expect("invalid state path"),
+			httpOrigins: Self.parseHTTPOrigins(entries["http_origins"]),
 		)
+	}
+
+	/// Parses the comma-separated `http_origins` option, tolerating surrounding whitespace
+	/// and empty entries so a malformed value can only ever allow fewer origins, never more.
+	public static func parseHTTPOrigins(_ value: String?) -> [String] {
+		return (value ?? "")
+			.split(separator: ",")
+			.map { $0.trimmed }
+			.filter { !$0.isEmpty }
 	}
 
 	private static func parse(_ text: String) throws -> [String: String] {
