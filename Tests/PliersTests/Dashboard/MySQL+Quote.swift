@@ -125,3 +125,79 @@ import Testing
 		)
 	}
 }
+
+@Test func testQuoteDatabaseEscapesBacktick() {
+	let model = MySQL()
+	model.database = "weird`name"
+
+	#expect(model.quoteDatabase == "`weird``name`")
+}
+
+@Test func testQuoteAccountEscapesQuotes() {
+	let model = MySQL()
+	model.username = "a'b"
+	model.host = "a'b"
+
+	#expect(model.quoteAccount == "'a''b'@'a''b'")
+}
+
+@Test func testPrepareAcceptsWildcardAndIPv6Host() throws {
+	let model = MySQL()
+
+	try model.prepare(database: "app", username: "app", host: "%", charset: "utf8mb4")
+	#expect(model.host == "%")
+
+	try model.prepare(database: "app", username: "app", host: "::1", charset: "utf8mb4")
+	#expect(model.host == "::1")
+}
+
+@Test func testPrepareRejectsInjectionInNames() {
+	for value in ["app;DROP", "app`x`", #"app\"#, "app'--", "app\0", "a b"] {
+		#expect(throws: AlertError.self) {
+			try MySQL().prepare(
+				database: value,
+				username: "app",
+				host: "localhost",
+				charset: "utf8mb4",
+			)
+		}
+		#expect(throws: AlertError.self) {
+			try MySQL().prepare(
+				database: "app",
+				username: value,
+				host: "localhost",
+				charset: "utf8mb4",
+			)
+		}
+	}
+}
+
+@Test func testPrepareEnforcesLengthLimits() throws {
+	let model = MySQL()
+
+	try model.prepare(
+		database: String(repeating: "a", count: 64),
+		username: String(repeating: "a", count: 32),
+		host: "localhost",
+		charset: "utf8mb4",
+	)
+	#expect(model.database.count == 64)
+	#expect(model.username.count == 32)
+
+	#expect(throws: AlertError.self) {
+		try MySQL().prepare(
+			database: String(repeating: "a", count: 65),
+			username: "app",
+			host: "localhost",
+			charset: "utf8mb4",
+		)
+	}
+	#expect(throws: AlertError.self) {
+		try MySQL().prepare(
+			database: "app",
+			username: String(repeating: "a", count: 33),
+			host: "localhost",
+			charset: "utf8mb4",
+		)
+	}
+}
