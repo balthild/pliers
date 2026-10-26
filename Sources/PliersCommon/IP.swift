@@ -33,8 +33,7 @@ extension String {
 
 	/// Whether this IP literal lies inside the given IP or CIDR range.
 	///
-	/// A bare address (no `/`) matches only itself. Addresses of different families never match,
-	/// and a malformed range returns `false`, so a typo can only ever narrow the trusted set.
+	/// A malformed range returns `false`, so a typo only narrows the trusted set.
 	public func isInCIDR(_ range: String) -> Bool {
 		let parts = range.trimmed.split(separator: "/", maxSplits: 1, omittingEmptySubsequences: false)
 

@@ -88,9 +88,7 @@ extension MySQL {
 		self.charset = charset
 	}
 
-	// A deliberate ASCII allowlist rather than `\w`, which is Unicode-aware and omits `-` and
-	// `.`. The leading character is restricted so a name cannot begin with `-` (read as an
-	// option by the mysql CLI) or `.`.
+	// ASCII allowlist rather than `\w` (Unicode-aware). The first character cannot be `-` or `.`.
 	private static var databasePattern: Regex<Substring> { /^[A-Za-z0-9_][A-Za-z0-9_.-]{0,63}$/ }
 	private static var usernamePattern: Regex<Substring> { /^[A-Za-z0-9_][A-Za-z0-9_.-]{0,31}$/ }
 	private static var hostPattern: Regex<Substring> { /^[A-Za-z0-9_.%:-]{1,255}$/ }

@@ -5,13 +5,12 @@ public struct Config: Sendable {
 	public let port: UInt16
 	public let state: Path
 
-	/// Extra origins the CSRF origin check accepts besides the request's own host, for panels
-	/// behind a proxy that rewrites the `Host` header. Each entry is a `scheme://host[:port]` origin.
+	/// Extra origins the CSRF check accepts besides the request's own host, for a proxy that
+	/// rewrites `Host`.
 	public let httpOrigins: [String]
 
-	/// Reverse proxies whose forwarding headers (`X-Forwarded-Proto`) the panel trusts, as IP
-	/// addresses or CIDR blocks. Headers from any other peer are ignored, so a client that reaches
-	/// the panel directly cannot forge its scheme. Defaults to loopback for a same-host proxy.
+	/// Peers whose `X-Forwarded-Proto` the panel trusts, as IPs or CIDR blocks. Headers from any
+	/// other peer are ignored. Defaults to loopback.
 	public let trustedProxies: [String]
 
 	/// Proxies trusted when none are configured: the local host.
@@ -52,14 +51,12 @@ public struct Config: Sendable {
 		)
 	}
 
-	/// Parses the comma-separated `http_origins` option, tolerating surrounding whitespace
-	/// and empty entries so a malformed value can only ever allow fewer origins, never more.
+	/// Parses the comma-separated `http_origins`. Blank entries are dropped.
 	public static func parseHTTPOrigins(_ value: String?) -> [String] {
 		return Self.parseList(value)
 	}
 
-	/// Parses the `trusted_proxies` option, falling back to loopback when nothing is configured so
-	/// a same-host proxy keeps working while a bare deployment trusts nothing beyond the local host.
+	/// Parses the comma-separated `trusted_proxies`, defaulting to loopback when empty.
 	public static func parseTrustedProxies(_ value: String?) -> [String] {
 		let list = Self.parseList(value)
 		return list.isEmpty ? Self.defaultTrustedProxies : list

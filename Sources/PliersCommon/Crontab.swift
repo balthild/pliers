@@ -26,7 +26,7 @@ public enum Crontab {
 	}
 
 	/// If `existing` already contains a `# pliers-start` .. `# pliers-end` block,
-	/// the block is replaced in place; otherwise the block is appended to the end.
+	/// the block is replaced in place. Otherwise it is appended to the end.
 	public static func merge(into existing: String, entries: [Entry]) -> String {
 		let block = [startMarker] + entries.map(\.line) + [endMarker]
 

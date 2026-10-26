@@ -1,11 +1,7 @@
 import PliersCommon
 import Vapor
 
-/// Rejects state-changing requests that do not originate from the panel's own origin.
-///
-/// Without an anti-CSRF token this check is the panel's primary CSRF defense: a cross-site
-/// form submission carries the attacker's origin, which will not match the panel's host.
-/// `GET`/`HEAD` are ignored because they must not change state.
+/// Rejects state-changing requests whose `Origin`/`Referer` is not the panel's own origin.
 struct OriginCheckMiddleware: AsyncMiddleware {
 	private static let methods: [HTTPMethod] = [.POST, .PUT, .PATCH, .DELETE]
 

@@ -226,8 +226,8 @@ struct PHPController: RouteCollection {
 
 		let input = try req.content.decode(Input.self)
 
-		// Upper bounds keep a mistyped or hostile value from exhausting the host — an enormous
-		// `max_children`, for example, would be a fork storm.
+		// Upper bounds keep a mistyped value from exhausting the host (an enormous `max_children`
+		// is a fork storm).
 		guard input.config.maxChildren >= 1 && input.config.maxChildren <= 4096 else {
 			throw AlertError("max_children must be between 1 and 4096")
 		}

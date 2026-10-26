@@ -1,10 +1,7 @@
 import Vapor
 
-/// Marks the session cookie `Secure` when the client connected over HTTPS.
-///
-/// Vapor's cookie factory cannot see the request, so the flag is applied here instead. The
-/// cookie stays usable over plain HTTP (local development) but is only sent back over TLS once
-/// the panel is reached through a TLS-terminating proxy.
+/// Marks the session cookie `Secure` for HTTPS requests. Vapor's cookie factory cannot see the
+/// request, so it is applied here.
 struct SecureCookieMiddleware: AsyncMiddleware {
 	func respond(to request: Request, chainingTo next: AsyncResponder) async throws -> Response {
 		let response = try await next.respond(to: request)

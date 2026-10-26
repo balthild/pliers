@@ -19,8 +19,10 @@ Refer to the `Makefile` for configurable options.
 
 ```bash
 make configure
-npm install
+npm clean-install # or `npm ci`
 ```
+
+`npm clean-install` installs the exact versions pinned in lockfile, so that a clean checkout builds the same frontend dependencies rather than resolving new ones.
 
 ### Build and Run in Debug Mode
 

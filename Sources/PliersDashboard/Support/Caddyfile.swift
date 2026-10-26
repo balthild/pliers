@@ -1,11 +1,8 @@
 import PliersCommon
 
 extension String {
-	/// Wraps the value as a Caddyfile backtick-quoted string.
-	///
-	/// A backtick-quoted Caddyfile token is raw, so a backtick inside the value would end the
-	/// token early and a control character is never valid in one. Rejecting such values instead
-	/// of silently altering them keeps a value from changing the directive structure around it.
+	/// Wraps the value in Caddyfile backticks. A backtick-quoted token is raw, so a backtick or a
+	/// control character inside it is rejected rather than altered.
 	var quoteCaddy: String {
 		get throws {
 			for scalar in self.unicodeScalars {

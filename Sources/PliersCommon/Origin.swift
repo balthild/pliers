@@ -1,18 +1,12 @@
 import Foundation
 
-/// Same-origin validation for state-changing requests.
-///
-/// Pliers carries no anti-CSRF token, so `Origin`/`Referer` validation is the primary
-/// defense against cross-site request forgery: a browser attaches the attacker's origin to
-/// a cross-site submission, which will not match the panel's own origin.
+/// Same-origin validation for state-changing requests — with no anti-CSRF token, the panel's
+/// primary CSRF defense.
 public enum Origin {
-	/// Whether a request's `Origin`/`Referer` identifies the same origin as the request target.
+	/// Whether a request's `Origin`/`Referer` matches the request target's origin.
 	///
-	/// `Origin` takes precedence and `Referer` is only a fallback, because browsers omit
-	/// `Referer` more often than `Origin`. A request that carries neither, or a literal `null`
-	/// origin (an opaque origin such as a sandboxed frame), is rejected so the check fails
-	/// closed. `allowlist` accepts additional origins verbatim, for deployments where a reverse
-	/// proxy rewrites the `Host` header.
+	/// `Origin` wins over `Referer` (browsers omit `Referer` more often). Missing, empty, or `null`
+	/// values fail closed. `allowlist` adds origins for a proxy that rewrites `Host`.
 	public static func isSameOrigin(
 		origin: String?,
 		referer: String?,
