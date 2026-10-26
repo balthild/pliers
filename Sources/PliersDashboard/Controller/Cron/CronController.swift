@@ -69,7 +69,7 @@ struct CronController: RouteCollection {
 
 		try await req.db.transaction { db in
 			try await user.$crons.create(model, on: db)
-			try await Self.apply(on: db, user: user)
+			try await Self.apply(on: db, owner: user)
 		}
 
 		return req.redirect(to: "/cron")
@@ -86,14 +86,12 @@ struct CronController: RouteCollection {
 
 	@Sendable
 	func update(req: Request) async throws -> Response {
-		let user = try req.auth.require(User.self)
-
 		let model = try await Self.find(req: req)
 		try Self.prepare(req: req, into: model)
 
 		try await req.db.transaction { db in
 			try await model.update(on: db)
-			try await Self.apply(on: db, user: user)
+			try await Self.apply(on: db, owner: model.user)
 		}
 
 		return req.redirect(.back)
@@ -105,7 +103,6 @@ struct CronController: RouteCollection {
 			let confirm: String
 		}
 
-		let user = try req.auth.require(User.self)
 		let input = try req.content.decode(Input.self)
 
 		let model = try await Self.find(req: req)
@@ -116,7 +113,7 @@ struct CronController: RouteCollection {
 
 		try await req.db.transaction { db in
 			try await model.delete(on: db)
-			try await Self.apply(on: db, user: user)
+			try await Self.apply(on: db, owner: model.user)
 		}
 
 		return req.redirect(to: "/cron")
@@ -158,16 +155,16 @@ struct CronController: RouteCollection {
 		model.command = command
 	}
 
-	private static func apply(on database: any Database, user: User) async throws {
-		let content = try await Self.build(on: database, user: user)
-		try await Self.install(content, for: user.username)
+	private static func apply(on database: any Database, owner: User) async throws {
+		let content = try await Self.build(on: database, owner: owner)
+		try await Self.install(content, for: owner.username)
 	}
 
-	private static func build(on database: any Database, user: User) async throws -> String {
-		let jobs = try await user.$crons.get(on: database)
+	private static func build(on database: any Database, owner: User) async throws -> String {
+		let jobs = try await owner.$crons.get(on: database)
 
 		let entries = jobs.map { Crontab.Entry(expr: $0.expr, command: $0.command) }
-		let existing = try await Self.read(for: user.username)
+		let existing = try await Self.read(for: owner.username)
 
 		return Crontab.merge(into: existing, entries: entries)
 	}
