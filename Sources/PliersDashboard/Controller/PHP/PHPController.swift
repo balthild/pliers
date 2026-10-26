@@ -226,12 +226,15 @@ struct PHPController: RouteCollection {
 
 		let input = try req.content.decode(Input.self)
 
-		guard input.config.maxChildren >= 1 else {
-			throw AlertError("max_children must be at least 1")
+		// Upper bounds keep a mistyped or hostile value from exhausting the host — an enormous
+		// `max_children`, for example, would be a fork storm.
+		guard input.config.maxChildren >= 1 && input.config.maxChildren <= 4096 else {
+			throw AlertError("max_children must be between 1 and 4096")
 		}
 
-		guard input.config.startServers >= 1 else {
-			throw AlertError("start_servers must be at least 1")
+		guard input.config.startServers >= 1 && input.config.startServers <= input.config.maxChildren
+		else {
+			throw AlertError("start_servers must be between 1 and max_children")
 		}
 
 		guard input.config.minSpareServers >= 1 else {
@@ -246,8 +249,34 @@ struct PHPController: RouteCollection {
 			throw AlertError("max_spare_servers must not exceed max_children")
 		}
 
-		guard input.config.terminateTimeout >= 0 else {
-			throw AlertError("invalid request_terminate_timeout")
+		guard input.config.maxRequests >= 0 && input.config.maxRequests <= 1_000_000 else {
+			throw AlertError("max_requests must be between 0 and 1000000")
+		}
+
+		guard input.config.terminateTimeout >= 0 && input.config.terminateTimeout <= 86_400 else {
+			throw AlertError("request_terminate_timeout must be between 0 and 86400")
+		}
+
+		guard input.config.maxExecutionTime >= 0 && input.config.maxExecutionTime <= 86_400 else {
+			throw AlertError("max_execution_time must be between 0 and 86400")
+		}
+
+		guard input.config.memoryLimit.isPHPSizeValue else {
+			throw AlertError("invalid memory_limit")
+		}
+
+		guard input.config.uploadMaxFilesize.isPHPSizeValue else {
+			throw AlertError("invalid upload_max_filesize")
+		}
+
+		guard input.config.postMaxSize.isPHPSizeValue else {
+			throw AlertError("invalid post_max_size")
+		}
+
+		if case .tcp(let address) = input.config.listen {
+			guard address.isPHPListenAddress else {
+				throw AlertError("invalid listen address")
+			}
 		}
 
 		model.config = input.config

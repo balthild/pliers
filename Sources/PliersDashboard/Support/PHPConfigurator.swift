@@ -112,3 +112,31 @@ extension PHPConfigurator {
 			""" + "\n"
 	}
 }
+
+extension String {
+	/// Whether the receiver is a `host:port` TCP listen address, e.g. `127.0.0.1:9000` or
+	/// `[::1]:9000`, with a port in the range 1–65535.
+	///
+	/// The listen address is written verbatim into `php-fpm.conf`, and this configuration is
+	/// line-oriented: a value containing a newline could inject a directive of its own. Anchoring
+	/// the whole value to a single `host:port` token keeps it from escaping its line.
+	var isPHPListenAddress: Bool {
+		guard
+			let match = self.wholeMatch(of: /(\[[0-9A-Fa-f:.]+\]|[A-Za-z0-9._-]+):([0-9]{1,5})/)
+		else {
+			return false
+		}
+
+		guard let port = Int(match.2) else {
+			return false
+		}
+
+		return (1...65535).contains(port)
+	}
+
+	/// Whether the receiver is a PHP ini shorthand size: `-1`, or a non-negative integer with an
+	/// optional `K`/`M`/`G` suffix, e.g. `128M` or `2G`.
+	var isPHPSizeValue: Bool {
+		self.wholeMatch(of: /-1|[0-9]+[KMGkmg]?/) != nil
+	}
+}
