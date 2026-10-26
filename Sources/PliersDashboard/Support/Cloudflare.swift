@@ -1,4 +1,5 @@
 import Foundation
+import PliersCommon
 import Vapor
 
 struct CloudflareNetworks: LifecycleHandler {
@@ -9,7 +10,7 @@ struct CloudflareNetworks: LifecycleHandler {
 		_ = Task.detached(priority: .background) {
 			while true {
 				do {
-					let ranges = try await Self.fetch(client: app.client)
+					let ranges = try await Self.fetch(client: app.client, logger: app.logger)
 					app.cloudflareNetworks = ranges
 					app.logger.notice("Updated Cloudflare IP ranges: \(ranges.count)")
 				} catch {
@@ -23,11 +24,26 @@ struct CloudflareNetworks: LifecycleHandler {
 }
 
 extension CloudflareNetworks {
-	static func fetch(client: any Client) async throws -> [String] {
+	/// Fetches Cloudflare's published IP ranges.
+	///
+	/// Bad entries are dropped (narrows the trusted set only). An all-bad response fails and keeps
+	/// the previous snapshot.
+	static func fetch(client: any Client, logger: Logger) async throws -> [String] {
 		let response = try await client.get(.init(string: url))
 		let payload = try response.content.decode(Payload.self)
 
-		return payload.result.ipv4_cidrs + payload.result.ipv6_cidrs
+		let raw = payload.result.ipv4_cidrs + payload.result.ipv6_cidrs
+		let valid = raw.map(\.trimmed).filter(\.isCIDR)
+
+		guard !raw.isEmpty && !valid.isEmpty else {
+			throw RuntimeError("cloudflare returned no valid ip ranges")
+		}
+
+		if valid.count != raw.count {
+			logger.warning("Skipped \(raw.count - valid.count) invalid Cloudflare IP range(s)")
+		}
+
+		return valid
 	}
 
 	private struct Payload: Codable {
