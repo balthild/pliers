@@ -18,6 +18,7 @@ struct AuthController: RouteCollection {
 	@Sendable
 	func logout(req: Request) async throws -> Response {
 		req.auth.logout(User.self)
+		req.session.destroy()
 		return req.redirect(to: "/login")
 	}
 }

@@ -1,5 +1,6 @@
 import Fluent
 import FluentSQLiteDriver
+import Foundation
 import Path
 import PliersCommon
 import Vapor
@@ -53,11 +54,21 @@ extension PliersDashboard {
 
 	private func http() async throws {
 		app.middleware.use(AlertMiddleware())
+		app.middleware.use(TrustedProxiesMiddleware())
 		app.middleware.use(OriginCheckMiddleware())
 		app.middleware.use(FileMiddleware(publicDirectory: app.directory.publicDirectory))
 
 		app.sessions.configuration.cookieName = "pliers_session"
+		app.sessions.configuration.cookieFactory = { id in
+			.init(
+				string: id.string,
+				expires: Date(timeIntervalSinceNow: 60 * 60 * 24 * 7),
+				isHTTPOnly: true,
+				sameSite: .lax,
+			)
+		}
 		app.sessions.use(.fluent)
+		app.middleware.use(SecureCookieMiddleware())
 		app.middleware.use(app.sessions.middleware)
 
 		try app.register(collection: HomeController())

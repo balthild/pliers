@@ -9,10 +9,24 @@ public struct Config: Sendable {
 	/// behind a proxy that rewrites the `Host` header. Each entry is a `scheme://host[:port]` origin.
 	public let httpOrigins: [String]
 
-	public init(port: UInt16, state: Path, httpOrigins: [String] = []) throws {
+	/// Reverse proxies whose forwarding headers (`X-Forwarded-Proto`) the panel trusts, as IP
+	/// addresses or CIDR blocks. Headers from any other peer are ignored, so a client that reaches
+	/// the panel directly cannot forge its scheme. Defaults to loopback for a same-host proxy.
+	public let trustedProxies: [String]
+
+	/// Proxies trusted when none are configured: the local host.
+	public static let defaultTrustedProxies = ["127.0.0.1/8", "::1/128"]
+
+	public init(
+		port: UInt16,
+		state: Path,
+		httpOrigins: [String] = [],
+		trustedProxies: [String] = Config.defaultTrustedProxies,
+	) throws {
 		self.port = port
 		self.state = state
 		self.httpOrigins = httpOrigins
+		self.trustedProxies = trustedProxies
 
 		guard port >= 1024 else {
 			throw RuntimeError("invalid port")
@@ -34,12 +48,24 @@ public struct Config: Sendable {
 			port: UInt16(port).expect("invalid port"),
 			state: Path(state).expect("invalid state path"),
 			httpOrigins: Self.parseHTTPOrigins(entries["http_origins"]),
+			trustedProxies: Self.parseTrustedProxies(entries["trusted_proxies"]),
 		)
 	}
 
 	/// Parses the comma-separated `http_origins` option, tolerating surrounding whitespace
 	/// and empty entries so a malformed value can only ever allow fewer origins, never more.
 	public static func parseHTTPOrigins(_ value: String?) -> [String] {
+		return Self.parseList(value)
+	}
+
+	/// Parses the `trusted_proxies` option, falling back to loopback when nothing is configured so
+	/// a same-host proxy keeps working while a bare deployment trusts nothing beyond the local host.
+	public static func parseTrustedProxies(_ value: String?) -> [String] {
+		let list = Self.parseList(value)
+		return list.isEmpty ? Self.defaultTrustedProxies : list
+	}
+
+	private static func parseList(_ value: String?) -> [String] {
 		return (value ?? "")
 			.split(separator: ",")
 			.map { $0.trimmed }

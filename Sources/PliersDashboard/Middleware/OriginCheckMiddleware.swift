@@ -18,7 +18,7 @@ struct OriginCheckMiddleware: AsyncMiddleware {
 			origin: request.headers.first(name: .origin),
 			referer: request.headers.first(name: .referer),
 			host: request.headers.first(name: .host) ?? "",
-			scheme: Self.scheme(of: request),
+			scheme: request.url.scheme ?? "http",
 			allowlist: request.config.httpOrigins,
 		)
 
@@ -27,16 +27,5 @@ struct OriginCheckMiddleware: AsyncMiddleware {
 		}
 
 		return try await next.respond(to: request)
-	}
-
-	/// The scheme the browser used, honoring the reverse proxy's `X-Forwarded-Proto`.
-	private static func scheme(of request: Request) -> String {
-		if let forwarded = request.headers.first(name: "X-Forwarded-Proto"),
-			let first = forwarded.split(separator: ",").first
-		{
-			return first.trimmed
-		}
-
-		return request.url.scheme ?? "http"
 	}
 }

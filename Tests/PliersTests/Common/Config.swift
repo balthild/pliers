@@ -33,3 +33,27 @@ import Testing
 			== ["https://a.example.com"]
 	)
 }
+
+@Test func testConfigDefaultsTrustedProxies() throws {
+	let state = Path("/tmp")!
+	let config = try Config(port: 7577, state: state)
+
+	#expect(config.trustedProxies == Config.defaultTrustedProxies)
+}
+
+@Test func testConfigStoresTrustedProxies() throws {
+	let state = Path("/tmp")!
+	let config = try Config(port: 7577, state: state, trustedProxies: ["10.0.0.0/8"])
+
+	#expect(config.trustedProxies == ["10.0.0.0/8"])
+}
+
+@Test func testParseTrustedProxies() {
+	#expect(Config.parseTrustedProxies(nil) == Config.defaultTrustedProxies)
+	#expect(Config.parseTrustedProxies("") == Config.defaultTrustedProxies)
+	#expect(Config.parseTrustedProxies("  ") == Config.defaultTrustedProxies)
+	#expect(
+		Config.parseTrustedProxies("10.0.0.0/8, 192.168.0.0/16")
+			== ["10.0.0.0/8", "192.168.0.0/16"]
+	)
+}
