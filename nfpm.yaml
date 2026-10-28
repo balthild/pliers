@@ -21,6 +21,12 @@ contents:
   - src: ./.build/release/pliers
     dst: /usr/bin/pliers
 
+  - src: ./.build/pkgroot/usr/lib/pliers
+    dst: /usr/lib/pliers
+
+  - src: ./Resources/Pkg/ld.so.conf
+    dst: /etc/ld.so.conf.d/pliers.conf
+
   - src: ./Public
     dst: /usr/share/pliers/Public
 
