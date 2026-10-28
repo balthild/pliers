@@ -17,8 +17,11 @@ extension PliersDashboard {
 		try await http()
 
 		app.placeholder = try .init(app: app)
-		app.lifecycle.use(DBusServer())
-		app.lifecycle.use(CloudflareNetworks())
+
+		if app.environment != .testing {
+			app.lifecycle.use(DBusServer())
+			app.lifecycle.use(CloudflareNetworks())
+		}
 	}
 
 	private func console() async throws {

@@ -8,7 +8,7 @@ public struct PliersDashboard {
 	let config: Config
 	let app: Application
 
-	private init(config: Config, app: Application) {
+	init(config: Config, app: Application) {
 		self.config = config
 		self.app = app
 		self.app.config = config

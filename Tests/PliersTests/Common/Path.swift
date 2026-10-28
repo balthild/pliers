@@ -54,3 +54,16 @@ import Testing
 	let home = try Path.home(for: username).expect("home should exist for current user")
 	#expect(home.hasAccess(.r, by: username))
 }
+
+@Test func testMktempCreatesUniqueDirectory() throws {
+	let first = try Path.mktemp()
+	let second = try Path.mktemp()
+	defer {
+		try? first.delete()
+		try? second.delete()
+	}
+
+	#expect(first.string != second.string)
+	#expect(first.isDirectory)
+	#expect(second.isDirectory)
+}

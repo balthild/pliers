@@ -89,6 +89,16 @@ extension Path {
 }
 
 extension Path {
+	public static func mktemp() throws -> Path {
+		guard let base = Path(url: FileManager.default.temporaryDirectory) else {
+			throw RuntimeError("failed to resolve the temporary directory")
+		}
+
+		return try base.mkrand(.dir)
+	}
+}
+
+extension Path {
 	public enum HandleTypeRead { case r }
 	public enum HandleTypeWrite { case w }
 	public enum HandleTypeReadWrite { case rw }

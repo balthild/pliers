@@ -1,6 +1,5 @@
 import Path
 import PliersCommon
-import Subprocess
 import Vapor
 
 struct CaddyConfigController: RouteCollection {
@@ -16,7 +15,7 @@ struct CaddyConfigController: RouteCollection {
 	func apply(req: Request) async throws -> Response {
 		let dir = try await Self.generate(req: req)
 
-		try await Result { try await Self.validate(dir: dir) }
+		try await Result { try await Caddyfile.validate(dir: dir, su: true) }
 			.alert("invalid caddy config generated")
 
 		defer { try? dir.delete() }
@@ -53,26 +52,6 @@ struct CaddyConfigController: RouteCollection {
 		try await req.fileio.writeFile(buffer, at: file.string)
 
 		return dir
-	}
-
-	private static func validate(dir: Path) async throws {
-		let file = dir / "Caddyfile"
-
-		let result = try await Subprocess.run(
-			.path(C.caddy.exec),
-			arguments: ["validate", "--config", file.string],
-			environment: .custom([]),
-			platformOptions: try .su(C.caddy.user),
-			input: .none,
-			output: .discarded,
-			error: .sequence,
-			body: { try await $0.standardError.lastLine() },
-		)
-
-		guard case .exited(0) = result.terminationStatus else {
-			try? dir.delete()
-			throw RuntimeError(result.closureResult)
-		}
 	}
 
 	private static func mkdir(sites: [Caddy]) async throws {

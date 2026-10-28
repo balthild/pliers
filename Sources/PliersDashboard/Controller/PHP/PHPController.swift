@@ -282,7 +282,7 @@ struct PHPController: RouteCollection {
 		model.config = input.config
 	}
 
-	private static func validate(tmp: Path, configurator: PHPConfigurator) async throws {
+	static func validate(tmp: Path, configurator: PHPConfigurator) async throws {
 		let fpm = tmp / "php-fpm.conf"
 		let ini = tmp / "php.ini"
 
