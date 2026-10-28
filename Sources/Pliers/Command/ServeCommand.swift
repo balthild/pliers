@@ -16,9 +16,13 @@ struct ServeCommand: AsyncCommand, Sendable {
 			throw RuntimeError("the server must be run as root.")
 		}
 
-		try context.config.state.mkdir(.p)
+		let state = context.config.state
+		if !state.exists {
+			try state.mkdir(.p)
+			try state.chmod(0o700)
+		}
 
-		let attrs = try context.config.state.attrs.expect("read state dir attributes")
+		let attrs = try state.attrs.expect("read state dir attributes")
 		guard let owner = attrs[.ownerAccountID] as? UInt32, owner == 0 else {
 			throw RuntimeError("state dir must be owned by root")
 		}
