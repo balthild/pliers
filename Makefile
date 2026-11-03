@@ -50,7 +50,7 @@ NPM_BIN = ./node_modules/.bin
 SWIFT_RUNTIME_LIB ?= $(shell swift -print-target-info | grep -oE '"[^"]*lib/swift/linux"' | tr -d '"' | head -1)
 
 help:
-	@echo "Usage: make [configure|build|test|fmt]"
+	@echo "Usage: make [configure|build|test|e2e|package|fmt]"
 
 configure:
 	@$(foreach v, $(sort $(filter PLIERS_%, $(.VARIABLES))), echo "$(v)=$($(v))";)
@@ -65,6 +65,9 @@ build:
 test:
 	@if [ ! -f $(GENERATE_PATH) ]; then echo 'Please run "make configure" first'; exit 1; fi
 	swift test
+
+e2e:
+	python3 ./Scripts/e2e/run.py
 
 package: export PKGARCH=$(shell uname -m)
 package: build

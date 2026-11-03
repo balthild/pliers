@@ -1,0 +1,15 @@
+FROM docker.io/library/ubuntu:26.04
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN <<EOF
+set -eux
+apt-get update
+apt-get install -y --no-install-recommends \
+  systemd systemd-sysv dbus cron caddy mysql-server unzip python3
+rm -rf /var/lib/apt/lists/*
+EOF
+
+RUN systemctl enable cron dbus 2>/dev/null || true
+
+CMD ["/lib/systemd/systemd"]
